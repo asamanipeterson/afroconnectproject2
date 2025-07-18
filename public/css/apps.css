@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Italianno&family=Lexend:wght@100..900&family=Libertinus+Mono&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair:ital,opsz,wdth,wght@0,5..1200,112.5,300..900;1,5..1200,112.5,300..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/instagram-sans-script');
+
+body {
+  margin: 0;
+  font-family: 'Instagram Sans Script', 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: #e9ecef;
+  color: #222;
+  transition: background 0.3s, color 0.3s;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  flex-direction: column;
+}
+
+body.dark-mode {
+  background: #1a1a1a;
+  color: #e9ecef;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  width: 100%;
+}
+
+.main-layout {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  flex-grow: 1;
+}
+
+body.dark-mode .main-layout {
+  background: #1a1a1a;
+}
+
+@media (max-width: 1387px) {
+  .main-content { margin-left: 60px; }
+  .rightbar, .topbar { display: none; }
+}
+
+@media (max-width: 768px) {
+  .main-content { margin-left: 60px; }
+  .rightbar { display: none; }
+}

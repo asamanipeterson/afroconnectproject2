@@ -1,0 +1,267 @@
+/* Container */
+.container {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    padding: 20px;
+    z-index: 50;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    z-index: 40;
+}
+
+/* Fade-in Animation */
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tabs */
+.tab-button {
+    position: relative;
+    padding: 15px 20px;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 1rem;
+}
+
+.tab-button.active {
+    color: #3B82F6;
+    font-weight: bold;
+}
+
+.tab-button.active::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3B82F6;
+}
+
+.tab-button:hover:not(.active) {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+/* Close Button */
+#close-create-form {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #EF4444;
+    cursor: pointer;
+}
+
+/* Form Container */
+.form-container {
+    margin-top: 1rem;
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    font-size: 1.75rem;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+/* Form Inputs */
+form {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+}
+
+label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+textarea,
+input[type="text"],
+input[type="file"],
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #111827;
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 1px #3B82F6;
+}
+
+/* Media Items */
+.media-item {
+    background-color: #f9fafb;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.remove-media-item {
+    background-color: #EF4444;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: none;
+    margin-top: 0.5rem;
+}
+
+.remove-media-item:hover {
+    background-color: #DC2626;
+}
+
+/* Story Textarea Specific */
+#story-text-container textarea {
+    min-height: 120px;
+}
+
+/* Color Picker */
+input[type="color"] {
+    height: 40px;
+    width: 60px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+}
+
+/* Buttons */
+.create-post-btn,
+.add-media-item {
+    background-color: #3B82F6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: none;
+}
+
+.create-post-btn:hover,
+.add-media-item:hover {
+    background-color: #2563EB;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Submit Button Container */
+.form-submit-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+/* Mobile */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        top: 5%;
+        max-height: 90vh;
+        padding: 1rem;
+    }
+
+    .tab-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-submit-container {
+        flex-direction: column;
+    }
+
+    .media-item {
+        padding: 0.75rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1586px) {
+    .container {
+        width: 90%;
+        padding: 1.5rem 2rem;
+    }
+
+    .tab-button {
+        font-size: 1rem;
+    }
+
+    .form-submit-container {
+        justify-content: flex-start;
+    }
+}
+
+/* Desktop Large Screens from 1587px */
+@media (min-width: 1587px) {
+    .container {
+        width: 70%;
+        max-width: 1000px;
+        padding: 2rem 3rem;
+    }
+
+    .tab-button {
+        font-size: 1.1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}

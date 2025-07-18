@@ -1,0 +1,145 @@
+/* Comment section styling */
+.comments-page-container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.add-comments {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.add-comment-avatar-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.comment-input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.comment-form {
+    flex: 1;
+}
+
+.comment-input, .reply-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    resize: none;
+}
+
+.submit-comment-button, .submit-reply-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.submit-comment-button:hover, .submit-reply-button:hover {
+    color: #0056b3;
+}
+
+.comments-list {
+    margin-top: 1rem;
+}
+
+.comment-card{
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+body.dark-mode .comment-card {
+    background-color: #333;
+}
+.nested-comment-card {
+    margin-left: 2rem;
+    background: #f8f9fa;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.comment-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.comment-avatar-wrapper img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-username {
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+}
+
+.comment-username:hover {
+    text-decoration: underline;
+}
+
+.comment-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.comment-body {
+    margin: 0.5rem 0;
+}
+
+.comment-text {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+.like-comment-button, .reply-button {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.like-comment-button:hover, .reply-button:hover {
+    text-decoration: underline;
+}
+
+.reply-form-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.no-comments-message {
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.comments-pagination {
+    display: flex;
+    justify-content: center;
+}

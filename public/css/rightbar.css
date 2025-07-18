@@ -1,0 +1,129 @@
+/* Rightbar Layout */
+.rightbar {
+    width:300px;
+    padding: 1rem;
+    transition: width 0.3s ease;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    right: 0;
+    height: 100vh;
+}
+
+/* Messages Section */
+.messages, .events {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+body.dark-mode .messages,
+body.dark-mode .events {
+    background: #2c2c2c;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.messages-header {
+    margin-bottom: 1rem;
+}
+.messages-header h4 {
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+    color: #333;
+}
+body.dark-mode .messages-header h4 {
+    color: #e9ecef;
+}
+.messages .search-container input {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    width:80%;
+    font-size: 14px;
+    background: white;
+    color: #222;
+}
+body.dark-mode .messages .search-container input {
+    background: #333;
+    border-color: #555;
+    color: #e9ecef;
+}
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-top: 0.5rem;
+}
+.tabs .tab {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.3s, color 0.3s;
+}
+body.dark-mode .tabs .tab {
+    color: #bbb;
+}
+.tabs .tab.active {
+    background: #007bff;
+    color: white;
+}
+body.dark-mode .tabs .tab.active {
+    background: #0056b3;
+}
+
+/* Message List */
+.message-list, .event-list {
+    max-height: 300px; /* Constrain height with scroll */
+    overflow-y: auto;
+}
+.message-list li, .event-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+body.dark-mode .message-list li,
+body.dark-mode .event-list li {
+    border-bottom: 1px solid #444;
+    color: #e9ecef;
+}
+.message-list .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+.message-list i.avatar {
+    font-size: 30px;
+    color: #666;
+}
+body.dark-mode .message-list i.avatar {
+    color: #999;
+}
+.message-list li:last-child, .event-list li:last-child {
+    border-bottom: none; /* No border for the last item */
+}
+.message-list a {
+    color: #007bff;
+    font-size: 12px;
+    display: block;
+    text-align: right;
+    width: 100%; /* Allows it to push to the right */
+}
+body.dark-mode .message-list a {
+    color: #66b3ff;
+}
+
+/* Events Section */
+.events h4 {
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+    color: #333;
+}
+body.dark-mode .events h4 {
+    color: #e9ecef;
+}
