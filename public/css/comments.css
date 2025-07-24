@@ -1,4 +1,8 @@
 /* Comment section styling */
+body{
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
 .comments-page-container h3 {
     font-size: 1.25rem;
     font-weight: 600;

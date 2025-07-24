@@ -9,14 +9,15 @@ return new class extends Migration {
     {
         Schema::create('stories', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('story_type', ['image', 'video', 'text']);
-            $table->string('media_path')->nullable(); // for image/video
-            $table->text('text_content')->nullable(); // for text stories
-            $table->string('background')->nullable(); // background color for text stories
+            $table->string('media_path')->nullable();
+            $table->text('text_content')->nullable();
+            $table->string('background')->nullable();
             $table->string('caption')->nullable();
+            $table->timestamp('expires_at')->index();
             $table->timestamps();
-            $table->timestamp('expires_at');
         });
     }
 

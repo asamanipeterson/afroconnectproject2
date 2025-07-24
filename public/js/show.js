@@ -82,6 +82,8 @@ function setupCarousel(postId) {
     const currentSlideEl = document.getElementById(`currentSlide-${postId}`);
     const totalSlideEl = document.getElementById(`totalSlides-${postId}`);
     const dotsContainer = document.getElementById(`carouselDots-${postId}`);
+    const prevArrow = document.getElementById(`prevArrow-${postId}`);
+    const nextArrow = document.getElementById(`nextArrow-${postId}`);
 
     let currentIndex = 0;
     totalSlideEl.innerText = totalSlides;
@@ -99,13 +101,23 @@ function setupCarousel(postId) {
     });
 
     function updateSlidePosition() {
+
+
         carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
         currentSlideEl.innerText = currentIndex + 1;
 
+        // Update active dot
         dotsContainer.querySelectorAll('.carousel-dot').forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);
         });
 
+        // Update arrow visibility
+        if (prevArrow && nextArrow) {
+            prevArrow.style.display = currentIndex === 0 ? 'none' : 'block';
+            nextArrow.style.display = currentIndex === totalSlides - 1 ? 'none' : 'block';
+        }
+
+        // Manage video play/pause
         slides.forEach((slide, i) => {
             const video = slide.querySelector('video');
             if (video) {
@@ -119,6 +131,7 @@ function setupCarousel(postId) {
         });
     }
 
+    // Touch swipe support
     let startX = 0;
     carousel.addEventListener('touchstart', e => {
         startX = e.touches[0].clientX;
@@ -140,15 +153,15 @@ function setupCarousel(postId) {
     window[`carouselState_${postId}`] = {
         currentIndex,
         updateSlidePosition,
-        slides
+        slides,
+        totalSlides
     };
 }
 
-// ===== Carousel Arrows =====
 function nextSlide(e, postId) {
     if (e) e.stopPropagation();
     const state = window[`carouselState_${postId}`];
-    if (state && state.currentIndex < state.slides.length - 1) {
+    if (state && state.currentIndex < state.totalSlides - 1) {
         state.currentIndex++;
         state.updateSlidePosition();
     }
@@ -162,6 +175,7 @@ function prevSlide(e, postId) {
         state.updateSlidePosition();
     }
 }
+
 
 // ===== Like Button Logic =====
 function bindLikeButtons() {

@@ -4,7 +4,6 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
- <link rel="stylesheet" href="{{ asset('css/postdetail-modal.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 @endsection
 
@@ -12,7 +11,7 @@
 <div class="profile-container">
     {{-- Profile Header --}}
     <div class="profile-header">
-        <div class="profile-image">
+        <div class="profile-image {{ $user->stories->count() > 0 ? 'has-stories' : '' }} "> {{-- Added has-stories class --}}
             @if ($user->profile_picture)
                 <img src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile">
             @else
@@ -102,6 +101,8 @@
                 $firstPost = $group->first();
                 $firstMedia = $firstPost->media->first();
                 $isVideo = $firstMedia && $firstMedia->file_type === 'video';
+                $likesCount = $firstPost->likes->count();
+                $commentsCount = $firstPost->comments->count();
             @endphp
 
             <div class="post-item" data-post-id="{{ $firstPost->id }}">
@@ -138,7 +139,12 @@
                         </div>
                     @endif
 
-                    <div class="hover-overlay"></div>
+                    <div class="hover-overlay">
+                        <div class="post-stats-overlay">
+                            <span class="stat-item"><i class="bi bi-heart-fill"></i>{{ $likesCount }}</span>
+                            <span class="stat-item"> <i class="fa-regular fa-comment"></i> {{ $commentsCount }}</span>
+                        </div>
+                    </div>
                 </a>
             </div>
         @endforeach

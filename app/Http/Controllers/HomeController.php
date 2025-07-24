@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Story;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function homepage()
     {
-        // Fetch posts with related user, likes, and comments
+        $user = Auth::user();
+
+        // Get posts with grouped media
         $posts = Post::with([
             'user',
             'likes',
@@ -18,14 +21,28 @@ class HomeController extends Controller
         ])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->groupBy('post_group_id'); // Group posts by group_id to get multiple media under one post
+            ->groupBy('post_group_id');
 
-        // You can keep the variable name as $postGroups for Blade compatibility
         $postGroups = $posts;
 
+        // ✅ Get IDs of users the authenticated user follows
+        $followingIds = $user->following()->pluck('users.id');
+
+        // ✅ Include own stories too
+        $visibleUserIds = $followingIds->push($user->id);
+
+        // ✅ Fetch active stories for current user + followed users
+        $stories = Story::with('user')
+            ->active()
+            ->whereIn('user_id', $visibleUserIds)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('user_id');
+
         return view('welcome', [
-            'user' => Auth::user(),
-            'postGroups' => $postGroups
+            'user' => $user,
+            'postGroups' => $postGroups,
+            'stories' => $stories, // ✅ This fixes the error
         ]);
     }
 }

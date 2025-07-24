@@ -8,7 +8,7 @@
 }
 
 body {
-    font-family: Inter, sans-serif;
+   font-family: 'Helvetica Neue', sans-serif;
     background: var(--background);
     color: #000;
 }
@@ -28,11 +28,11 @@ body.dark {
     background: var(--accent);
     color: #fff;
     border: none;
-    padding: 8px 15px;
+    padding:5px 12px;
     border-radius: 5px;
     cursor: pointer;
     margin-left: 10px;
-    font-size:16px;
+    font-size: 0.85rem;
 }
 .profile-header {
     display: flex;
@@ -47,6 +47,13 @@ body.dark {
     border-radius: 50%;
     object-fit: cover;
 }
+
+/* New: Styling for profile picture when user has stories */
+.profile-image.has-stories img {
+    border: 3px solid #f09433; /* Instagram-like orange/red border */
+    padding: 3px; /* Add padding to make the border visible outside the image */
+}
+
 
 .default-avatar {
     width: 140px;
@@ -87,13 +94,45 @@ body.dark {
 }
 
 .follow-btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
-    font-size:16px;
+    transition: all 0.2s;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+body.dark-mode .follow-btn {
+    border-color: #007bff;
+}
+
+.follow-btn:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+body.dark-mode .follow-btn:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.follow-btn.following {
+    background-color: transparent;
+    color: #007bff;
+}
+body.dark-mode .follow-btn.following {
+    color: #66b3ff;
+}
+
+.follow-btn.following:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: #007bff;
+}
+body.dark-mode .follow-btn.following:hover {
+    background-color: rgba(102, 179, 255, 0.1);
 }
 
 .editbtn {
@@ -140,11 +179,35 @@ body.dark {
     background: rgba(0, 0, 0, 0.3);
     z-index: 1;
     transition: background 0.3s ease;
+    display: flex; /* Added for centering content */
+    align-items: center; /* Added for centering content */
+    justify-content: center; /* Added for centering content */
+    opacity: 0; /* Hidden by default */
 }
 
 .post-item:hover .hover-overlay {
     background: rgba(0, 0, 0, 0.55);
+    opacity: 1; /* Visible on hover */
 }
+
+.post-stats-overlay {
+    display: flex;
+    gap: 20px;
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-item i {
+    color: #fff;
+}
+
 
 .reels-icon,
 .stack-icon {

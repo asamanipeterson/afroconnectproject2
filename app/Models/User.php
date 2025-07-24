@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+// Make sure to import Storage
+use Illuminate\Support\Facades\Storage; // <-- ADD THIS LINE
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -43,6 +45,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    // ADD THIS LINE: This tells Laravel to include 'profile_picture_url' when converting the model to an array/JSON
+    protected $appends = ['profile_picture_url'];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -54,6 +64,17 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // ADD THIS METHOD: Accessor to get the full URL of the profile picture
+    public function getProfilePictureUrlAttribute()
+    {
+        // If profile_picture exists, return its public URL from storage
+        // Otherwise, return a path to a default avatar image
+        return $this->profile_picture
+            ? Storage::disk('public')->url($this->profile_picture)
+            : asset('images/default-avatar.png'); // You might need to create this image in public/images
+    }
+
     /**
      * Get the posts created by the user.
      *
@@ -81,8 +102,6 @@ class User extends Authenticatable
     //     return $this->hasOne(Profile::class);
     // }
 
-
-
     // Users this user is following
     public function followers()
     {
@@ -108,5 +127,10 @@ class User extends Authenticatable
         }
 
         return $this->following()->attach($user->id);
+    }
+
+    public function stories()
+    {
+        return $this->hasMany(Story::class);
     }
 }

@@ -4,12 +4,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Lexend', sans-serif;
 }
 
 body {
     background-color: #00210b;
     padding: 1rem;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .login-container{
@@ -72,6 +73,8 @@ body {
     font-size: 1rem;
     cursor: pointer;
     margin-bottom: 1.2rem;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .apple-logo {
@@ -91,6 +94,8 @@ body {
     padding: 0 10px;
     position: relative;
     z-index: 1;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .divider::before {
@@ -113,6 +118,8 @@ body {
     margin-bottom: 0.5rem;
     color: #333;
     font-weight: 600;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .input-with-icon {
@@ -128,8 +135,13 @@ body {
     border: 1px solid #ccc;
     font-size: 1rem;
     transition: border 0.3s ease;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
-
+input::placeholder {
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
 .input-icon {
     position: absolute;
     left: 10px;
@@ -146,7 +158,7 @@ body {
     user-select: none;
 }
 
-.options-row {
+.options-row{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -160,8 +172,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
+    font-size:1.5rem;
     color: #666;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 .login-button {
     width: 100%;
@@ -174,6 +188,8 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s ease;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .login-button:hover {
@@ -184,7 +200,7 @@ body {
     text-align: center;
     margin-top: 1.5rem;
     color: #000;
-    font-size: 1rem;
+    font-size:0.9rem;
 }
 
 .signup-prompt a {
@@ -207,6 +223,8 @@ body {
     color: red;
     font-size: 0.85rem;
     margin-top: 4px;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 .is-invalid:focus {
     outline: none;

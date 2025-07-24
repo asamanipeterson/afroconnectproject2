@@ -7,6 +7,9 @@
 
     <!-- Custom CSS -->
     <link href="{{ asset('css/register.css') }}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -21,7 +24,7 @@
                 @csrf
 
                 <h2 class="login-title">Register Here to join the African family 👋</h2>
-                <div class="divider"><span>--</span></div>
+                <div class="divider"><span>or</span></div>
 
                 <x-register-field label="Email" name="email" type="email" placeholder="Enter your email" />
                 <x-register-field name="username" label="Username" placeholder="Username" />

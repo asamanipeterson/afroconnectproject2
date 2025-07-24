@@ -87,7 +87,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/toggle-follow/{id}', [FollowController::class, 'toggleFollow'])->middleware('auth');
     Route::delete('/user/{user}/unfollow', [FollowController::class, 'unfollow'])->name('user.unfollow');
 });
-Route::controller(StoryController::class)->prefix('stories')->middleware('auth')->group(function () {
-    Route::post('/', 'store')->name('stories.store');
-    Route::get('/', 'index')->name('stories.index');
-});
+Route::controller(StoryController::class)
+    ->prefix('stories')
+    ->middleware('auth')
+    ->group(function () {
+        Route::post('/', 'store')->name('stories.store');
+        Route::get('/', 'index')->name('stories.index');
+        Route::get('/user/{user}', 'fetchUserStories')->name('stories.fetchUserStories');
+    });

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Story extends Model
 {
@@ -19,6 +20,13 @@ class Story extends Model
         'expires_at',
     ];
 
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
+
+    // This array tells Laravel to always append these attributes when converting to JSON
+    protected $appends = ['media_url'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -27,5 +35,13 @@ class Story extends Model
     public function scopeActive($query)
     {
         return $query->where('expires_at', '>', now());
+    }
+
+    // Get full media URL (this accessor is good)
+    public function getMediaUrlAttribute()
+    {
+        return $this->media_path
+            ? Storage::disk('public')->url($this->media_path)
+            : null;
     }
 }

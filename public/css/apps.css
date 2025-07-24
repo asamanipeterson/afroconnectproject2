@@ -3,7 +3,8 @@
 
 body {
   margin: 0;
-  font-family: 'Instagram Sans Script', 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
   background: #e9ecef;
   color: #222;
   transition: background 0.3s, color 0.3s;

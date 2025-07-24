@@ -4,7 +4,6 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/postdetail-modal.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endsection
@@ -35,7 +34,7 @@
                         </div>
 
                         @if(Auth::check() && Auth::id() !== $user->id)
-                            <button class="follow-btn {{ Auth::user()->isFollowing($user) ? 'following' : '' }}" data-user-id="{{ $user->id }}">
+                            <button class="follow-btn  {{ Auth::user()->isFollowing($user) ? 'following' : '' }}" data-user-id="{{ $user->id }}">
                                 {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
                             </button>
                         @endif
@@ -104,20 +103,18 @@
                             <span class="likes-count">{{ $firstPost->likes->count()}}</span>
                             <a class="comment-button show-comments-btn" data-post-id="{{ $firstPost->id }}">
                                 <i class="fa-regular fa-comment"></i>
-
                             </a>
+                            <span class="comments-count">{{ $firstPost->comments->count() }}</span>
                             <a href="{{ route('post.share', $firstPost->id) }}" class="share-button">
-                                <i class="fa-solid fa-share"></i>
+                               <i class="fa-regular fa-paper-plane"></i>
                             </a>
                         </div>
                         <div class="icon-share-bookmark">
-                            <a href="{{ route('post.bookmark', $firstPost->id) }}" class="bookmark-button"><i class="fa-solid fa-bookmark"></i></a>
+                            <a href="{{ route('post.bookmark', $firstPost->id) }}" class="bookmark-button"><i class="fa-regular fa-bookmark"></i></a>
                         </div>
                     </div>
 
-                    {{-- <div class="post-stats">
-                        <span class="likes-count">{{ $firstPost->likes->count() }}</span>
-                    </div> --}}
+
                 </div>
 
                 {{-- Comments --}}
@@ -157,6 +154,32 @@
     </div>
 </div>
 @endsection
+
+<script>
+    function toggleModal(modalElement, show) {
+        if (modalElement) {
+            modalElement.style.display = show ? 'flex' : 'none';
+        }
+    }
+
+    function previewMedia(input) {
+        const preview = input.nextElementSibling;
+        preview.innerHTML = '';
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileType = file.type;
+                if (fileType.startsWith('image/')) {
+                    preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; height: auto;">`;
+                } else if (fileType.startsWith('video/')) {
+                    preview.innerHTML = `<video controls style="max-width: 100%;"><source src="${e.target.result}" type="${fileType}"></video>`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 
 @section('scripts')
 <script src="{{ asset('js/welcome.js') }}"></script>

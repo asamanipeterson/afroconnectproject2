@@ -1,3 +1,6 @@
+body{
+    font-family: 'Helvetica Neue', sans-serif;
+}
 /* Rightbar Layout */
 .rightbar {
     width:300px;

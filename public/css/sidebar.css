@@ -1,5 +1,6 @@
 body {
-    font-family: 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
     padding: 0;
     margin: 0;
     display: flex;
@@ -644,6 +645,7 @@ body.dark-mode .footer-links p {
         z-index: 1000; /* Ensure it appears above other elements */
     }
 }
+
 
 .modal {
     display: none;
