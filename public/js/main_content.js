@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Story Creation Modal ---
     const storyCreationModal = document.getElementById('storyCreationModal');
-    // Changed this to target the plus-badge specifically
     const openStoryCreationModalButton = document.getElementById('openStoryCreationModal');
     const closeStoryCreationModal = document.getElementById('closeStoryCreationModal');
     const storyItemsContainer = document.getElementById('story-items-container');
@@ -31,14 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
         storyCountSpan.textContent = `${count}/${maxStories} stories`;
         storyItemsContainer.querySelectorAll('.story-item-block').forEach((block, index) => {
             const removeBtn = block.querySelector('.remove-story-item');
-            const counter = block.querySelector('.story-counter'); // This counter doesn't exist in your HTML, consider removing or adding.
+            const counter = block.querySelector('.story-counter');
             if (removeBtn) removeBtn.style.display = count > 1 ? 'inline-block' : 'none';
             if (counter) counter.textContent = `${index + 1}/${maxStories} stories`;
         });
     };
 
     if (storyCreationModal && openStoryCreationModalButton && closeStoryCreationModal) {
-        // Event listener for the plus badge
         openStoryCreationModalButton.addEventListener('click', (e) => {
             e.preventDefault();
             toggleModal(storyCreationModal, true);
@@ -100,104 +98,183 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStoryCount();
     }
 
-    // --- Story Viewer Modal ---
+    // Add global variables to track users and their stories
+    let allUsersWithStories = [];
+    let currentUserIndex = 0;
     let currentStories = [];
     let currentStoryIndex = 0;
-    const storyViewerModal = document.getElementById('storyViewerModal');
-    const storyDisplayArea = document.getElementById('storyDisplayArea');
+    let storySlider = document.querySelector('.story-slider');
 
     window.openStoryViewer = function(userId) {
-        // This will now handle both other users' stories and the authenticated user's own stories
-        fetch(`/stories/user/${userId}`)
+        fetch('/stories/all' + (userId ? `?start_user_id=${userId}` : ''))
             .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
             })
             .then(data => {
-                if (data.length === 0) {
-                    alert('No active stories available for this user.');
-                    return;
-                }
-                currentStories = data;
-                currentStoryIndex = 0;
-                displayCurrentStory();
-                toggleModal(storyViewerModal, true);
+                allUsersWithStories = data.map(user => user.id);
+                currentUserIndex = allUsersWithStories.indexOf(parseInt(userId)) || 0;
+                if (allUsersWithStories.length === 0) console.error('No users with stories found');
+                loadUserStories();
             })
-            .catch(error => {
-                console.error('Error fetching stories:', error);
-                alert('Could not load stories. Please try again later.');
-            });
+            .catch(error => console.error('Error fetching stories:', error));
     };
 
-    function displayCurrentStory() {
-        if (currentStories.length === 0) {
-            storyDisplayArea.innerHTML = '<p>No stories to display.</p>';
+    function loadUserStories() {
+        if (!storySlider) {
+            console.error('storySlider element not found');
             return;
         }
-
-        const story = currentStories[currentStoryIndex];
-        let storyContentHtml = '';
-        let userInfoHtml = '';
-
-        if (story.user) {
-            const profilePicUrl = story.user.profile_picture_url;
-            userInfoHtml = `
-                <div class="story-header">
-                    <img src="${profilePicUrl}" alt="${story.user.username}" class="story-viewer-avatar">
-                    <p class="story-viewer-username">${story.user.username}</p>
-                </div>
-            `;
-        }
-
-        if (story.story_type === 'image' && story.media_url) {
-            storyContentHtml = `<img src="${story.media_url}" alt="Story Media" class="story-media">`;
-        } else if (story.story_type === 'video' && story.media_url) {
-            storyContentHtml = `<video src="${story.media_url}" controls autoplay loop muted class="story-media"></video>`;
-        } else if (story.story_type === 'text' && story.text_content) {
-            storyContentHtml = `<div class="story-text-content" style="background-color: ${story.background || '#3B82F6'};"><p>${story.text_content}</p></div>`;
-        } else {
-            storyContentHtml = '<p>Story content not available or not supported.</p>';
-        }
-
-        let captionHtml = story.caption ? `<p class="story-caption">${story.caption}</p>` : '';
-
-        storyDisplayArea.innerHTML = `
-            ${userInfoHtml}
-            <div class="story-media-area">${storyContentHtml}</div>
-            ${captionHtml}
-        `;
-
-        const prevBtn = document.querySelector('.nav-btn.prev');
-        const nextBtn = document.querySelector('.nav-btn.next');
-
-        if (currentStories.length <= 1) {
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-        } else if (currentStoryIndex === 0) {
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'block';
-        } else if (currentStoryIndex === currentStories.length - 1) {
-            prevBtn.style.display = 'block';
-            nextBtn.style.display = 'none';
-        } else {
-            prevBtn.style.display = 'block';
-            nextBtn.style.display = 'block';
-        }
+        storySlider.innerHTML = '';
+        allUsersWithStories.forEach((userId, index) => {
+            fetch(`/stories/user/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Failed to fetch stories for user ${userId}`);
+                    return response.json();
+                })
+                .then(stories => {
+                    if (!stories || stories.length === 0) console.warn(`No stories for user ${userId}`);
+                    const card = createStoryCard(userId, stories);
+                    storySlider.appendChild(card);
+                    if (index === currentUserIndex) {
+                        card.classList.add('active');
+                        currentStories = stories;
+                        currentStoryIndex = 0;
+                        displayCurrentStory();
+                    }
+                })
+                .catch(error => console.error(`Error fetching stories for user ${userId}:`, error));
+        });
+        toggleModal(storyViewerModal, true);
     }
 
-    window.prevStory = function() {
-        if (currentStories.length > 0) {
-            currentStoryIndex = (currentStoryIndex - 1 + currentStories.length) % currentStories.length;
-            displayCurrentStory();
+    function createStoryCard(userId, stories) {
+        const card = document.createElement('div');
+        card.className = 'story-user-card';
+        if (stories && stories.length > 0) {
+            const story = stories[0];
+            const createdAt = getRelativeTime(story.created_at);
+            const username = userId == window.authUserId ? 'Your story' : (story.user.username || 'Unknown');
+            card.innerHTML = `
+                <div class="story-header">
+                    <img src="${story.user.profile_picture_url || '/default-avatar.png'}" class="story-viewer-avatar">
+                    <p class="story-viewer-username" style="font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; font-weight: 500; font-size: 1rem;">${username} <span class="story-time">${createdAt}</span></p>
+                </div>
+                <div class="story-media-area">
+                    ${story.story_type === 'image' ? `<img src="${story.media_url || '/default-image.png'}" class="story-media">` : ''}
+                    ${story.story_type === 'video' ? `<video src="${story.media_url || '/default-video.mp4'}" class="story-media"></video>` : ''}
+                    ${story.story_type === 'text' ? `<div class="story-text-content" style="background-color: ${story.background || '#3B82F6'}"><p>${story.text_content || 'No text'}</p></div>` : ''}
+                    <button class="nav-btn prev" onclick="prevStory(this)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-btn next" onclick="nextStory(this)"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="progress-bar" style="width: 0;"></div>
+            `;
+        } else {
+            card.innerHTML = `<p>No stories available</p>`;
         }
+        return card;
+    }
+
+    function displayCurrentStory() {
+        const activeCard = storySlider.querySelector('.story-user-card.active');
+        if (activeCard) {
+            const story = currentStories[currentStoryIndex];
+            const mediaArea = activeCard.querySelector('.story-media-area');
+            mediaArea.innerHTML = getStoryContent(story) + `
+                <button class="nav-btn prev" onclick="prevStory(this)"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="nav-btn next" onclick="nextStory(this)"><i class="fa-solid fa-chevron-right"></i></button>
+            `;
+            if (story.caption) {
+                mediaArea.insertAdjacentHTML('beforeend', `<div class="story-caption"  >${story.caption || 'No caption'}</div>`);
+            }
+            activeCard.querySelector('.progress-bar').style.width = `${(currentStoryIndex + 1) / currentStories.length * 100}%`;
+            const timeElement = activeCard.querySelector('.story-time');
+            if (timeElement) timeElement.textContent = getRelativeTime(story.created_at);
+            updateNavigation(activeCard);
+        }
+        const cardWidth = 400;
+        const gap = 20;
+        const offset = currentUserIndex * (cardWidth + gap) - (window.innerWidth - cardWidth) / 2 + gap;
+        storySlider.style.transform = `translateX(-${offset}px)`;
+    }
+
+    function getStoryContent(story) {
+        if (story.story_type === 'image') return `<img src="${story.media_url || '/default-image.png'}" class="story-media">`;
+        if (story.story_type === 'video') return `<video src="${story.media_url || '/default-video.mp4'}" controls autoplay loop muted class="story-media"></video>`;
+        if (story.story_type === 'text') return `<div class="story-text-content" style="background-color: ${story.background || '#3B82F6'}"><p>${story.text_content || 'No text'}</p></div>`;
+        return '<p>Content not supported</p>';
+    }
+
+    function getRelativeTime(createdAt) {
+        const now = new Date();
+        const created = new Date(createdAt);
+        const diffMs = now - created;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHour = Math.floor(diffMs / 3600000);
+        if (diffMin < 1) return 'Just now';
+        if (diffMin < 60) return `${diffMin}m`;
+        return `${diffHour}h`;
+    }
+
+    window.nextStory = function(button) {
+        const card = button.closest('.story-user-card');
+        if (currentStoryIndex < currentStories.length - 1) {
+            currentStoryIndex++;
+        } else {
+            if (currentUserIndex < allUsersWithStories.length - 1) {
+                currentUserIndex++;
+            } else {
+                currentUserIndex = 0; // Loop back to the first user
+            }
+            const nextUserId = allUsersWithStories[currentUserIndex];
+            fetch(`/stories/user/${nextUserId}`)
+                .then(response => response.json())
+                .then(data => {
+                    currentStories = data || [];
+                    currentStoryIndex = 0;
+                    storySlider.querySelectorAll('.story-user-card').forEach(c => c.classList.remove('active'));
+                    storySlider.querySelectorAll('.story-user-card')[currentUserIndex].classList.add('active');
+                    displayCurrentStory();
+                })
+                .catch(error => console.error(`Error fetching stories for user ${nextUserId}:`, error));
+        }
+        displayCurrentStory();
     };
 
-    window.nextStory = function() {
-        if (currentStories.length > 0) {
-            currentStoryIndex = (currentStoryIndex + 1) % currentStories.length;
-            displayCurrentStory();
+    window.prevStory = function(button) {
+        const card = button.closest('.story-user-card');
+        if (currentStoryIndex > 0) {
+            currentStoryIndex--;
+        } else {
+            if (currentUserIndex > 0) {
+                currentUserIndex--;
+            } else {
+                currentUserIndex = allUsersWithStories.length - 1; // Loop to the last user
+            }
+            const prevUserId = allUsersWithStories[currentUserIndex];
+            fetch(`/stories/user/${prevUserId}`)
+                .then(response => response.json())
+                .then(data => {
+                    currentStories = data || [];
+                    currentStoryIndex = data.length - 1;
+                    storySlider.querySelectorAll('.story-user-card').forEach(c => c.classList.remove('active'));
+                    storySlider.querySelectorAll('.story-user-card')[currentUserIndex].classList.add('active');
+                    displayCurrentStory();
+                })
+                .catch(error => console.error(`Error fetching stories for user ${prevUserId}:`, error));
         }
+        displayCurrentStory();
     };
+
+    function updateNavigation(card) {
+        const prevBtn = card.querySelector('.nav-btn.prev');
+        const nextBtn = card.querySelector('.nav-btn.next');
+        if (prevBtn && nextBtn) {
+            const hasMultipleStories = currentStories.length > 1;
+            prevBtn.style.display = hasMultipleStories || currentUserIndex > 0 ? 'flex' : 'none';
+            nextBtn.style.display = hasMultipleStories || currentUserIndex < allUsersWithStories.length - 1 ? 'flex' : 'none';
+        }
+    }
 
     window.closeStoryViewer = function() {
         toggleModal(storyViewerModal, false);

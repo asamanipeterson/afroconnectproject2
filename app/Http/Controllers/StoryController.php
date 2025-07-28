@@ -23,6 +23,26 @@ class StoryController extends Controller
         return response()->json($stories);
     }
 
+
+    public function fetchAllActiveStories(Request $request)
+    {
+        $clickedUserId = $request->input('start_user_id');
+
+        $users = User::whereHas('stories', function ($query) {
+            $query->where('expires_at', '>', now());
+        })
+            ->with(['stories' => function ($query) {
+                $query->where('expires_at', '>', now())->orderBy('created_at', 'asc');
+            }])
+            ->get()
+            ->sortBy(function ($user) use ($clickedUserId) {
+                return $user->id == $clickedUserId ? 0 : 1;
+            })
+            ->values();
+
+        return response()->json($users);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

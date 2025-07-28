@@ -15,13 +15,14 @@
             @php
                 $firstPost = $group->first();
                 $user = $firstPost->user;
+                $userHasStories = isset($stories[$user->id]) && $stories[$user->id]->isNotEmpty();
             @endphp
             <div class="post-card" data-post-id="{{ $firstPost->id }}">
 
                 {{-- Post Header --}}
                 <div class="post-header">
                     <div class="user-info-container">
-                        <a href="{{ route('user.profile', $user->id) }}" class="profile-avatar-wrapper">
+                        <a href="" class="profile-avatar-wrapper @if($userHasStories) has-stories @endif">
                             @if($user->profile_picture)
                                 <img src="{{ asset('storage/' . $user->profile_picture) }}" class="avatar" alt="Profile Picture">
                             @else
@@ -34,7 +35,7 @@
                         </div>
 
                         @if(Auth::check() && Auth::id() !== $user->id)
-                            <button class="follow-btn  {{ Auth::user()->isFollowing($user) ? 'following' : '' }}" data-user-id="{{ $user->id }}">
+                            <button class="follow-btn {{ Auth::user()->isFollowing($user) ? 'following' : '' }}" data-user-id="{{ $user->id }}">
                                 {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
                             </button>
                         @endif
@@ -100,7 +101,7 @@
                             <a class="like-button action-btn" data-post-id="{{ $firstPost->id }}">
                                 <i class="bi {{ Auth::check() && Auth::user()->hasLiked($firstPost) ? 'bi-heart-fill liked' : 'bi-heart' }}"></i>
                             </a>
-                            <span class="likes-count">{{ $firstPost->likes->count()}}</span>
+                            <span class="likes-count">{{ $firstPost->likes->count() }}</span>
                             <a class="comment-button show-comments-btn" data-post-id="{{ $firstPost->id }}">
                                 <i class="fa-regular fa-comment"></i>
                             </a>
@@ -113,8 +114,6 @@
                             <a href="{{ route('post.bookmark', $firstPost->id) }}" class="bookmark-button"><i class="fa-regular fa-bookmark"></i></a>
                         </div>
                     </div>
-
-
                 </div>
 
                 {{-- Comments --}}
@@ -131,7 +130,7 @@
 
                 {{-- Add Comment Section --}}
                 <div class="add-comments">
-                    <div class="add-comment-avatar-wrapper">
+                    <div class="add-comment-avatar-wrapper @if(isset($stories[Auth::id()]) && $stories[Auth::id()]->isNotEmpty()) has-stories @endif">
                         @if(Auth::check() && Auth::user()->profile_picture)
                             <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" class="avatar" alt="My Profile Picture">
                         @else

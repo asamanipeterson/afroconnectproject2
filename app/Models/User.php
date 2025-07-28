@@ -72,7 +72,7 @@ class User extends Authenticatable
         // Otherwise, return a path to a default avatar image
         return $this->profile_picture
             ? Storage::disk('public')->url($this->profile_picture)
-            : asset('images/default-avatar.png'); // You might need to create this image in public/images
+            : asset('default-avatar.png'); // You might need to create this image in public/images
     }
 
     /**
