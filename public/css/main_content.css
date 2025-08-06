@@ -96,8 +96,9 @@ body.dark-mode .post-creation-section i.avatar {
     margin-right: 5px;
 }
 .post-input input {
-    width: 100%;
-    padding: 0.5rem 1rem;
+    width: 98%;
+    padding: 0.5rem 0rem 0.5rem 0.75rem;
+    font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 20px;
     font-size: 14px;
@@ -458,7 +459,7 @@ body.dark-mode .story-username {
 .story-slider {
     display: flex;
     align-items: center;
-    gap: 40px; /* Increased gap between card groups */
+    gap:20px; /* Increased gap between card groups */
     transition: transform 0.4s ease;
     position: relative;
 }
@@ -803,11 +804,12 @@ body.dark-mode .story-username {
 /* Tablet < 992px */
 @media (max-width: 991px) {
     .story-bar {
-        gap: 8px;
+        gap:4px;
     }
     .story-avatar-wrapper {
         width: 45px;
         height: 45px;
+        margin:0;
     }
     .plus-badge {
         width: 14px;

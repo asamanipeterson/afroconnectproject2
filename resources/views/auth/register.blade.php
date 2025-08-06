@@ -32,7 +32,7 @@
                 <x-register-field label="Confirm Password" name="password_confirmation" type="password" placeholder="Confirm your password" />
                 <x-register-field name="phone" type="tel" label="Phone Number" placeholder="Enter your phone number" />
                 <x-register-field name="dob" type="date" label="Date of Birth" placeholder="Date of Birth" />
-                 <div class="form-options">
+                <div class="form-options">
                     <x-register-field name="gender" type="select" label="Gender" placeholder="Gender"
                         :options="[
                             'male' => 'Male',
@@ -42,7 +42,7 @@
                         ]" />
 
 
-                <x-register-field name="language" type="select" label="Language"
+                        <x-register-field name="language" type="select" label="Language"
                         :options="[
                             'en' => 'English (en)',
                             'es' => 'Spanish (es)',
@@ -56,24 +56,13 @@
                             'it' => 'Italian (it)'
                         ]" value="en" />
 
-                            <x-register-field name="location" type="select" label="Country" placeholder="Country"
-                    :options="[
-                        'US' => 'United States',
-                        'CA' => 'Canada',
-                        'GB' => 'United Kingdom',
-                        'AU' => 'Australia',
-                        'IN' => 'India',
-                        'CN' => 'China',
-                        'JP' => 'Japan',
-                        'DE' => 'Germany',
-                        'FR' => 'France',
-                        'BR' => 'Brazil',
-                        'ZA' => 'South Africa',
-                        'RU' => 'Russia',
-                        'MX' => 'Mexico',
-                        'IT' => 'Italy',
-                        'ES' => 'Spain'
-                    ]" />
+                            <x-register-field
+                                        name="location"
+                                        type="select"
+                                        label="Country"
+                                        placeholder="Country"
+                                        :options="$countries"
+                            />
                  </div>
                 <div class="options-row">
                     <label>

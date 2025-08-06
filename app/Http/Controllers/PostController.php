@@ -11,16 +11,16 @@ use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        // Fetch grouped posts (each post is a collection of media)
-        $groupedPosts = Post::with('media');
+    // public function index()
+    // {
+    //     // Fetch grouped posts (each post is a collection of media)
+    //     $groupedPosts = Post::with('media');
 
-        return view('create-post', [
-            'user' => Auth::user(),
-            'posts' => $groupedPosts
-        ]);
-    }
+    //     return view('create-post', [
+    //         'user' => Auth::user(),
+    //         'posts' => $groupedPosts
+    //     ]);
+    // }
 
     // public function store(Request $request)
     // {
@@ -104,11 +104,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         // // Debug incoming request data and uploaded files
-        // dd([
-        //     'all_input' => $request->all(),
-        //     'media_files' => $request->file('media_files'),
-        //     'sound_files' => $request->file('sound_files'),
-        // ]);
+
 
         $request->validate([
             'caption' => 'nullable|string|max:2200',

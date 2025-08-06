@@ -6,19 +6,20 @@
     </div>
     <div class="search-section">
         <div class="search-container">
-            <input type="text" class="search" placeholder="Search...">
+            <input type="text" class="search" id="searchInput" placeholder="Search by username or location...">
+            <div id="searchResults" class="search-results" style="display: none;"></div>
         </div>
     </div>
     <div class="profile-section">
         <div class="icon-section">
             <div class="top-icons">
                 <a href="{{ route('notifications.index') }}" class="notification-icon">
-                    <i class="fa-regular fa-bell"></i>
+                    <i class="bi bi-bell"></i>
                     @if(auth()->user()->unreadNotifications->count())
                         <span class="notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
                     @endif
                 </a>
-                <a href="#"><i class="bi bi-bookmark-fill"></i></a>
+                <a href="#"><i class="bi bi-bookmark"></i></a>
             </div>
         </div>
         <a href="#" class="profile-link" id="toggleDropdown">
@@ -32,7 +33,17 @@
         <span class="username">{{ auth()->user()->username }}</span>
         <div class="dropdown-menu" id="dropdownMenu">
             <div class="settings-hover">
-                <a href="#" class="dropdown-item" id="openSettings"><i class="bi bi-gear"></i> Settings</a>
+                {{-- <a href="#" class="dropdown-item" id="openSettings"><i class="bi bi-gear"></i> Settings</a> --}}
+                <a class="dropdown-item preview-item" id="openSettings" >
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-settings text-success"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1" style="cursor: pointer">Settings</p>
+                    </div>
+                  </a>
                 <div class="hover-menu">
                     <a href="#" class="hover-item"><i class="bi bi-activity"></i> Your Activity</a>
                     <a href="#" class="hover-item"><i class="bi bi-bookmark"></i> Saved</a>
@@ -40,30 +51,16 @@
                     <a href="#" class="hover-item"><i class="bi bi-exclamation-circle"></i> Report a problem</a>
                 </div>
             </div>
-            <a href="{{ route('logout') }}" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            <a href="{{ route('logout') }}" class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const profileLink = document.getElementById('toggleDropdown');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-
-        if (profileLink && dropdownMenu) {
-            profileLink.addEventListener('click', e => {
-                e.preventDefault();
-                const isVisible = dropdownMenu.style.display === 'block';
-                dropdownMenu.style.display = isVisible ? 'none' : 'block';
-                profileLink.classList.toggle('active', !isVisible);
-            });
-
-            document.addEventListener('click', e => {
-                if (!profileLink.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.style.display = 'none';
-                    profileLink.classList.remove('active');
-                }
-            });
-        }
-    });
-</script>

@@ -1,10 +1,11 @@
+
 document.addEventListener('DOMContentLoaded', function () {
     // --- Real-time New Comment Listener via Laravel Echo ---
     if (typeof Echo !== 'undefined') {
         document.querySelectorAll('.post-card').forEach(card => {
             const postId = card.dataset.postId;
             const commentsSection = card.querySelector('.recent-comments-section');
-            const commentsCountDisplay = card.querySelector('.comments-count-display');
+            const commentsCountDisplay = card.querySelector('.comments-count');
             const viewCommentsLink = card.querySelector('.view-comments-link');
             const likesCountSpan = card.querySelector('.likes-count');
 
@@ -36,8 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     if (commentsCountDisplay) {
-                        const currentCount = parseInt(commentsCountDisplay.textContent.match(/\d+/)) || 0;
-                        commentsCountDisplay.textContent = `${currentCount + 1} ${currentCount + 1 === 1 ? 'Comment' : 'Comments'}`;
+                        const currentCount = parseInt(commentsCountDisplay.textContent) || 0;
+                        commentsCountDisplay.textContent = `${currentCount + 1}`;
                     }
                 })
 
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('❤️ Post liked/unliked by another user:', e);
 
                     if (likesCountSpan) {
-                        likesCountSpan.textContent = `${e.likes_count} likes`;
+                        likesCountSpan.textContent = `${e.likes_count}`;
                     }
                 });
         });
@@ -86,9 +87,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const items = carouselInner.querySelectorAll('.carousel-item');
         const leftArrow = carousel.querySelector('.left-arrow');
         const rightArrow = carousel.querySelector('.right-arrow');
+        const dotsContainer = carousel.querySelector('.carousel-dots');
+        const counter = carousel.querySelector('.carousel-counter');
+        const currentSlideEl = counter?.querySelector(`#currentSlide-${carouselInner.dataset.postId}`);
+        const totalSlideEl = counter?.querySelector(`#totalSlides-${carouselInner.dataset.postId}`);
         let currentIndex = 0;
         let startX = 0;
         let isDragging = false;
+
+        // Initialize dots and counter
+        if (dotsContainer && items.length > 1) {
+            dotsContainer.innerHTML = '';
+            items.forEach((_, i) => {
+                const dot = document.createElement('span');
+                dot.classList.add('carousel-dot');
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    currentIndex = i;
+                    updateCarousel();
+                });
+                dotsContainer.appendChild(dot);
+            });
+        }
+        if (totalSlideEl) totalSlideEl.textContent = items.length;
+        if (currentSlideEl) currentSlideEl.textContent = currentIndex + 1;
 
         function updateCarousel() {
             if (items.length === 0) return;
@@ -106,6 +128,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (leftArrow) leftArrow.style.display = (currentIndex === 0 || items.length <= 1) ? 'none' : 'flex';
             if (rightArrow) rightArrow.style.display = (currentIndex >= items.length - 1 || items.length <= 1) ? 'none' : 'flex';
+            if (dotsContainer) {
+                dotsContainer.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+            if (currentSlideEl) currentSlideEl.textContent = currentIndex + 1;
+
+            // Manage video playback
+            items.forEach((item, i) => {
+                const video = item.querySelector('.post-video');
+                if (video) {
+                    if (i === currentIndex) {
+                        video.play();
+                    } else {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                }
+            });
         }
 
         updateCarousel();
@@ -128,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
+        // Touch swipe support
         carouselInner.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
             isDragging = true;
@@ -156,50 +198,74 @@ document.addEventListener('DOMContentLoaded', function () {
             carouselInner.style.scrollBehavior = 'smooth';
         });
 
-        let isMouseDown = false;
-        let mouseStartX = 0;
-        let scrollLeftStart = 0;
-
-        carouselInner.addEventListener('mousedown', (e) => {
-            isMouseDown = true;
-            mouseStartX = e.clientX;
-            scrollLeftStart = carouselInner.scrollLeft;
-            carouselInner.style.scrollBehavior = 'auto';
-            carouselInner.style.cursor = 'grabbing';
-        });
-
-        carouselInner.addEventListener('mousemove', (e) => {
-            if (!isMouseDown) return;
+        // Prevent vertical scrolling on mouse wheel over carousel
+        carouselInner.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const mouseMoveX = e.clientX - mouseStartX;
-            carouselInner.scrollLeft = scrollLeftStart - mouseMoveX;
         });
+    });
 
-        carouselInner.addEventListener('mouseup', () => {
-            if (!isMouseDown) return;
-            isMouseDown = false;
-            const finalScrollLeft = carouselInner.scrollLeft;
-            const itemWidth = items[0]?.offsetWidth || 0;
-            if (itemWidth > 0) {
-                currentIndex = Math.round(finalScrollLeft / itemWidth);
-                updateCarousel();
+    // --- Video Controls Functionality ---
+    document.querySelectorAll('.post-media-carousel').forEach(carousel => {
+        const videos = carousel.querySelectorAll('.post-video');
+        videos.forEach(video => {
+            const container = video.closest('.video-container');
+            const playPauseBtn = container.querySelector('.play-pause-btn');
+            const seekBar = container.querySelector('.seek-bar');
+            const timeDisplay = container.querySelector('.time-display');
+            const muteBtn = container.querySelector('.mute-btn');
+
+            // Initialize icons
+            if (video.paused) {
+                playPauseBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
+            } else {
+                playPauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
             }
-            carouselInner.style.scrollBehavior = 'smooth';
-            carouselInner.style.cursor = 'grab';
-        });
+            if (video.muted) {
+                muteBtn.innerHTML = '<i class="bi bi-volume-mute-fill"></i>';
+            } else {
+                muteBtn.innerHTML = '<i class="bi bi-volume-up-fill"></i>';
+            }
 
-        carouselInner.addEventListener('mouseleave', () => {
-            if (isMouseDown) {
-                isMouseDown = false;
-                const finalScrollLeft = carouselInner.scrollLeft;
-                const itemWidth = items[0]?.offsetWidth || 0;
-                if (itemWidth > 0) {
-                    currentIndex = Math.round(finalScrollLeft / itemWidth);
-                    updateCarousel();
+            // Play/Pause
+            playPauseBtn.addEventListener('click', () => {
+                if (video.paused) {
+                    video.play();
+                    playPauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
+                } else {
+                    video.pause();
+                    playPauseBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
                 }
-                carouselInner.style.scrollBehavior = 'smooth';
-                carouselInner.style.cursor = 'grab';
-            }
+            });
+
+            // Mute
+            muteBtn.addEventListener('click', () => {
+                video.muted = !video.muted;
+                if (video.muted) {
+                    muteBtn.innerHTML = '<i class="bi bi-volume-mute-fill"></i>';
+                } else {
+                    muteBtn.innerHTML = '<i class="bi bi-volume-up-fill"></i>';
+                }
+            });
+
+            // Seek bar
+            seekBar.addEventListener('input', () => {
+                video.currentTime = (seekBar.value / 100) * video.duration;
+            });
+
+            // Timer
+            video.addEventListener('timeupdate', () => {
+                seekBar.value = (video.currentTime / video.duration) * 100 || 0;
+                const minutes = Math.floor(video.currentTime / 60);
+                const seconds = Math.floor(video.currentTime % 60).toString().padStart(2, '0');
+                timeDisplay.textContent = `${minutes}:${seconds}`;
+            });
+
+            // Ensure duration is loaded
+            video.addEventListener('loadedmetadata', () => {
+                const minutes = Math.floor(video.duration / 60);
+                const seconds = Math.floor(video.duration % 60).toString().padStart(2, '0');
+                timeDisplay.textContent = `0:00`;
+            });
         });
     });
 
@@ -261,21 +327,34 @@ document.addEventListener('DOMContentLoaded', function () {
         dot.addEventListener('click', function(e) {
             e.stopPropagation();
             const dropdown = this.closest('.post-menu-dropdown').querySelector('.dropdown-content');
-            document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
-                if (openDropdown !== dropdown) {
-                    openDropdown.classList.remove('show');
-                }
+            console.log('Menu dot clicked, toggling dropdown:', dropdown); // Debug
+            if (dropdown) {
+                // Close other open dropdowns
+                document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
+                    if (openDropdown !== dropdown) {
+                        openDropdown.classList.remove('show');
+                    }
+                });
+                // Toggle current dropdown
+                dropdown.classList.toggle('show');
+                console.log('Dropdown show class:', dropdown.classList.contains('show')); // Debug
+            } else {
+                console.error('Dropdown not found for menu dot:', this);
+            }
+        });
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.post-menu-dropdown')) {
+            document.querySelectorAll('.dropdown-content.show').forEach(dropdown => {
+                dropdown.classList.remove('show');
+                console.log('Closed dropdown on outside click:', dropdown); // Debug
             });
-            dropdown.classList.toggle('show');
-        });
+        }
     });
 
-    document.addEventListener('click', function() {
-        document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-            dropdown.classList.remove('show');
-        });
-    });
-
+    // Prevent dropdown from closing when clicking inside
     document.querySelectorAll('.dropdown-content').forEach(dropdown => {
         dropdown.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -363,4 +442,5 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.height = `${this.scrollHeight}px`;
         });
     });
+
 });

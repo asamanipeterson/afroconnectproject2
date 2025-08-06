@@ -8,7 +8,7 @@
                 <div class="story-avatar-wrapper @if($userHasStories) has-stories @endif">
                     @if(auth()->user()->profile_picture)
                         <img src="{{ auth()->user()->profile_picture_url }}" class="story-avatar" alt="Your Profile"
-                             @if($userHasStories) onclick="openStoryViewer({{ auth()->id() }})" @endif>
+                        @if($userHasStories) onclick="openStoryViewer({{ auth()->id() }})" @endif>
                     @else
                         <i class="bi bi-person-circle story-avatar"
                            @if($userHasStories) onclick="openStoryViewer({{ auth()->id() }})" @endif></i>
@@ -44,7 +44,7 @@
                             <div class="story-item-block" data-index="0">
                                 <div class="form-group">
                                     <label>Caption:</label>
-                                    <input type="text" name="caption[]" placeholder="Enter a caption">
+                                    <input type="text" name="caption[]" placeholder="Add a caption">
                                 </div>
                                 <div class="form-group">
                                     <label>Upload Media (Image/Video):</label>
@@ -122,6 +122,7 @@
                                 <textarea name="text_contents[0]" id="text_content_0" rows="2"></textarea>
                                 <small>Max 1000 characters.</small>
                             </div>
+                                            <button type="button" class="remove-media-item">Remove</button>
                         </div>
                     </div>
                     <div class="form-group">

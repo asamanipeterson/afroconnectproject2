@@ -13,7 +13,7 @@
     <div class="profile-header">
         <div class="profile-image {{ $user->stories->count() > 0 ? 'has-stories' : '' }} "> {{-- Added has-stories class --}}
             @if ($user->profile_picture)
-                <img src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile">
+                <img src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile" class="avatar">
             @else
                 <div class="default-avatar">{{ strtoupper(substr($user->username, 0, 1)) }}</div>
             @endif

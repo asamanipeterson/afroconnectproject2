@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('phone')->nullable();
             $table->date('dob')->nullable();
-            // $table->string('profile_picture')->nullable();
+            $table->string('user_type')->default('user');
             $table->rememberToken();
             $table->timestamps();
         });

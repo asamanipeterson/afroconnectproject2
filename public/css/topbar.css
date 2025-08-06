@@ -1,5 +1,4 @@
-
-body{
+body {
     font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
@@ -27,6 +26,8 @@ body.dark-mode .topbar {
 .search-section {
     flex: 2;
     padding: 0 1rem;
+    position: relative;
+    z-index: 1000;
 }
 .icon-section {
     flex-shrink: 0;
@@ -41,7 +42,7 @@ body.dark-mode .topbar {
     justify-content: flex-end;
     position: relative;
     min-width: 150px;
-    margin-left:15px;
+    margin-left: 15px;
 }
 
 .logo-link {
@@ -57,7 +58,7 @@ body.dark-mode .logo-link {
 }
 
 .search-container input {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem .5rem;
     border-radius: 20px;
     border: 1px solid #ccc;
     width: 100%;
@@ -68,6 +69,58 @@ body.dark-mode .logo-link {
 body.dark-mode .search-container input {
     background: #333;
     border-color: #555;
+    color: #e9ecef;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1001;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+body.dark-mode .search-results {
+    background: #2c2c2c;
+    border-color: #555;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+body.dark-mode .search-result-item {
+    border-bottom: 1px solid #444;
+}
+.search-result-item:hover {
+    background: #f0f0f0;
+}
+body.dark-mode .search-result-item:hover {
+    background: #3c3c3c;
+}
+.search-result-item i.avatar {
+    font-size: 40px;
+    margin-right: 10px;
+    color: #666;
+}
+body.dark-mode .search-result-item i.avatar {
+    color: #999;
+}
+.search-result-item a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+body.dark-mode .search-result-item a {
     color: #e9ecef;
 }
 
@@ -96,16 +149,22 @@ body.dark-mode .top-icons a:hover {
     font-size: 20px;
 }
 
+.notification-icon {
+    position: relative;
+    display: inline-block;
+}
 .notification-badge {
     position: absolute;
-    top: -4px;
-    right: -2px;
+    top: -8px;
+    right: -8px;
     background: red;
     color: white;
     border-radius: 50%;
     font-size: 10px;
-    padding: 2px 5px;
+    padding: 3px 7px;
     line-height: 1;
+    z-index: 998;
+    pointer-events: none;
 }
 
 .profile-link {
@@ -119,16 +178,15 @@ body.dark-mode .top-icons a:hover {
 body.dark-mode .profile-link {
     color: #bbb;
 }
-.profile-link .avatar {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    object-fit: cover;
-    margin-right: 5px;
-}
 .profile-link i.avatar {
     font-size: 30px;
     color: #666;
+}
+.profile-link img.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 body.dark-mode .profile-link i.avatar {
     color: #999;
@@ -256,6 +314,12 @@ body.dark-mode .hover-menu .hover-item:hover {
         padding: 0.3rem 0.8rem;
         font-size: 12px;
     }
+    .search-results {
+        max-height: 200px;
+    }
+    .search-result-item i.avatar {
+        font-size: 30px;
+    }
     .icon-section {
         flex: 1;
         justify-content: flex-start;
@@ -266,6 +330,12 @@ body.dark-mode .hover-menu .hover-item:hover {
     }
     .top-icons i {
         font-size: 18px;
+    }
+    .notification-badge {
+        top: -6px;
+        right: -6px;
+        padding: 2px 5px;
+        font-size: 9px;
     }
     .profile-section {
         flex: 1;

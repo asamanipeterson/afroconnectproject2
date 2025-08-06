@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Home')
+@section('title')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 @endsection
 
 @section('content')
@@ -67,9 +68,21 @@
                                     @if($media->file_type === 'image')
                                         <img src="{{ asset('storage/' . $media->file_path) }}" class="post-image" alt="Post Image">
                                     @elseif($media->file_type === 'video')
-                                        <video controls class="post-video" autoplay muted loop>
-                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="{{ $media->mime_type }}">
-                                        </video>
+                                        <div class="video-container">
+                                            <video class="post-video" autoplay muted loop>
+                                                <source src="{{ asset('storage/' . $media->file_path) }}" type="{{ $media->mime_type }}">
+                                            </video>
+                                            <div class="custom-video-controls">
+                                                <div class="top-controls">
+                                                    <span class="time-display">0:00</span>
+                                                </div>
+                                                <div class="bottom-controls">
+                                                    <button class="play-pause-btn"><i class="bi bi-pause-fill"></i></button>
+                                                    <input type="range" class="seek-bar" value="0" min="0" max="100">
+                                                    <button class="mute-btn"><i class="bi bi-volume-mute-fill"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @elseif($media->file_type === 'audio')
                                         <audio controls class="post-audio">
                                             <source src="{{ asset('storage/' . $media->file_path) }}" type="{{ $media->mime_type }}">
@@ -88,8 +101,12 @@
                         </div>
 
                         @if($firstPost->media->count() > 1)
-                            <button class="carousel-arrow left-arrow"><i class="fa-solid fa-chevron-left"></i></button>
-                            <button class="carousel-arrow right-arrow"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button class="carousel-arrow left-arrow" id="prevArrow-{{ $firstPost->id }}">&#10094;</button>
+                            <button class="carousel-arrow right-arrow" id="nextArrow-{{ $firstPost->id }}">&#10095;</button>
+                            <div class="carousel-dots" id="carouselDots-{{ $firstPost->id }}"></div>
+                            <div class="carousel-counter" id="carouselCounter-{{ $firstPost->id }}">
+                                <span id="currentSlide-{{ $firstPost->id }}">1</span>/<span id="totalSlides-{{ $firstPost->id }}">{{ $firstPost->media->count() }}</span>
+                            </div>
                         @endif
                     </div>
                 @endif
@@ -107,11 +124,11 @@
                             </a>
                             <span class="comments-count">{{ $firstPost->comments->count() }}</span>
                             <a href="{{ route('post.share', $firstPost->id) }}" class="share-button">
-                               <i class="fa-regular fa-paper-plane"></i>
+                               <svg width="24" height="24" fill="green" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21.0808 4.08454c.0817-.26553.0099-.55446-.1865-.7509-.1964-.19644-.4854-.2682-.7509-.1865L1.75863 8.80399c-.2994.09213-.51001.36063-.52817.67336-.01816.31273.15995.60385.44668.72995l8.57186 3.7716 3.7716 8.5719c.1262.2867.4173.4648.73.4467.3127-.0182.5812-.2288.6734-.5282l5.6568-18.38476ZM10.6505 12.5168 4.12458 9.64541 19.2305 4.99743l-4.648 15.10597-2.8714-6.526 3.3496-3.3495L14 9.16725l-3.3495 3.34955Z"></path></svg>
                             </a>
                         </div>
                         <div class="icon-share-bookmark">
-                            <a href="{{ route('post.bookmark', $firstPost->id) }}" class="bookmark-button"><i class="fa-regular fa-bookmark"></i></a>
+                            <a href="{{ route('post.bookmark', $firstPost->id) }}" class="bookmark-button"><i class="bi bi-bookmark"></i></a>
                         </div>
                     </div>
                 </div>
@@ -126,7 +143,7 @@
                     @endforeach
                 </div>
 
-                <a href="{{ route('posts.show', $firstPost->id) }}" class="view-comments-link" data-post-id="{{ $firstPost->id }}">View all comments</a>
+                <a href="{{ route('posts.show', $firstPost->id) }}" class="view-comments-link" data-post-id="{{ $firstPost->id }}">View all {{ $firstPost->comments->count() }} comments</a>
 
                 {{-- Add Comment Section --}}
                 <div class="add-comments">
@@ -142,7 +159,8 @@
                             <input type="text" class="comment-input" placeholder="Add a comment..." name="content" required>
                         </form>
                         <button type="button" class="submit-comment-button" data-post-id="{{ $firstPost->id }}">
-                            <i class="bi bi-send-fill"></i>
+                               <svg width="30" height="30" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21.0808 4.08454c.0817-.26553.0099-.55446-.1865-.7509-.1964-.19644-.4854-.2682-.7509-.1865L1.75863 8.80399c-.2994.09213-.51001.36063-.52817.67336-.01816.31273.15995.60385.44668.72995l8.57186 3.7716 3.7716 8.5719c.1262.2867.4173.4648.73.4467.3127-.0182.5812-.2288.6734-.5282l5.6568-18.38476ZM10.6505 12.5168 4.12458 9.64541 19.2305 4.99743l-4.648 15.10597-2.8714-6.526 3.3496-3.3495L14 9.16725l-3.3495 3.34955Z"></path></svg>
+                            {{-- <i class="bi bi-send-fill"></i> --}}
                         </button>
                     </div>
                 </div>
@@ -153,33 +171,6 @@
     </div>
 </div>
 @endsection
-
-<script>
-    function toggleModal(modalElement, show) {
-        if (modalElement) {
-            modalElement.style.display = show ? 'flex' : 'none';
-        }
-    }
-
-    function previewMedia(input) {
-        const preview = input.nextElementSibling;
-        preview.innerHTML = '';
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const fileType = file.type;
-                if (fileType.startsWith('image/')) {
-                    preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; height: auto;">`;
-                } else if (fileType.startsWith('video/')) {
-                    preview.innerHTML = `<video controls style="max-width: 100%;"><source src="${e.target.result}" type="${fileType}"></video>`;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-</script>
-
 @section('scripts')
 <script src="{{ asset('js/welcome.js') }}"></script>
 @endsection

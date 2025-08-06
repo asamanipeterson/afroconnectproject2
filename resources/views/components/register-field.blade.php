@@ -17,8 +17,6 @@
             <i class="bi bi-envelope input-icon"></i>
         @elseif ($type === 'password')
             <i class="bi bi-lock input-icon"></i>
-        @elseif ($type === 'select')
-            <i class="bi bi-chevron-down input-icon"></i>
         @elseif($type ==='text')
             <i class="bi bi-person-fill input-icon"></i>
         @elseif($type ==='tel')

@@ -12,6 +12,11 @@ class HomeController extends Controller
     public function homepage()
     {
         $user = Auth::user();
+        $user_type = $user->user_type;
+        if ($user_type === 'admin') {
+            // Redirect admin to admin dashboard
+            return view('Admin.dashboard');
+        }
 
         // Get posts with grouped media
         $posts = Post::with([

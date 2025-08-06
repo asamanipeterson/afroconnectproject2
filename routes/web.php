@@ -22,6 +22,7 @@ Route::get('/broadcast-test', function () {
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'homepage')->name('welcome')->middleware('auth');
+    Route::get('admin/dashboard', 'adminDashboard')->name('admin.dashboard')->middleware('auth'); // Admin dashboard route
 });
 
 // Authentication routes
@@ -34,6 +35,8 @@ Route::controller(AuthController::class)->group(function () {
 
     Route::get('logout', 'logout')->name('logout')->middleware('auth');
     Route::patch('update-profile', 'updateProfile')->name('update-profile')->middleware('auth');
+    Route::get('/search-users', 'search')->name('users.search');
+    Route::get('user/{user}', 'show')->name('user.profile')->middleware('auth');
 });
 
 //Posting routes
@@ -69,7 +72,7 @@ Route::post('/posts/{post}/bookmark', function ($post) {
 Route::get('/user/{user}', [ProfileController::class, 'index'])->middleware('auth')->name('user.profile');
 
 //Route for notifications
-Route::controller(NotificationController::class)->prefix('notifications')->group(function () {
+Route::controller(NotificationController::class)->middleware('auth')->prefix('notifications')->group(function () {
     Route::get('/', 'index')->name('notifications.index');
     Route::get('/read/{id}', 'markAsRead')->name('notifications.read');
 });
