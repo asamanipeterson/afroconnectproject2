@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Story;
+use App\Models\User;
+use App\Models\Like;
+use App\Models\Comment;
+//use App\Models\Share; // ✅ Only if you have a shares table/model
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -13,9 +17,36 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         $user_type = $user->user_type;
+
         if ($user_type === 'admin') {
-            // Redirect admin to admin dashboard
-            return view('Admin.dashboard');
+            // Posts per day
+            $postsPerDay = [];
+            $usersPerDay = [];
+
+            for ($i = 6; $i >= 0; $i--) {
+                $date = Carbon::today()->subDays($i)->toDateString();
+
+                $postsCount = Post::whereDate('created_at', $date)->count();
+                $usersCount = User::whereDate('created_at', $date)->count();
+
+                $postsPerDay[] = ['date' => $date, 'count' => $postsCount];
+                $usersPerDay[] = ['date' => $date, 'count' => $usersCount];
+            }
+
+            // ✅ Engagement counts from DB
+            $likesCount = Like::count();
+            $commentsCount = Comment::count();
+            //$sharesCount = class_exists(Share::class) ? Share::count() : 0;
+
+            return view('Admin.dashboard', [
+                'totalUsers'   => User::count(),
+                'totalPosts'   => Post::count(),
+                'postsPerDay'  => $postsPerDay,
+                'usersPerDay'  => $usersPerDay,
+                'likesCount'   => $likesCount,
+                'commentsCount'=> $commentsCount,
+                //'sharesCount'  => $sharesCount,
+            ]);
         }
 
         // Get posts with grouped media
@@ -45,9 +76,9 @@ class HomeController extends Controller
             ->groupBy('user_id');
 
         return view('welcome', [
-            'user' => $user,
+            'user'       => $user,
             'postGroups' => $postGroups,
-            'stories' => $stories, // ✅ This fixes the error
+            'stories'    => $stories,
         ]);
     }
 }
