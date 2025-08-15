@@ -1,6 +1,10 @@
+
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/main_content.css') }}">
 <div class="main-content">
     @if (!Request::is('user/*'))
-        <div class="story-bar">
+        {{-- @if(!Request::is('marketplace') && !Request::is('marketplace/*')) --}}
+            <div class="story-bar">
             @php
                 $userHasStories = isset($stories[auth()->id()]) && $stories[auth()->id()]->isNotEmpty();
             @endphp
@@ -30,10 +34,10 @@
                 @endif
             @endforeach
         </div>
-
+{{-- @endif --}}
         <div class="modal" id="storyCreationModal">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-headers">
                     <h2>Create Stories</h2>
                     <button class="close-btn" id="closeStoryCreationModal">×</button>
                 </div>
@@ -57,7 +61,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Background Color:</label>
-                                    <input type="color" name="background[]" value="#3B82F6">
+                                    <input type="color" name="background[]" value="#3B82F6" class="color-picker" style="width: 100px; color:#3b82f6;">
                                 </div>
                                 <hr>
                             </div>
@@ -98,7 +102,7 @@
 
     <div class="modal" id="postCreationModal">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-headers">
                 <h2>Create Post</h2>
                 <button class="close-btn" id="closePostCreationModal">×</button>
             </div>
@@ -111,7 +115,7 @@
                     </div>
                     <div id="media-inputs-container">
                         <h3>Media & Text Content (Max 10):</h3>
-                        <div class="media-item" data-index="0">
+                        <div class="media-item " data-index="0">
                             <div class="form-group">
                                 <label for="media_file_0">Upload File (Image/Video/Audio):</label>
                                 <input type="file" name="media_files[0]" id="media_file_0" accept="image/*,video/*,audio/*">
@@ -140,4 +144,5 @@
     <script>
         window.authUserId = {{ auth()->id() }};
     </script>
+     <script src="{{ asset('js/main_content.js') }}"></script>
 </div>

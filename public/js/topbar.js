@@ -125,32 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hoverMenu = document.querySelector('.hover-menu');
         const openSettings = document.getElementById('openSettings');
 
-        if (settingsHover && hoverMenu && openSettings) {
-            let hoverTimeout;
-            settingsHover.addEventListener('mouseenter', () => {
-                clearTimeout(hoverTimeout);
-                hoverMenu.style.display = 'block';
-            });
-
-            settingsHover.addEventListener('mouseleave', () => {
-                hoverTimeout = setTimeout(() => {
-                    if (!hoverMenu.matches(':hover')) {
-                        hoverMenu.style.display = 'none';
-                    }
-                }, 300);
-            });
-
-            hoverMenu.addEventListener('mouseenter', () => {
-                clearTimeout(hoverTimeout);
-                hoverMenu.style.display = 'block';
-            });
-
-            hoverMenu.addEventListener('mouseleave', () => {
-                hoverTimeout = setTimeout(() => {
-                    hoverMenu.style.display = 'none';
-                }, 300);
-            });
-
+        if (settingsHover  && openSettings) {
             openSettings.addEventListener('click', (e) => {
                 e.preventDefault();
                 toggleModal(document.getElementById('settingsModal'), true);

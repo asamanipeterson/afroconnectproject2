@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'caption',
         'post_group_id',
+        'reports_count',
     ];
 
     public function user()
@@ -38,9 +41,13 @@ class Post extends Model
         return $this->likes()->where('user_id', $user->id)->exists();
     }
 
-    // Main media relation
     public function media()
     {
         return $this->hasMany(PostMedia::class)->orderBy('order');
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(PostReport::class);
     }
 }

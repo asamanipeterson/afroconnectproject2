@@ -81,6 +81,47 @@
     body.dark-mode .no-notifications {
         color: #bbb;
     }
+
+    .follow-back-button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .follow-back-button:hover {
+        background-color: #0056b3;
+    }
+
+    body.dark-mode .follow-back-button {
+        background-color: #1a73e8;
+    }
+
+    body.dark-mode .follow-back-button:hover {
+        background-color: #135ab6;
+    }
+
+    .follow-back-button.following {
+        background-color: #28a745;
+    }
+
+    .follow-back-button.following:hover {
+        background-color: #218838;
+    }
+
+    body.dark-mode .follow-back-button.following {
+        background-color: #28a745;
+    }
+
+    body.dark-mode .follow-back-button.following:hover {
+        background-color: #218838;
+    }
 </style>
 
 <div class="notifications-container">
@@ -94,11 +135,57 @@
                         <span class="message">{{ $notification->data['message'] }}</span>
                         <small class="timestamp">{{ $notification->created_at->diffForHumans() }}</small>
                     </a>
-                </li>
+  @if (isset($notification->data['show_follow_back_button']) && $notification->data['show_follow_back_button'])
+    <form method="POST" action="{{ route('toggle.follow', ['id' => $notification->data['follower_id']]) }}" class="follow-form" style="display: inline;">
+        @csrf
+        <button type="submit" class="follow-back-button {{ $notification->follower && auth()->user()->isFollowing($notification->follower) ? 'following' : '' }}"
+            data-user-id="{{ $notification->data['follower_id'] }}"
+            data-is-following="{{ $notification->follower && auth()->user()->isFollowing($notification->follower) ? 'true' : 'false' }}">
+            {{ $notification->follower && auth()->user()->isFollowing($notification->follower) ? 'Following' : 'Follow Back' }}
+        </button>
+    </form>
+@endif           </li>
             @endforeach
         </ul>
     @else
         <p class="no-notifications">You have no notifications.</p>
     @endif
 </div>
+
+@push('scripts')
+    <script>
+        document.querySelectorAll('.follow-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const button = form.querySelector('.follow-back-button');
+                const userId = button.getAttribute('data-user-id');
+                const isFollowing = button.getAttribute('data-is-following') === 'true';
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        button.textContent = isFollowing ? 'Follow Back' : 'Following';
+                        button.setAttribute('data-is-following', isFollowing ? 'false' : 'true');
+                        button.classList.toggle('following');
+                    } else {
+                        alert(data.message || 'An error occurred.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing your request.');
+                });
+            });
+        });
+    </script>
+@endpush
 @endsection

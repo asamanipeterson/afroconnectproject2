@@ -13,7 +13,7 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Auth::user()->notifications()->latest()->get();
-
+        $user = Auth::user();
         // Fetch users the authenticated user follows
         $followedUsers = Auth::user()->following()->pluck('followed_id');
 
@@ -25,7 +25,7 @@ class NotificationController extends Controller
             ->get()
             ->groupBy('user_id');
 
-        return view('Notification.index', compact('notifications', 'stories'));
+        return view('Notification.index', compact('notifications', 'stories', 'user'));
     }
 
     public function markAsRead($id)

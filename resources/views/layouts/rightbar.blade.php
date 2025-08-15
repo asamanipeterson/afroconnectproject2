@@ -1,4 +1,4 @@
-@if (!Request::is('user/*'))
+@if (!Request::is('user/*') && !Request::is('marketplace') && !Request::is('marketplace/*'))
 <aside class="rightbar">
     <div class="messages">
         <div class="messages-header">

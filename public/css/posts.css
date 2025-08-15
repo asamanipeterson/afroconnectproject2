@@ -19,6 +19,9 @@ body {
   --light-carousel-dot-inactive: rgba(0, 0, 0, 0.4);
   --light-carousel-dot-active: #333;
   --light-text-post-color: #333;
+  --light-dropdown-hover-bg: #e0e0e0;
+  --light-dropdown-border: #ddd;
+  --light-dropdown-text: #333;
 
   --dark-bg: #1a1a1a;
   --dark-text: #f1f1f1;
@@ -37,6 +40,9 @@ body {
   --dark-carousel-dot-inactive: rgba(255, 255, 255, 0.4);
   --dark-carousel-dot-active: #fff;
   --dark-text-post-color: #f1f1f1;
+  --dark-dropdown-hover-bg: #333;
+  --dark-dropdown-border: #555;
+  --dark-dropdown-text: #f1f1f1;
 
   --modal-bg: var(--light-bg);
   --text: var(--light-text);
@@ -76,6 +82,7 @@ body.dark-mode {
   --carousel-dot-active: var(--dark-carousel-dot-active);
   --text-post-color: var(--dark-text-post-color);
 }
+
 /* Posts Container Styling */
 .posts-container {
     width: 100%;
@@ -83,7 +90,7 @@ body.dark-mode {
     margin: 0 auto;
     padding: 1rem 0;
     box-sizing: border-box;
-    overflow-y: hidden; /* Prevent vertical scrolling */
+    overflow-y: hidden;
 }
 
 /* Posts Grid Styling */
@@ -104,10 +111,9 @@ body.dark-mode {
     max-width: 560px;
     min-height: 300px;
     box-sizing: border-box;
-    overflow: hidden; /* Prevent vertical scrolling within post */
+    overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-    padding-bottom: 15px;
 }
 body.dark-mode .post-card {
     background-color: var(--dark-bg);
@@ -121,7 +127,6 @@ body.dark-mode .post-card {
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    /* Add position: relative to the parent of dropdown-content */
     position: relative;
 }
 
@@ -228,11 +233,11 @@ body.dark-mode .menu-dot i {
 
 /* Dropdown Content Styling */
 .dropdown-content {
-    display: none; /* Keep this as display: none; for JavaScript toggling */
+    display: none;
     position: absolute;
     right: 10px;
-    top: 50px; /* Adjusted top for better positioning */
-    background-color:#f4f4f4;
+    top: 50px;
+    background-color: #f4f4f4;
     border: 1px solid var(--light-dropdown-border);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -282,59 +287,50 @@ body.dark-mode .post-caption {
     color: var(--dark-text);
 }
 
-/* Post Media Carousel Styling */
+/* --- Carousel Styling (Updated) --- */
 .post-media-carousel {
     position: relative;
     width: 100%;
-    height: auto;
-    overflow: hidden; /* Prevent vertical scrolling */
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
     background-color: var(--light-bg);
 }
 body.dark-mode .post-media-carousel {
     background-color: var(--dark-bg);
 }
 
-/* Carousel Styling */
 .carousel-inner {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     overflow-x: auto;
-    overflow-y: hidden; /* Explicitly disable vertical scrolling */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    width: 100%;
-    height: auto;
-    display: flex;
 }
 .carousel-inner::-webkit-scrollbar {
     display: none;
 }
+
 .carousel-item {
     flex-shrink: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     scroll-snap-align: start;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--light-bg);
-}
-body.dark-mode .carousel-item {
-    background-color: var(--dark-bg);
 }
 
 /* Media Styling */
 .carousel-item img,
 .carousel-item video {
     width: 100%;
-    max-width: 100%;
-    height: auto;
-    max-height: 80vh; /* Cap height to prevent excessive vertical scroll */
-    object-fit: contain;
-    display: block;
-}
-.carousel-item audio {
-    width: calc(100% - 40px);
-    margin: 20px auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }
 
@@ -342,55 +338,40 @@ body.dark-mode .carousel-item {
 .video-container {
     position: relative;
     width: 100%;
-    height: auto;
+    height: 100%;
 }
 
 /* Custom Video Controls */
 .custom-video-controls {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
+    bottom: 0;
     left: 0;
-    pointer-events: none;
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
     padding: 10px;
-}
-.custom-video-controls .top-controls {
-    align-self: flex-start;
-    /* display: flex; */
-    align-items: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 5px 10px;
-    border-radius: 6px;
-    margin-right:15px;
-    pointer-events: auto;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+    box-sizing: border-box;
 }
 .custom-video-controls .bottom-controls {
-    align-self: flex-start;
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 6px 12px;
-    border-radius: 8px;
-    pointer-events: auto;
-    margin-bottom: 20px;
-    margin-left: 10px;
+    gap: 8px;
+    background: none;
+    padding: 0;
 }
 .custom-video-controls button {
     background: none;
     border: none;
     color: white;
-    font-size: 1rem;
+    font-size: 1.2rem;
     cursor: pointer;
 }
 .custom-video-controls .time-display {
     color: white;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    min-width: 35px;
 }
 .custom-video-controls .seek-bar {
     width: 120px;
@@ -427,6 +408,7 @@ body.dark-mode .carousel-item {
     transform: translateX(-50%);
     display: flex;
     gap: 6px;
+    z-index: 10;
 }
 .carousel-dot {
     width: 8px;
@@ -434,17 +416,11 @@ body.dark-mode .carousel-item {
     border-radius: 50%;
     background: var(--carousel-dot-inactive);
     cursor: pointer;
-    /* Removed border to use only fill */
-    /* border: 1px solid var(--light-carousel-dot-active); */
+    transition: all 0.2s;
 }
-/* Removed specific dark-mode border for dots, now only fill is used */
-/* body.dark-mode .carousel-dot {
-    border: 1px solid var(--dark-carousel-dot-active);
-} */
 .carousel-dot.active {
     background: var(--carousel-dot-active);
-    /* Removed border-color as we're using fill */
-    /* border-color: var(--carousel-dot-active); */
+    transform: scale(1.2);
 }
 
 /* Carousel Counter */
@@ -501,30 +477,30 @@ body.dark-mode .text-content {
     display: block;
 }
 
-/* Carousel Arrow Styling - Adopted from provided modal style */
+/* Carousel Arrow Styling */
 .carousel-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: var(--carousel-arrow-bg); /* Use new background variable */
-    color: var(--carousel-arrow-color); /* Use new color variable */
-    width: 20px; /* Adopted from provided modal style */
-    height: 20px; /* Adopted from provided modal style */
+    background: var(--carousel-arrow-bg);
+    color: var(--carousel-arrow-color);
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
-    border: none; /* No border for arrows */
+    border: none;
     cursor: pointer;
-    font-size: .9rem; /* Adopted from provided modal style */
+    font-size: .9rem;
     z-index: 15;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s ease, color 0.2s ease; /* Adopted transition */
-    user-select: none; /* Prevent text selection */
-    padding: 0; /* Remove padding */
+    transition: background 0.2s ease, transform 0.2s ease;
+    user-select: none;
+    padding: 0;
 }
 .carousel-arrow:hover {
-    background: var(--carousel-arrow-hover-bg); /* Use new hover background variable */
-    transform: translateY(-50%) scale(1.05); /* Keep scale effect */
+    background: var(--carousel-arrow-hover-bg);
+    transform: translateY(-50%) scale(1.1);
 }
 .carousel-arrow.left-arrow {
     left: 10px;
@@ -594,31 +570,52 @@ body.dark-mode .icon-share-bookmark a {
 
 /* Like Button Styling */
 .like-button i {
+    color:#ff0000;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.like-button.liked i {
+    color: #ff0000;
+}
+body.dark-mode .like-button i {
+    color: var(--dark-placeholder);
+}
+.like-button i.liked {
+    animation: like-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes like-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+/* Comment Button Styling */
+like-button i {
     color: #ff0000;
     cursor: pointer;
 }
+
 .like-button.liked i,
-body.dark-mode .like-button i.liked { /* Corrected this selector */
+body.dark-mode .like-button i,
+.like-button i.liked {
     color: #ff0000;
 }
-/* Corrected dark mode like button color when not liked, or make it consistent if always red */
-body.dark-mode .like-button i {
-    color: var(--dark-placeholder); /* Or a specific dark mode non-liked color */
-}
-
 
 /* Comment Button Styling */
 .comment-button i {
-    color: var(--light-button);
+    color: #007bff;
 }
+
 body.dark-mode .comment-button:hover i {
-    color: var(--dark-button);
+    color: #66b3ff;
 }
 
 /* Share Button Styling */
 .share-button i {
     color: #28a745;
 }
+
 body.dark-mode .share-button:hover i {
     color: #28a745;
 }
@@ -627,12 +624,13 @@ body.dark-mode .share-button:hover i {
 .bookmark-button i {
     color: #ffc107;
 }
+
 body.dark-mode .bookmark-button:hover i {
     color: #ffc107;
 }
 
 /* View Comments Link Styling */
-.view-comments-link {
+.views-comment{
     text-decoration: none;
     color: var(--light-placeholder);
     font-size: 0.9rem;
@@ -642,13 +640,13 @@ body.dark-mode .bookmark-button:hover i {
     margin-bottom: 15px;
     transition: color 0.2s ease;
 }
-body.dark-mode .view-comments-link {
+body.dark-mode .views-comment {
     color: var(--dark-placeholder);
 }
-.view-comments-link:hover {
+.views-comment:hover {
     color: var(--light-button);
 }
-body.dark-mode .view-comments-link:hover {
+body.dark-mode .views-comment:hover {
     color: var(--dark-button);
 }
 
@@ -730,6 +728,7 @@ body.dark-mode .comment-text {
     display: flex;
     align-items: center;
     margin-top: 15px;
+    margin-bottom:15px;
 }
 
 /* Add Comment Avatar Wrapper Styling */
@@ -800,7 +799,8 @@ body.dark-mode .comment-input-wrapper {
     color: var(--light-text);
     background: transparent;
     border-radius: 25px;
-    margin-top:15px;
+    margin-top: 15px;
+    padding-bottom: 10px;
 }
 .comment-input::placeholder {
     color: var(--light-placeholder);
@@ -829,7 +829,7 @@ body.dark-mode .comment-input {
     display: flex;
     align-items: center;
     justify-content: center;
-    height:40px;
+    height: 40px;
     width: 40px;
     border-radius: 50%;
 }
@@ -838,11 +838,9 @@ body.dark-mode .submit-comment-button {
 }
 .submit-comment-button:hover {
     color: var(--light-button-hover);
-    background-color: rgba(0, 123, 255, 0.1);
 }
 body.dark-mode .submit-comment-button:hover {
     color: var(--dark-button-hover);
-    background-color: rgba(102, 179, 255, 0.1);
 }
 
 /* No Posts Message Styling */
@@ -862,147 +860,211 @@ body.dark-mode .no-posts-message {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Layouts */
-@media (max-width: 1587px) {
-    .posts-container {
-        padding: 1rem;
-    }
-    .post-card {
-        margin-bottom: 20px;
-        border-radius: 12px;
-    }
+/* Share Modal Styling */
+.share-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
 }
-@media (max-width: 840px) {
-    .posts-container {
-        margin: 0;
-    }
-    .posts-grid {
-        margin: 0;
-    }
-    .post-card {
-        margin: 20px 0;
-        border-radius: 12px;
-    }
-    .post-header,
-    .post-caption,
-    .post-bottom-section,
-    .view-comments-link,
-    .add-comments {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
+.share-modal-content {
+    background: var(--modal-bg);
+    color: var(--text);
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-@media (max-width: 768px) {
-    .posts-container {
-        padding: 0;
-        margin: 0;
-    }
-    .post-card {
-        border-radius: 12px;
-        border-left: none;
-        border-right: none;
-        box-shadow: none;
-        padding-top: 10px;
-        margin-bottom: 15px;
-    }
-    .post-header,
-    .post-caption,
-    .post-bottom-section,
-    .view-comments-link,
-    .add-comments {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    .carousel-item img,
-    .carousel-item video {
-        max-width: 100%;
-        max-height: 70vh; /* Adjusted for smaller screens */
-    }
-    .text-content p {
-        font-size: 1.3rem;
-    }
-    .carousel-arrow {
-        font-size: 20px;
-        width: 35px;
-        height: 35px;
-        padding: 0;
-    }
-    .carousel-dots {
-        bottom: 10px;
-    }
-    .carousel-counter {
-        top: 5px;
-        right: 10px;
-        font-size: 0.8rem;
-    }
-    .custom-video-controls .top-controls,
-    .custom-video-controls .bottom-controls {
-        padding: 4px 8px;
-    }
-    .custom-video-controls .seek-bar {
-        width: 100px;
-    }
-    .profile-avatar-wrapper {
-        width: 38px;
-        height: 38px;
-    }
-    .post-username {
-        font-size: 0.95rem;
-    }
-    .view-comments-link {
-        font-size: 0.85rem;
-    }
-    .add-comment-avatar-wrapper {
-        width: 28px;
-        height: 28px;
-        margin-right: 5px;
-    }
-    .dropdown-content {
-        right: 5px;
-        top: 35px;
-        min-width: 140px;
-    }
+.share-modal-content h2,
+.share-modal-content h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: var(--text);
 }
-@media (max-width: 480px) {
-    .posts-container {
-        margin: 0;
-    }
-    .post-card {
-        margin-bottom: 10px;
-        margin-left: 0;
-    }
-    .post-header,
-    .post-caption,
-    .post-bottom-section,
-    .view-comments-link,
-    .add-comments {
-        padding-left: 8px;
-        padding-right: 8px;
-    }
-    .carousel-item img,
-    .carousel-item video {
-        max-height: 60vh; /* Adjusted for smaller screens */
-    }
-    .post-actions .icons,
-    .icon-share-bookmark {
-        gap: 12px;
-    }
-    .post-actions a i,
-    .icon-share-bookmark a i {
-        font-size: 22px;
-    }
-    .text-content p {
-        font-size: 1.1rem;
-    }
-    .carousel-dots {
-        bottom: 8px;
-    }
-    .carousel-counter {
-        font-size: 0.75rem;
-    }
-    .dropdown-content {
-        right: 5px;
-        top: 30px;
-        min-width: 120px;
-    }
+.share-modal-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+.followers-list,
+.social-media-list {
+    margin-bottom: 20px;
+}
+.follower-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--modal-bg);
+    color: var(--text);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+body.dark-mode .follower-search {
+    border-color: var(--dark-border);
+    background-color: var(--dark-bg);
+}
+.followers-container {
+    max-height: 200px;
+    overflow-y: auto;
+}
+.follower-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+.follower-item input {
+    margin-right: 10px;
+}
+.follower-avatar-wrapper {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #3B82F6;
+}
+body.dark-mode .follower-avatar-wrapper {
+    border-color: #3B82F6;
+}
+.follower-avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border: none;
+}
+.follower-avatar-wrapper .avatar-placeholder {
+    font-size: 25px;
+    color: var(--light-placeholder);
+}
+body.dark-mode .follower-avatar-wrapper .avatar-placeholder {
+    color: var(--dark-placeholder);
+}
+.follower-item span {
+    color: var(--text);
+}
+.social-media-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.social-media-button {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+.social-media-button i {
+    margin-right: 8px;
+}
+.social-media-button.twitter {
+    background-color: #1DA1F2;
+}
+.social-media-button.twitter:hover {
+    background-color: #1a91da;
+}
+.social-media-button.facebook {
+    background-color: #3b5998;
+}
+.social-media-button.facebook:hover {
+    background-color: #344e86;
+}
+.social-media-button.whatsapp {
+    background-color: #25D366;
+}
+.social-media-button.whatsapp:hover {
+    background-color: #20b958;
+}
+.social-media-button.linkedin {
+    background-color: #0077b5;
+}
+.social-media-button.linkedin:hover {
+    background-color: #00669c;
+}
+.social-media-button.email {
+    background-color: #666;
+}
+.social-media-button.email:hover {
+    background-color: #555;
+}
+.social-media-button.instagram {
+    background-color: #E1306C;
+}
+.social-media-button.instagram:hover {
+    background-color: #c92e60;
+}
+.social-media-button.tiktok {
+    background-color: #00F2EA;
+}
+.social-media-button.tiktok:hover {
+    background-color: #00d4cc;
+}
+.social-media-button.youtube {
+    background-color: #FF0000;
+}
+.social-media-button.youtube:hover {
+    background-color: #e60000;
+}
+.social-media-button.snapchat {
+    background-color: #FFFC00;
+    color: #000;
+}
+.social-media-button.snapchat:hover {
+    background-color: #e6e200;
+}
+.share-modal-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+.share-modal-actions button {
+    padding: 8px 16px;
+    margin-left: 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--button);
+    color: white;
+    transition: background-color 0.2s ease;
+}
+body.dark-mode .share-modal-actions button {
+    background-color: var(--dark-button);
+}
+.share-modal-actions button:hover {
+    background-color: var(--button-hover);
+}
+body.dark-mode .share-modal-actions button:hover {
+    background-color: var(--dark-button-hover);
+}
+.share-modal-actions .cancel-share-btn {
+    background-color: rgb(250, 51, 51);
+    color: #333;
+}
+body.dark-mode .share-modal-actions .cancel-share-btn {
+    background-color: rgb(250, 51, 51);
+    color: #f1f1f1;
+}
+.share-modal-actions .cancel-share-btn:hover {
+    background-color: rgb(248, 34, 34);
+}
+body.dark-mode .share-modal-actions .cancel-share-btn:hover {
+    background-color: rgb(248, 34, 34);
 }

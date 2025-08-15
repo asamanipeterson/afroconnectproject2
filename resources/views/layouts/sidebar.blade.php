@@ -1,192 +1,234 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Afroconnect</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-</head>
-<body>
-    <aside class="sidebar">
-        <div class="profile-box">
-            @if(auth()->user()->cover_picture)
-                <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture" alt="Cover Picture">
-            @else
-                <div class="cover-placeholder">
-                    <i class="bi bi-image"></i>
-                    <span>Add Cover Picture</span>
-                </div>
-            @endif
+{{-- @include('layouts.head') --}}
+@section('styles')
+<link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('css/main_content.css') }}"> --}}
+<aside class="sidebar">
+    <div class="profile-box">
+        @if(auth()->user()->cover_picture)
+            <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture" alt="Cover Picture">
+        @else
+            <div class="cover-placeholder">
+                <i class="bi bi-image"></i>
+                <span>Add Cover Picture</span>
+            </div>
+        @endif
+
+
 
             @if(auth()->user()->profile_picture)
                 <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture" alt="Profile Picture">
+            @else
+                <i class="bi bi-person-circle "></i>
             @endif
 
-            <a href="{{ route('user.profile', auth()->user()) }}"><p>@ {{ auth()->user()->username }}</p></a>
+        <a href="{{ route('user.profile', auth()->user()) }}"><p>@ {{ auth()->user()->username }}</p></a>
 
-            @php
-                $followersCount = auth()->user()->followers()->count();
-                $followingCount = auth()->user()->following()->count();
-                $postsCount = auth()->user()->posts->count();
-            @endphp
+        @php
+            $followersCount = auth()->user()->followers()->count();
+            $followingCount = auth()->user()->following()->count();
+            $postsCount = auth()->user()->posts->count();
+        @endphp
 
-            <div class="stats">
-                <div><strong>{{ $followersCount }}</strong> <span>{{ $followersCount === 1 ? 'Follower' : 'Followers' }}</span></div>
-                <div><strong>{{ $followingCount }}</strong> <span>{{ $followingCount <= 1 ? 'Following' : 'Followings' }}</span></div>
-                <div><strong>{{ $postsCount }}</strong> <span>{{ $postsCount === 1 ? 'Post' : 'Posts' }}</span></div>
-            </div>
-
-            <a href="#" class="btn" id="openProfileModalSidebar">Edit Profile</a>
+        <div class="stats">
+            <div><strong>{{ $followersCount }}</strong> <span>{{ $followersCount === 1 ? 'Follower' : 'Followers' }}</span></div>
+            <div><strong>{{ $followingCount }}</strong> <span>{{ $followingCount <= 1 ? 'Following' : 'Followings' }}</span></div>
+            <div><strong>{{ $postsCount }}</strong> <span>{{ $postsCount === 1 ? 'Post' : 'Posts' }}</span></div>
         </div>
 
-        <div class="navigation">
-            <a href="{{ route('welcome') }}" class="logo"><img src="{{ asset('afrlogo.png') }}" alt=""></a>
-            <a href="{{ route('welcome') }}" class="nav-item active"><i class="bi bi-house-door"></i><span>Home</span></a>
-            <a href="#" class="nav-item" id="openSearchModal"><i class="bi bi-search"></i><span>Search</span></a>
-            <a href="#" class="nav-item"><i class="bi bi-handbag"></i><span>Market</span></a>
-            <a href="#" class="nav-item"><i class="bi bi-camera-video"></i><span>Live</span></a>
-            <a href="{{ route('notifications.index') }}" class="nav-item notification-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}" id="notificationBell">
-                <div class="icon-wrapper" style="position: relative;">
-                    <i class="bi bi-bell"></i>
-                    @if(auth()->user()->unreadNotifications->count() > 0)
-                        <span class="notifications-badge">
-                            {{ auth()->user()->unreadNotifications->count() }}
-                        </span>
-                    @endif
-                </div>
-                <span class="nav-label">Notifications</span>
-            </a>
-            <a href="#" class="nav-item"><i class="bi bi-chat"></i><span>Messages</span></a>
-            <a href="#" class="nav-item" id="openStoryModalSidebarNav"><i class="bi bi-plus-circle"></i><span>Create Story</span></a>
-            <a href="#" class="nav-item" id="openPostModalSidebarNav"><i class="bi bi-images"></i><span>Create Post</span></a>
-            <div class="menu-bar">
-                <a href="#" class="nav-item menu-trigger"><i class="bi bi-three-dots"></i><span>More</span></a>
-                <div class="dropdown-menu sidebar-dropdown">
-                    <div class="settingsdrop">
-                        <ul class="main-drop">
-                            <li class="main-li">
-                                <a href="#" class="dropdown-items"><i class="bi bi-gear"></i> Settings</a>
-                                <ul class="dropdown">
-                                    <div class="drop-container">
-                                        <li><a href="#" class="dropdown-item"><i class="bi bi-activity"></i> Your Activity</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bi bi-bookmark"></i> Saved</a></li>
-                                        <li><a href="#" class="dropdown-item" id="toggleDarkMode"><i class="bi bi-brilliance"></i> Switch appearance</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bi bi-exclamation-circle"></i> Report a problem</a></li>
+        <a href="#" class="btn" id="openProfileModalSidebar">Edit Profile</a>
+    </div>
+
+    <div class="navigation">
+    <a href="{{ route('welcome') }}" class="logo"><img src="{{ asset('2projlogo.png') }}" alt=""></a>
+    <a href="{{ route('welcome') }}" class="nav-item {{ request()->routeIs('welcome') ? 'active' : '' }}">
+        <i class="bi bi-house-door"></i><span>Home</span>
+    </a>
+    <a href="" class="nav-item {{ request()->routeIs('search') ? 'active' : '' }}" id="openSearchModal">
+        <i class="bi bi-search"></i><span>Search</span>
+    </a>
+    <a href="{{ route('marketshowroom') }}" class="nav-item {{ request()->routeIs('marketshowroom') ? 'active' : '' }}">
+        <i class="bi bi-handbag"></i><span>Market</span>
+    </a>
+    <a href="" class="nav-item {{ request()->routeIs('live') ? 'active' : '' }}">
+        <i class="bi bi-camera-video"></i><span>Live</span>
+    </a>
+    <a href="{{ route('notifications.index') }}" class="nav-item notification-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}" id="notificationBell" style="font-size: 10px">
+        <div class="icon-wrapper" style="position: relative;">
+            <i class="bi bi-bell"></i>
+            @if(auth()->user()->unreadNotifications->count() > 0)
+                <span class="notifications-badge">
+                    {{ auth()->user()->unreadNotifications->count() }}
+                </span>
+            @endif
+        </div>
+        <span class="nav-label">Notifications</span>
+    </a>
+    <a href="" class="nav-item {{ request()->routeIs('messages.index') ? 'active' : '' }}">
+        <i class="bi bi-chat"></i><span>Messages</span>
+    </a>
+    <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">
+        <i class="bi bi-plus-circle"></i><span>Create Story</span>
+    </a>
+    <a href="" class="nav-item {{ request()->routeIs('posts.create') ? 'active' : '' }}" id="openPostModalSidebarNav">
+        <i class="bi bi-images"></i><span>Create Post</span>
+    </a>
+    <div class="menu-bar">
+        <a href="#" class="nav-item menu-trigger {{ request()->routeIs(['settings', 'logout']) ? 'active' : '' }}">
+            <i class="bi bi-list"></i><span>More</span>
+        </a>
+        <div class="dropdown-menu sidebar-dropdown">
+            <div class="settingsdrop">
+                <ul class="main-drop">
+                    <li class="main-li">
+                        <a href="" class="dropdown-items {{ request()->routeIs('settings') ? 'active' : '' }}" id="openSettingsModal">
+                            <div class="preview-thumbnail">
+                                <div class="preview-icon bg-dark rounded-circle">
+                                    <i class="mdi mdi-settings text-success"></i>
+                                </div>
+                            </div>
+                            <div class="preview-item-content">
+                                <p class="preview-subject" style="cursor: pointer">Settings</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="main-li">
+                        <a href="{{ route('logout') }}" class="dropdown-items">
+                             <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-logout text-danger"></i>
                                     </div>
-                                </ul>
-                            </li>
-                            <li class="main-li"><a href="{{ route('logout') }}" class="dropdown-items"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
+                            </div>
+                            <div class="preview-item-content">
+                                    <p class="preview-subject">Log out</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <a href="{{ route('user.profile', auth()->user()) }}" class="nav-item profile-nav-link">
+        </div>
+    </div>
+    @if (request()->routeIs(['marketplace.newlisting', 'marketshowroom']))
+        <a href="" class="nav-item {{ request()->routeIs('marketplace.categories') ? 'active' : '' }}" id="openCategoryModal">
+            <i class="bi bi-grid"></i><span>Categories</span>
+        </a>
+    @endif
+    <a href="{{ route('user.profile', auth()->user()) }}" class="nav-item profile-nav-link {{ request()->routeIs('user.profile') ? 'active' : '' }}">
+        @if(auth()->user()->profile_picture)
+            <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-nav-icon" alt="Profile Picture">
+        @else
+            <i class="bi bi-person-circle profile-nav-icon"></i>
+        @endif
+        <span>Profile</span>
+    </a>
+</div>
+</aside>
+<div class="modals category-modal" id="categoryModal">
+    <div class="category-modal-content">
+        <div class="modals-header">
+            <h2>Categories</h2>
+            <button class="close-btn" id="closeCategoryModal">×</button>
+        </div>
+        <div class="category-container">
+            <ul class="category-list">
+                <li><a href="{{ url('/category/phones') }}">Phones</a></li>
+                <li><a href="{{ url('/category/vehicles') }}">Vehicles</a></li>
+                <li><a href="{{ url('/category/clothing') }}">Clothing</a></li>
+                <li><a href="{{ url('/category/games') }}">Games</a></li>
+                <li><a href="{{ url('/category/electronics') }}">Electronics</a></li>
+                <li><a href="{{ url('/category/african-crafts') }}">African Crafts</a></li>
+                <li><a href="{{ url('/category/african-textiles') }}">African Textiles</a></li>
+                <li><a href="{{ url('/category/jewelry') }}">Jewelry</a></li>
+                <li><a href="{{ url('/category/home-decor') }}">Home Decor</a></li>
+                <li><a href="{{ url('/category/furniture') }}">Furniture</a></li>
+                <div class="hidden-categories" id="hiddenCategoryItems">
+                    <li><a href="{{ url('/category/books') }}">Books</a></li>
+                    <li><a href="{{ url('/category/sports') }}">Sports Equipment</a></li>
+                    <li><a href="{{ url('/category/beauty') }}">Beauty Products</a></li>
+                    <li><a href="{{ url('/category/toys') }}">Toys</a></li>
+                    <li><a href="{{ url('/category/appliances') }}">Appliances</a></li>
+                    <li><a href="{{ url('/category/music') }}">Musical Instruments</a></li>
+                    <li><a href="{{ url('/category/art') }}">Art & Collectibles</a></li>
+                    <li><a href="{{ url('/category/pets') }}">Pet Supplies</a></li>
+                    <li><a href="{{ url('/category/food') }}">Food & Beverages</a></li>
+                    <li><a href="{{ url('/category/african-spices') }}">African Spices</a></li>
+                    <li><a href="{{ url('/category/tools') }}">Tools & Hardware</a></li>
+                    <li><a href="{{ url('/category/baby') }}">Baby Products</a></li>
+                    <li><a href="{{ url('/category/health') }}">Health & Wellness</a></li>
+                    <li><a href="{{ url('/category/garden') }}">Garden & Outdoor</a></li>
+                    <li><a href="{{ url('/category/african-beadwork') }}">African Beadwork</a></li>
+                </div>
+            </ul>
+            <div class="more-button" id="moreCategoryButton">
+                <span id="moreCategoryButtonText">More</span> <i class="bi bi-caret-down-fill"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Settings Modal -->
+<div class="modal settings-modal" id="settingsModal">
+    <div class="settings-modal-content">
+        <button class="close-btn" id="closeSettingsModal">×</button>
+        <ul>
+            <li><a href="#" class="dropdown-item"><i class="bi bi-activity"></i> Your Activity</a></li>
+            <li><a href="#" class="dropdown-item"><i class="bi bi-bookmark"></i> Saved</a></li>
+            <li><a href="#" class="dropdown-item" id="toggleDarkMode"><svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-paintbrush">
+    <path d="M11.134 1.535c.7-.509 1.416-.942 2.076-1.155.649-.21 1.463-.267 2.069.34.603.601.568 1.411.368 2.07-.202.668-.624 1.39-1.125 2.096-1.011 1.424-2.496 2.987-3.775 4.249-1.098 1.084-2.132 1.839-3.04 2.3a3.744 3.744 0 0 1-1.055 3.217c-.431.431-1.065.691-1.657.861-.614.177-1.294.287-1.914.357A21.151 21.151 0 0 1 .797 16H.743l.007-.75H.749L.742 16a.75.75 0 0 1-.743-.742l.743-.008-.742.007v-.054a21.25 21.25 0 0 1 .13-2.284c.067-.647.187-1.287.358-1.914.17-.591.43-1.226.86-1.657a3.746 3.746 0 0 1 3.227-1.054c.466-.893 1.225-1.907 2.314-2.982 1.271-1.255 2.833-2.75 4.245-3.777ZM1.62 13.089c-.051.464-.086.929-.104 1.395.466-.018.932-.053 1.396-.104a10.511 10.511 0 0 0 1.668-.309c.526-.151.856-.325 1.011-.48a2.25 2.25 0 1 0-3.182-3.182c-.155.155-.329.485-.48 1.01a10.515 10.515 0 0 0-.309 1.67Zm10.396-10.34c-1.224.89-2.605 2.189-3.822 3.384l1.718 1.718c1.21-1.205 2.51-2.597 3.387-3.833.47-.662.78-1.227.912-1.662.134-.444.032-.551.009-.575h-.001V1.78c-.014-.014-.113-.113-.548.027-.432.14-.995.462-1.655.942Zm-4.832 7.266-.001.001a9.859 9.859 0 0 0 1.63-1.142L7.155 7.216a9.7 9.7 0 0 0-1.161 1.607c.482.302.889.71 1.19 1.192Z"></path>
+</svg> Switch appearance</a></li>
+            <li><a href="#" class="dropdown-item"><i class="bi bi-exclamation-circle"></i> Report a problem</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal" id="profileModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Profile</h2>
+            <button class="close-btn" id="closeProfileModal">×</button>
+        </div>
+        <form action="{{ route('update-profile') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PATCH')
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture</label>
                 @if(auth()->user()->profile_picture)
-                    <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-nav-icon" alt="Profile Picture">
-                @else
-                    <i class="bi bi-person-circle profile-nav-icon"></i>
+                    <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture-preview" alt="Current Profile Picture">
                 @endif
-                <span>Profile</span>
-            </a>
-        </div>
-
-        <div class="footer-links">
-            <a href="#">Privacy terms</a> <span>|</span> <a href="#">Advertising</a> <span>|</span> <a href="#">Cookies</a>
-            <p>Platform © 1000</p>
-        </div>
-    </aside>
-
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="profileModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Profile</h2>
-                <button class="close-btn" id="closeProfileModal">×</button>
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
             </div>
-            <form action="{{ route('update-profile') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PATCH')
-                <div class="form-group">
-                    <label for="profile_picture">Profile Picture</label>
-                    @if(auth()->user()->profile_picture)
-                        <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture-preview" alt="Current Profile Picture">
-                    @endif
-                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label for="bio">Bio</label>
-                    <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ auth()->user()->bio ?? '' }}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="cover_picture">Cover Picture</label>
-                    @if(auth()->user()->cover_picture)
-                        <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture-preview" alt="Current Cover Picture">
-                    @endif
-                    <input type="file" id="cover_picture" name="cover_picture" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label for="website">Website</label>
-                    <input type="url" id="website" name="website" placeholder="https://yourwebsite.com" value="{{ auth()->user()->website ?? '' }}">
-                </div>
-                <button type="submit" class="submit-btn">Save Changes</button>
-            </form>
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ auth()->user()->bio ?? '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="cover_picture">Cover Picture</label>
+                @if(auth()->user()->cover_picture)
+                    <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture-preview" alt="Current Cover Picture">
+                @endif
+                <input type="file" id="cover_picture" name="cover_picture" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="website">Website</label>
+                <input type="url" id="website" name="website" placeholder="https://yourwebsite.com" value="{{ auth()->user()->website ?? '' }}">
+            </div>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<!-- Search Modal -->
+<div class="modal search-modal" id="searchModal">
+    <div class="search-modal-content">
+        <div class="modal-header">
+            <h2>Search</h2>
+            <button class="close-btn" id="closeSearchModal">×</button>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search by username or location...">
+            <div id="searchModalResults" class="search-modal-results"></div>
         </div>
     </div>
+</div>
 
-    <!-- Search Modal -->
-    <div class="modal search-modal" id="searchModal">
-        <div class="search-modal-content">
-            <div class="modal-header">
-                <h2>Search</h2>
-                <button class="close-btn" id="closeSearchModal">×</button>
-            </div>
-            <div class="search-container">
-                <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search by username or location...">
-                <div id="searchModalResults" class="search-modal-results"></div>
-            </div>
-        </div>
-    </div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get all navigation items (using the consistent class name)
-    const navItems = document.querySelectorAll('.nav-item');
+<script src="{{ asset('js/sidebar.js') }}"></script>
 
-    // Function to set active state based on current URL
-    function setActiveNav() {
-        const currentPath = window.location.pathname;
-
-        navItems.forEach(item => {
-            const itemPath = item.getAttribute('href');
-
-            // Remove all active classes first
-            item.classList.remove('active');
-
-            // Check if this item's path matches current URL
-            if (itemPath && currentPath.startsWith(itemPath)) {
-                item.classList.add('active');
-            }
-
-            // Special case for home page
-            if (currentPath === '/' && itemPath === "{{ route('welcome') }}") {
-                item.classList.add('active');
-            }
-        });
-    }
-
-    // Set initial active state
-    setActiveNav();
-
-    // Add click handlers for visual feedback
-    navItems.forEach(item => {
-        item.addEventListener('click', function() {
-            // For modal links (#), update active state immediately
-            if (this.getAttribute('href') === '#') {
-                navItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            }
-            // For real links, the page reload will handle active state
-        });
-    });
-});
-</script>

@@ -1,7 +1,8 @@
+@if(!Request::is('marketplace') && !Request::is('marketplace/*'))
 <div class="topbar">
     <div class="logo-section">
         <a href="{{ route('welcome') }}" class="logo-link">
-            <span>Afroconnect</span>
+            <img src="{{ asset('2projlogo.png') }}" alt="" style="width: 80px; height:70px;">
         </a>
     </div>
     <div class="search-section">
@@ -41,7 +42,7 @@
                       </div>
                     </div>
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1" style="cursor: pointer">Settings</p>
+                      <p class="preview-subject" style="cursor: pointer">Settings</p>
                     </div>
                   </a>
                 <div class="hover-menu">
@@ -58,9 +59,11 @@
                       </div>
                     </div>
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Log out</p>
+                      <p class="preview-subject">Log out</p>
                     </div>
                   </a>
         </div>
     </div>
 </div>
+@endif
+<script src="{{ asset('js/topbar.js') }}"></script>

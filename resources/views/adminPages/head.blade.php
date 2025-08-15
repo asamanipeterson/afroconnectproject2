@@ -16,7 +16,9 @@
     <!-- inject:css -->
     <!-- endinject -->
     <!-- Layout styles -->
+    @yield('styles')
     <link rel="stylesheet" href="assets/css/style.css">
+    {{-- <link rel="stylesheet" href="assets/css/navbar.css"> --}}
     <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">

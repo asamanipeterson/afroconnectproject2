@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function () {
     // --- Real-time New Comment Listener via Laravel Echo ---
     if (typeof Echo !== 'undefined') {
@@ -6,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const postId = card.dataset.postId;
             const commentsSection = card.querySelector('.recent-comments-section');
             const commentsCountDisplay = card.querySelector('.comments-count');
-            const viewCommentsLink = card.querySelector('.view-comments-link');
+            // const viewCommentsLink = card.querySelector('.view-comments-link');
             const likesCountSpan = card.querySelector('.likes-count');
 
             Echo.channel(`post.${postId}`)
@@ -31,10 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
 
-                    if (viewCommentsLink) {
-                        const currentCount = parseInt(viewCommentsLink.textContent.match(/\d+/)) || 0;
-                        viewCommentsLink.textContent = `View all ${currentCount + 1} comments`;
-                    }
+
 
                     if (commentsCountDisplay) {
                         const currentCount = parseInt(commentsCountDisplay.textContent) || 0;
@@ -94,6 +90,9 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentIndex = 0;
         let startX = 0;
         let isDragging = false;
+        let isMouseDown = false;
+        let mouseStartX = 0;
+        let scrollLeftStart = 0;
 
         // Initialize dots and counter
         if (dotsContainer && items.length > 1) {
@@ -169,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Touch swipe support
+        // --- Touch swipe support ---
         carouselInner.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
             isDragging = true;
@@ -197,6 +196,46 @@ document.addEventListener('DOMContentLoaded', function () {
             isDragging = false;
             carouselInner.style.scrollBehavior = 'smooth';
         });
+
+        // --- Mouse drag support ---
+        carouselInner.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            mouseStartX = e.clientX;
+            scrollLeftStart = carouselInner.scrollLeft;
+            carouselInner.style.scrollBehavior = 'auto';
+            carouselInner.style.cursor = 'grabbing';
+            // Added event listener to the document to handle mouseup even if it's outside the carousel
+            document.addEventListener('mouseup', handleMouseUp);
+        });
+
+        carouselInner.addEventListener('mousemove', (e) => {
+            if (!isMouseDown) return;
+            e.preventDefault();
+            const mouseMoveX = e.clientX - mouseStartX;
+            carouselInner.scrollLeft = scrollLeftStart - mouseMoveX;
+        });
+
+        carouselInner.addEventListener('mouseleave', () => {
+            if (isMouseDown) {
+                // If the mouse leaves while dragging, treat it like a mouseup
+                handleMouseUp();
+            }
+        });
+
+        function handleMouseUp() {
+            if (!isMouseDown) return;
+            isMouseDown = false;
+            const finalScrollLeft = carouselInner.scrollLeft;
+            const itemWidth = items[0]?.offsetWidth || 0;
+            if (itemWidth > 0) {
+                // Calculate the new index based on the final scroll position
+                currentIndex = Math.round(finalScrollLeft / itemWidth);
+                updateCarousel();
+            }
+            carouselInner.style.scrollBehavior = 'smooth';
+            carouselInner.style.cursor = 'grab';
+            document.removeEventListener('mouseup', handleMouseUp);
+        }
 
         // Prevent vertical scrolling on mouse wheel over carousel
         carouselInner.addEventListener('wheel', (e) => {
@@ -443,4 +482,63 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // --- Share Modal Functionality ---
+    document.querySelectorAll('.share-post').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            const postId = this.getAttribute('data-post-id');
+            const modal = document.getElementById(`shareModal-${postId}`);
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        });
+    });
+
+    document.querySelectorAll('.cancel-share-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const modal = this.closest('.share-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    document.querySelectorAll('.confirm-share-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.getAttribute('data-post-id');
+            const modal = this.closest('.share-modal');
+            const checkboxes = modal.querySelectorAll('input[name="followers"]:checked');
+            const followerIds = Array.from(checkboxes).map(cb => cb.value);
+
+            if (followerIds.length === 0) {
+                alert('Please select at least one follower to share with.');
+                return;
+            }
+
+            fetch('/posts/share', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    post_id: postId,
+                    follower_ids: followerIds
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Post shared successfully!');
+                    modal.style.display = 'none';
+                } else {
+                    alert('Failed to share post: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while sharing the post.');
+            });
+        });
+    });
 });

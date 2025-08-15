@@ -12,6 +12,7 @@ class FollowNotification extends Notification
 {
     use Queueable;
     protected $follower;
+
     /**
      * Create a new notification instance.
      */
@@ -19,7 +20,6 @@ class FollowNotification extends Notification
     {
         $this->follower = $follower;
     }
-
 
     /**
      * Get the notification's delivery channels.
@@ -36,10 +36,21 @@ class FollowNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
+        $isFollowingBack = $notifiable->following()->where('followed_id', $this->follower->id)->exists();
+        $message = $isFollowingBack
+            ? "{$this->follower->username} has followed you."
+            : "{$this->follower->username} followed you.";
+
+        $mail = (new MailMessage)
+            ->line($message)
             ->line('Thank you for using our application!');
+
+        if (!$isFollowingBack) {
+            // Assuming you have a route to follow a user, e.g., /follow/{id}
+            $mail->action('Follow Back', url('/follow/' . $this->follower->id));
+        }
+
+        return $mail;
     }
 
     /**
@@ -49,9 +60,15 @@ class FollowNotification extends Notification
      */
     public function toDatabase($notifiable)
     {
+        $isFollowingBack = $notifiable->following()->where('followed_id', $this->follower->id)->exists();
+        $message = $isFollowingBack
+            ? "{$this->follower->username} has followed you"
+            : "{$this->follower->username} followed you";
+
         return [
-            'message' => "{$this->follower->username} started following you",
+            'message' => $message,
             'follower_id' => $this->follower->id,
+            'show_follow_back_button' => !$isFollowingBack, // Flag for frontend to show button if needed
         ];
     }
 }

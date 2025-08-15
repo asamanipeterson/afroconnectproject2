@@ -1,4 +1,80 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Script loaded');
+
+    // --- Debug Modal Elements ---
+    const settingsModal = document.getElementById('settingsModal');
+    const openSettingsModal = document.getElementById('openSettingsModal');
+    const closeSettingsModal = document.getElementById('closeSettingsModal');
+    const sidebarDropdown = document.querySelector('.sidebar-dropdown');
+    const menuTrigger = document.querySelector('.menu-trigger');
+
+    console.log('Settings Modal Elements:', {
+        settingsModal: !!settingsModal,
+        openSettingsModal: !!openSettingsModal,
+        closeSettingsModal: !!closeSettingsModal,
+        sidebarDropdown: !!sidebarDropdown,
+        menuTrigger: !!menuTrigger
+    });
+
+    // --- Settings Modal Handling ---
+    if (openSettingsModal && settingsModal && closeSettingsModal) {
+        openSettingsModal.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Opening settings modal');
+            settingsModal.style.display = 'flex';
+            settingsModal.classList.add('show');
+            if (sidebarDropdown) {
+                sidebarDropdown.classList.remove('show');
+                console.log('Closed sidebar dropdown');
+            }
+        });
+
+        closeSettingsModal.addEventListener('click', () => {
+            console.log('Closing settings modal');
+            settingsModal.classList.remove('show');
+            settingsModal.addEventListener('transitionend', function handler() {
+                settingsModal.style.display = 'none';
+                settingsModal.removeEventListener('transitionend', handler);
+            });
+        });
+
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                console.log('Closing settings modal via backdrop click');
+                settingsModal.classList.remove('show');
+                settingsModal.addEventListener('transitionend', function handler() {
+                    settingsModal.style.display = 'none';
+                    settingsModal.removeEventListener('transitionend', handler);
+                });
+            }
+        });
+    } else {
+        console.error('Settings modal elements not found:', {
+            settingsModal,
+            openSettingsModal,
+            closeSettingsModal
+        });
+    }
+
+    // --- Sidebar Dropdown ---
+    if (menuTrigger && sidebarDropdown) {
+        console.log('Menu trigger and sidebar dropdown found');
+        menuTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            sidebarDropdown.classList.toggle('show');
+            console.log('Sidebar dropdown toggled:', sidebarDropdown.classList.contains('show'));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!menuTrigger.contains(e.target) && !sidebarDropdown.contains(e.target)) {
+                sidebarDropdown.classList.remove('show');
+                console.log('Sidebar dropdown closed');
+            }
+        });
+    } else {
+        console.error('Menu trigger or sidebar dropdown not found:', { menuTrigger, sidebarDropdown });
+    }
+
     // --- Dark Mode Toggle ---
     const toggleDarkMode = document.getElementById('toggleDarkMode');
     if (toggleDarkMode) {
@@ -10,58 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            console.log('Dark mode toggled:', document.body.classList.contains('dark-mode'));
         });
-    }
-
-
-
-    // --- Sidebar Dropdown ---
-    const menuTrigger = document.querySelector('.menu-trigger');
-    const sidebarDropdown = document.querySelector('.sidebar-dropdown');
-    const settingsTrigger = document.querySelector('.settingsdrop .dropdown-items');
-    const settingsDropdown = document.querySelector('.settingsdrop .dropdown');
-
-    if (menuTrigger && sidebarDropdown) {
-        console.log('Menu trigger and sidebar dropdown found');
-        menuTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            sidebarDropdown.classList.toggle('show');
-            console.log('Sidebar dropdown toggled:', sidebarDropdown.classList.contains('show'));
-            if (settingsDropdown) {
-                settingsDropdown.classList.remove('show');
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!menuTrigger.contains(e.target) && !sidebarDropdown.contains(e.target)) {
-                sidebarDropdown.classList.remove('show');
-                console.log('Sidebar dropdown closed');
-                if (settingsDropdown) {
-                    settingsDropdown.classList.remove('show');
-                }
-            }
-        });
-    } else {
-        console.error('Menu trigger or sidebar dropdown not found:', { menuTrigger, sidebarDropdown });
-    }
-
-    // --- Settings Dropdown ---
-    if (settingsTrigger && settingsDropdown) {
-        console.log('Settings trigger and dropdown found');
-        settingsTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            settingsDropdown.classList.toggle('show');
-            console.log('Settings dropdown toggled:', settingsDropdown.classList.contains('show'));
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!settingsTrigger.contains(e.target) && !settingsDropdown.contains(e.target)) {
-                settingsDropdown.classList.remove('show');
-                console.log('Settings dropdown closed');
-            }
-        });
-    } else {
-        console.error('Settings trigger or dropdown not found:', { settingsTrigger, settingsDropdown });
     }
 
     // --- Profile Modal ---
@@ -72,11 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (profileModal && openProfileModalSidebar && closeProfileModalButton) {
         openProfileModalSidebar.addEventListener('click', (e) => {
             e.preventDefault();
+            console.log('Opening profile modal');
             profileModal.style.display = 'flex';
             setTimeout(() => profileModal.classList.add('show'), 10);
         });
 
         closeProfileModalButton.addEventListener('click', () => {
+            console.log('Closing profile modal');
             profileModal.classList.remove('show');
             profileModal.addEventListener('transitionend', function handler() {
                 profileModal.style.display = 'none';
@@ -86,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         profileModal.addEventListener('click', (e) => {
             if (e.target === profileModal) {
+                console.log('Closing profile modal via backdrop click');
                 profileModal.classList.remove('show');
                 profileModal.addEventListener('transitionend', function handler() {
                     profileModal.style.display = 'none';
@@ -105,15 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('modal-open');
                 const input = modalElement.querySelector('#searchModalInput');
                 if (input) input.focus();
+                console.log('Opening search modal');
             }, 10);
-            // Close dropdowns when search modal opens
             if (sidebarDropdown) sidebarDropdown.classList.remove('show');
-            if (settingsDropdown) settingsDropdown.classList.remove('show');
         } else {
             modalElement.classList.remove('show');
             modalElement.addEventListener('transitionend', function handler() {
                 modalElement.style.display = 'none';
                 document.body.classList.remove('modal-open');
+                console.log('Closing search modal');
                 modalElement.removeEventListener('transitionend', handler);
             });
         }
@@ -202,4 +231,61 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+
+
+    // --- Category Modal ---
+function toggleModalCategory(modalElement, show) {
+    if (!modalElement) return;
+    if (show) {
+        modalElement.style.display = 'block';
+        setTimeout(() => {
+            modalElement.classList.add('show');
+            document.body.classList.add('modal-open');
+            console.log('Opening category modal');
+        }, 10);
+        if (sidebarDropdown) sidebarDropdown.classList.remove('show');
+    } else {
+        modalElement.classList.remove('show');
+        modalElement.addEventListener('transitionend', function handler() {
+            modalElement.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            console.log('Closing category modal');
+            modalElement.removeEventListener('transitionend', handler);
+        });
+    }
+}
+
+const openCategoryModal = document.getElementById('openCategoryModal');
+const categoryModal = document.getElementById('categoryModal');
+const closeCategoryModal = document.getElementById('closeCategoryModal');
+const moreCategoryButton = document.getElementById('moreCategoryButton');
+const hiddenCategoryItems = document.getElementById('hiddenCategoryItems');
+const moreCategoryButtonText = document.getElementById('moreCategoryButtonText');
+
+if (openCategoryModal && categoryModal && closeCategoryModal) {
+    openCategoryModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleModalCategory(categoryModal, true);
+    });
+
+    closeCategoryModal.addEventListener('click', () => {
+        toggleModalCategory(categoryModal, false);
+    });
+
+    categoryModal.addEventListener('click', (e) => {
+        if (e.target === categoryModal) {
+            toggleModalCategory(categoryModal, false);
+        }
+    });
+}
+
+if (moreCategoryButton && hiddenCategoryItems && moreCategoryButtonText) {
+    moreCategoryButton.addEventListener('click', () => {
+        hiddenCategoryItems.classList.toggle('show');
+        moreCategoryButton.classList.toggle('active');
+        moreCategoryButtonText.textContent = hiddenCategoryItems.classList.contains('show') ? 'View Less' : 'More';
+        console.log('Category toggle:', hiddenCategoryItems.classList.contains('show') ? 'Showing' : 'Hiding');
+    });
+}
 });

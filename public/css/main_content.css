@@ -16,6 +16,7 @@ body.dark-mode .main-content {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 1rem;
+
 }
 body.dark-mode .story-section {
     background: #2c2c2c;
@@ -126,13 +127,21 @@ body.dark-mode .share-post-btn {
 .share-post-btn:hover {
     background: #0056b3;
 }
-
+.color-picker {
+    width:30px;
+    height: 30px;
+    /* border-radius: 50%; */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    margin-left: 10px;
+}
 /* Modal specific styles */
 .modal#postCreationModal .form-container,
 .modal#storyCreationModal .form-container {
     transition: opacity 0.3s ease;
 }
-.modal {
+.modal{
     display: none;
     position: fixed;
     z-index: 9999;
@@ -140,7 +149,7 @@ body.dark-mode .share-post-btn {
     left: 0;
     height: 100%;
     width: 100%;
-    overflow: auto;
+    overflow:hidden;
     background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
@@ -151,10 +160,11 @@ body.dark-mode .share-post-btn {
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    max-width: 600px;
+    max-width:680px;
     width: 95%;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden;
     box-sizing: border-box;
 }
 
@@ -261,6 +271,7 @@ body.dark-mode .modal-content small {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     margin-bottom: 1rem;
+    margin-right:3rem;
 }
 body.dark-mode .media-item {
     background-color: #333;
@@ -321,18 +332,8 @@ body.dark-mode .media-item {
 #story-text-container textarea {
     min-height: 120px;
 }
-input[type="color"] {
-    height: 30px;
-    width: 30px;
-    border-radius: 4px;
-    border: 1px solid #d1d5db;
-    padding: 0;
-    cursor: pointer;
-    vertical-align: middle;
-}
-body.dark-mode input[type="color"] {
-    border-color: #555;
-}
+
+
 .form-submit-container {
     display: flex;
     justify-content: center;
@@ -504,27 +505,31 @@ body.dark-mode .story-username {
     object-fit: contain;
 }
 
-.story-viewer-modal .close-story-viewer-btn {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 30px;
-    font-weight: 300;
-    cursor: pointer;
-    z-index: 10001;
-    background: none;
-    border: none;
-    padding: 5px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease;
-}
-.story-viewer-modal .close-story-viewer-btn:hover {
-    color: white;
-}
+.close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 40px;
+            color: #fff;
+            background-color: #333;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1001;
+        }
+        body.dark .close-btn {
+            color: #fff;
+            background-color: #555;
+        }
+        .close-btn:hover {
+            background-color: #ff4444;
+            color: #fff;
+        }
 
 /* Per-story navigation arrows */
 .story-media-area {

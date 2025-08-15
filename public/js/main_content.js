@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="form-group">
                     <label>Background Color:</label>
-                    <input type="color" name="background[]" value="#3B82F6">
+                    <input type="color" name="background[]" class="color-picker" value="#3B82F6">
                 </div>
                 <hr>
             `;

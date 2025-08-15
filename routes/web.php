@@ -10,6 +10,9 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\StoryController;
+use App\Http\Controllers\MarketPlaceController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ReportController;
 
 
 
@@ -22,7 +25,8 @@ Route::get('/broadcast-test', function () {
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'homepage')->name('welcome')->middleware('auth');
-    Route::get('admin/dashboard', 'adminDashboard')->name('admin.dashboard')->middleware('auth'); // Admin dashboard route
+    Route::get('/admin', 'homepage')->name('admin.dashboard')->middleware('auth'); // Changed to 'homepage'
+    // Route::get('/userstable', 'usertable')->name('users.table')->middleware('auth');
 });
 
 // Authentication routes
@@ -51,6 +55,7 @@ Route::controller(PostController::class)->group(function () {
     Route::delete('delete-post/{id}', 'destroy')->name('delete-post')->middleware('auth');
     Route::post('report-post/{id}', 'report')->name('report-post')->middleware('auth');
     Route::post('mark-as-not-interested/{id}', 'markAsNotInterested')->name('mark-as-not-interested')->middleware('auth');
+    Route::post('/posts/share',  'share')->name('post.share')->middleware('auth');
 })->middleware('auth');
 
 // Route for liking and unliking posts
@@ -87,7 +92,7 @@ Route::controller(CommentController::class)->prefix('posts/{post}')->middleware(
 
 
 Route::middleware('auth')->group(function () {
-    Route::post('/toggle-follow/{id}', [FollowController::class, 'toggleFollow'])->middleware('auth');
+    Route::post('/toggle-follow/{id}', [FollowController::class, 'toggleFollow'])->middleware('auth')->name('toggle.follow');
     Route::delete('/user/{user}/unfollow', [FollowController::class, 'unfollow'])->name('user.unfollow');
 });
 
@@ -100,3 +105,32 @@ Route::controller(StoryController::class)
         Route::get('/user/{user}', 'fetchUserStories')->name('stories.fetchUserStories');
         Route::get('/all', 'fetchAllActiveStories')->name('stories.fetchAllActiveStories'); // 👈 this is the new one
     });
+
+
+// Marketplace routes
+Route::controller(MarketPlaceController::class)->prefix('marketplace')->middleware('auth')->group(function () {
+    Route::get('/', 'index')->name('marketshowroom');
+    Route::get('/new-listing', 'newListing')->name('marketplace.newlisting');
+    Route::post('/store', 'store')->name('marketplace.store');
+    Route::get('/item/{item}', 'show')->name('marketplace.show');
+    // The new route to fetch item data as JSON, using the group's prefix and controller.
+    Route::get('/items/{item}/data', 'getItemData');
+});
+
+Route::prefix('admin/users')->controller(UserManagementController::class)->middleware('auth')->group(function () {
+    Route::get('/', 'index')->name('admin.users.index');
+    Route::get('/{user}', 'show')->name('admin.users.show');
+    Route::patch('/{user}/block', 'block')->name('admin.users.block');
+    Route::patch('/{user}/unblock', 'unblock')->name('admin.users.unblock');
+    Route::patch('/{user}/verify', 'verify')->name('admin.users.verify');
+    Route::patch('/{user}/suspend', 'suspend')->name('admin.users.suspend');
+    Route::patch('/{user}/unsuspend', 'unsuspend')->name('admin.users.unsuspend');
+    Route::delete('/{user}', 'destroy')->name('admin.users.destroy');
+});
+Route::controller(ReportController::class)->prefix('reports')->middleware(['auth'])->group(function () {
+    Route::post('/users/{user}/report', 'store')->name('users.report');
+    Route::post('/posts/{post}/report', 'storePost')->name('posts.report');
+    Route::get('/', 'index')->name('admin.reports.index');
+    Route::patch('/{report}/resolve', 'resolve')->name('reports.resolve');
+    Route::patch('/post/{report}/resolve', 'resolvePost')->name('reports.resolve.post');
+});

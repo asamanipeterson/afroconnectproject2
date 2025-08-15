@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+<<<<<<< HEAD
+=======
+
+>>>>>>> c0d373d (admin side working left small touches)
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Post;
@@ -8,7 +12,10 @@ use App\Models\Story;
 use App\Models\User;
 use App\Models\Like;
 use App\Models\Comment;
+<<<<<<< HEAD
 //use App\Models\Share; // ✅ Only if you have a shares table/model
+=======
+>>>>>>> c0d373d (admin side working left small touches)
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -44,7 +51,11 @@ class HomeController extends Controller
                 'postsPerDay'  => $postsPerDay,
                 'usersPerDay'  => $usersPerDay,
                 'likesCount'   => $likesCount,
+<<<<<<< HEAD
                 'commentsCount'=> $commentsCount,
+=======
+                'commentsCount' => $commentsCount,
+>>>>>>> c0d373d (admin side working left small touches)
                 //'sharesCount'  => $sharesCount,
             ]);
         }
@@ -79,6 +90,39 @@ class HomeController extends Controller
             'user'       => $user,
             'postGroups' => $postGroups,
             'stories'    => $stories,
+<<<<<<< HEAD
+=======
+        ]);
+    }
+
+    public function usertable()
+    {
+        $totalUsers = User::count();
+        $totalPosts = Post::count();
+        $postsPerDay = [];
+        $usersPerDay = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i)->toDateString();
+
+            $postsCount = Post::whereDate('created_at', $date)->count();
+            $usersCount = User::whereDate('created_at', $date)->count();
+
+            $postsPerDay[] = ['date' => $date, 'count' => $postsCount];
+            $usersPerDay[] = ['date' => $date, 'count' => $usersCount];
+        }
+
+        // ✅ Engagement counts from DB
+        $likesCount = Like::count();
+        $commentsCount = Comment::count();
+        return view('adminPages.usertable', [
+            'totalUsers' => $totalUsers,
+            'totalPosts' => $totalPosts,
+            'postsPerDay'  => $postsPerDay,
+            'usersPerDay'  => $usersPerDay,
+            'likesCount'   => $likesCount,
+            'commentsCount' => $commentsCount,
+>>>>>>> c0d373d (admin side working left small touches)
         ]);
     }
 }
