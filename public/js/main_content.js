@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     // Utility: Modal toggle
     function toggleModal(modalElement, show) {
         if (!modalElement) return;
@@ -15,95 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('modal-open');
         }
     }
-
-    // --- Story Creation Modal ---
-    const storyCreationModal = document.getElementById('storyCreationModal');
-    const openStoryCreationModalButton = document.getElementById('openStoryCreationModal');
-    const closeStoryCreationModal = document.getElementById('closeStoryCreationModal');
-    const storyItemsContainer = document.getElementById('story-items-container');
-    const storyCountSpan = document.getElementById('story-count');
-    const maxStories = 10;
-    let storyIndex = storyItemsContainer ? storyItemsContainer.querySelectorAll('.story-item-block').length : 0;
-
-    const updateStoryCount = () => {
-        const count = storyItemsContainer.querySelectorAll('.story-item-block').length;
-        storyCountSpan.textContent = `${count}/${maxStories} stories`;
-        storyItemsContainer.querySelectorAll('.story-item-block').forEach((block, index) => {
-            const removeBtn = block.querySelector('.remove-story-item');
-            const counter = block.querySelector('.story-counter');
-            if (removeBtn) removeBtn.style.display = count > 1 ? 'inline-block' : 'none';
-            if (counter) counter.textContent = `${index + 1}/${maxStories} stories`;
-        });
-    };
-
-    if (storyCreationModal && openStoryCreationModalButton && closeStoryCreationModal) {
-        openStoryCreationModalButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleModal(storyCreationModal, true);
-        });
-        closeStoryCreationModal.addEventListener('click', () => toggleModal(storyCreationModal, false));
-        storyCreationModal.addEventListener('click', (e) => {
-            if (e.target === storyCreationModal) toggleModal(storyCreationModal, false);
-        });
-    }
-
-    const addStoryBlockBtn = document.getElementById('addStoryBlock');
-
-    if (addStoryBlockBtn && storyItemsContainer) {
-        addStoryBlockBtn.addEventListener('click', () => {
-            if (storyItemsContainer.querySelectorAll('.story-item-block').length >= maxStories) return;
-
-            const block = document.createElement('div');
-            block.className = 'story-item-block';
-            block.dataset.index = storyIndex;
-
-            block.innerHTML = `
-                <div class="story-block-header">
-                    <button type="button" class="remove-story-item">Remove</button>
-                </div>
-                <div class="form-group">
-                    <label>Caption:</label>
-                    <input type="text" name="caption[]" placeholder="Enter a caption">
-                </div>
-                <div class="form-group">
-                    <label>Upload Media (Image/Video):</label>
-                    <input type="file" name="media[]" accept="image/*,video/*" onchange="previewMedia(this)">
-                    <div class="media-preview mt-2"></div>
-                </div>
-                <div class="form-group">
-                    <label>Text Story:</label>
-                    <textarea name="text_content[]" rows="3" placeholder="Write something..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Background Color:</label>
-                    <input type="color" name="background[]" class="color-picker" value="#3B82F6">
-                </div>
-                <hr>
-            `;
-            storyItemsContainer.appendChild(block);
-            storyIndex++;
-            updateStoryCount();
-        });
-
-        storyItemsContainer.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-story-item')) {
-                const block = e.target.closest('.story-item-block');
-                if (block) {
-                    block.remove();
-                    updateStoryCount();
-                }
-            }
-        });
-
-        updateStoryCount();
-    }
-
     // Add global variables to track users and their stories
     let allUsersWithStories = [];
     let currentUserIndex = 0;
     let currentStories = [];
     let currentStoryIndex = 0;
     let storySlider = document.querySelector('.story-slider');
+    let timerInterval = null;
+    let isPlaying = true;
+    let isMuted = true; // Start muted as per the initial video setup
 
     window.openStoryViewer = function(userId) {
         fetch('/stories/all' + (userId ? `?start_user_id=${userId}` : ''))
@@ -155,20 +74,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const story = stories[0];
             const createdAt = getRelativeTime(story.created_at);
             const username = userId == window.authUserId ? 'Your story' : (story.user.username || 'Unknown');
+            const profileUrl = userId == window.authUserId ? '#' : (story.user.profile_url || `/profile/${userId}`);
+            const progressBars = stories.map((_, i) => `
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" data-index="${i}"></div>
+                </div>
+            `).join('');
             card.innerHTML = `
+                <button class="play-pause-btn">${isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>'}</button>
+                <button class="mute-unmute-btn">${isMuted ? '<i class="fa-solid fa-volume-mute"></i>' : '<i class="fa-solid fa-volume-up"></i>'}</button>
+                <div class="progress-bar-container">${progressBars}</div>
                 <div class="story-header">
                     <img src="${story.user.profile_picture_url || '/default-avatar.png'}" class="story-viewer-avatar">
-                    <p class="story-viewer-username" style="font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; font-weight: 500; font-size: 1rem;">${username} <span class="story-time">${createdAt}</span></p>
+                    <p class="story-viewer-username"><a href="${profileUrl}" class="profile-link">${username}</a> <span class="story-time">${createdAt}</span></p>
                 </div>
-                <div class="story-media-area">
-                    ${story.story_type === 'image' ? `<img src="${story.media_url || '/default-image.png'}" class="story-media">` : ''}
-                    ${story.story_type === 'video' ? `<video src="${story.media_url || '/default-video.mp4'}" class="story-media"></video>` : ''}
-                    ${story.story_type === 'text' ? `<div class="story-text-content" style="background-color: ${story.background || '#3B82F6'}"><p>${story.text_content || 'No text'}</p></div>` : ''}
-                    <button class="nav-btn prev" onclick="prevStory(this)"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="nav-btn next" onclick="nextStory(this)"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-                <div class="progress-bar" style="width: 0;"></div>
+                <div class="story-media-area"></div>
             `;
+            card.querySelector('.play-pause-btn').addEventListener('click', togglePlayPause);
+            card.querySelector('.mute-unmute-btn').addEventListener('click', toggleMuteUnmute);
         } else {
             card.innerHTML = `<p>No stories available</p>`;
         }
@@ -177,30 +100,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayCurrentStory() {
         const activeCard = storySlider.querySelector('.story-user-card.active');
-        if (activeCard) {
+        if (activeCard && currentStories.length > 0) {
             const story = currentStories[currentStoryIndex];
             const mediaArea = activeCard.querySelector('.story-media-area');
+            const video = mediaArea.querySelector('video');
             mediaArea.innerHTML = getStoryContent(story) + `
                 <button class="nav-btn prev" onclick="prevStory(this)"><i class="fa-solid fa-chevron-left"></i></button>
                 <button class="nav-btn next" onclick="nextStory(this)"><i class="fa-solid fa-chevron-right"></i></button>
             `;
             if (story.caption) {
-                mediaArea.insertAdjacentHTML('beforeend', `<div class="story-caption"  >${story.caption || 'No caption'}</div>`);
+                mediaArea.insertAdjacentHTML('beforeend', `<div class="story-caption">${story.caption || 'No caption'}</div>`);
             }
-            activeCard.querySelector('.progress-bar').style.width = `${(currentStoryIndex + 1) / currentStories.length * 100}%`;
+            const progressBars = activeCard.querySelectorAll('.progress-bar-fill');
+            progressBars.forEach((bar, index) => {
+                bar.style.width = index < currentStoryIndex ? '100%' : index === currentStoryIndex ? '0%' : '0%';
+            });
             const timeElement = activeCard.querySelector('.story-time');
             if (timeElement) timeElement.textContent = getRelativeTime(story.created_at);
             updateNavigation(activeCard);
+            const playPauseBtn = activeCard.querySelector('.play-pause-btn');
+            const muteUnmuteBtn = activeCard.querySelector('.mute-unmute-btn');
+            playPauseBtn.innerHTML = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
+            muteUnmuteBtn.innerHTML = isMuted ? '<i class="fa-solid fa-volume-mute"></i>' : '<i class="fa-solid fa-volume-up"></i>';
+            if (isPlaying) {
+                startProgressTimer(activeCard.querySelector(`.progress-bar-fill[data-index="${currentStoryIndex}"]`));
+                if (video) {
+                    video.play().catch(error => console.error('Video play failed:', error));
+                    video.muted = isMuted;
+                }
+            } else {
+                if (timerInterval) clearInterval(timerInterval);
+                if (video) video.pause();
+            }
+            const cardWidth = 400;
+            const gap = 20;
+            const offset = currentUserIndex * (cardWidth + gap) - (window.innerWidth - cardWidth) / 2 + gap;
+            storySlider.style.transform = `translateX(-${offset}px)`;
         }
-        const cardWidth = 400;
-        const gap = 20;
-        const offset = currentUserIndex * (cardWidth + gap) - (window.innerWidth - cardWidth) / 2 + gap;
-        storySlider.style.transform = `translateX(-${offset}px)`;
+    }
+
+    function startProgressTimer(progressBar) {
+        if (timerInterval) clearInterval(timerInterval);
+        let duration = currentStories[currentStoryIndex].story_type === 'video' ? 30000 : 5000;
+        let startTime = Date.now();
+        timerInterval = setInterval(() => {
+            let elapsed = Date.now() - startTime;
+            let progress = Math.min((elapsed / duration) * 100, 100);
+            progressBar.style.width = `${progress}%`;
+            if (progress >= 100) {
+                clearInterval(timerInterval);
+                nextStory(progressBar.closest('.story-user-card').querySelector('.next'));
+            }
+        }, 50);
+    }
+
+    function togglePlayPause() {
+        isPlaying = !isPlaying;
+        const activeCard = storySlider.querySelector('.story-user-card.active');
+        const playPauseBtn = activeCard.querySelector('.play-pause-btn');
+        const video = activeCard.querySelector('.story-media-area video');
+        playPauseBtn.innerHTML = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
+        if (isPlaying) {
+            startProgressTimer(activeCard.querySelector(`.progress-bar-fill[data-index="${currentStoryIndex}"]`));
+            if (video) video.play().catch(error => console.error('Video play failed:', error));
+        } else {
+            if (timerInterval) clearInterval(timerInterval);
+            if (video) video.pause();
+        }
+    }
+
+    function toggleMuteUnmute() {
+        isMuted = !isMuted;
+        const activeCard = storySlider.querySelector('.story-user-card.active');
+        const muteUnmuteBtn = activeCard.querySelector('.mute-unmute-btn');
+        const video = activeCard.querySelector('.story-media-area video');
+        muteUnmuteBtn.innerHTML = isMuted ? '<i class="fa-solid fa-volume-mute"></i>' : '<i class="fa-solid fa-volume-up"></i>';
+        if (video) video.muted = isMuted;
     }
 
     function getStoryContent(story) {
         if (story.story_type === 'image') return `<img src="${story.media_url || '/default-image.png'}" class="story-media">`;
-        if (story.story_type === 'video') return `<video src="${story.media_url || '/default-video.mp4'}" controls autoplay loop muted class="story-media"></video>`;
+        if (story.story_type === 'video') return `<video src="${story.media_url || '/default-video.mp4'}" autoplay loop muted class="story-media"></video>`;
         if (story.story_type === 'text') return `<div class="story-text-content" style="background-color: ${story.background || '#3B82F6'}"><p>${story.text_content || 'No text'}</p></div>`;
         return '<p>Content not supported</p>';
     }
@@ -223,20 +203,23 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             if (currentUserIndex < allUsersWithStories.length - 1) {
                 currentUserIndex++;
+                const nextUserId = allUsersWithStories[currentUserIndex];
+                fetch(`/stories/user/${nextUserId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        currentStories = data || [];
+                        currentStoryIndex = 0;
+                        storySlider.querySelectorAll('.story-user-card').forEach(c => c.classList.remove('active'));
+                        storySlider.querySelectorAll('.story-user-card')[currentUserIndex].classList.add('active');
+                        displayCurrentStory();
+                    })
+                    .catch(error => console.error(`Error fetching stories for user ${nextUserId}:`, error));
             } else {
-                currentUserIndex = 0; // Loop back to the first user
+                if (currentStoryIndex >= currentStories.length - 1) {
+                    closeStoryViewer();
+                    return;
+                }
             }
-            const nextUserId = allUsersWithStories[currentUserIndex];
-            fetch(`/stories/user/${nextUserId}`)
-                .then(response => response.json())
-                .then(data => {
-                    currentStories = data || [];
-                    currentStoryIndex = 0;
-                    storySlider.querySelectorAll('.story-user-card').forEach(c => c.classList.remove('active'));
-                    storySlider.querySelectorAll('.story-user-card')[currentUserIndex].classList.add('active');
-                    displayCurrentStory();
-                })
-                .catch(error => console.error(`Error fetching stories for user ${nextUserId}:`, error));
         }
         displayCurrentStory();
     };
@@ -248,26 +231,24 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             if (currentUserIndex > 0) {
                 currentUserIndex--;
-            } else {
-                currentUserIndex = allUsersWithStories.length - 1; // Loop to the last user
+                const prevUserId = allUsersWithStories[currentUserIndex];
+                fetch(`/stories/user/${prevUserId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        currentStories = data || [];
+                        currentStoryIndex = data.length - 1;
+                        storySlider.querySelectorAll('.story-user-card').forEach(c => c.classList.remove('active'));
+                        storySlider.querySelectorAll('.story-user-card')[currentUserIndex].classList.add('active');
+                        displayCurrentStory();
+                    })
+                    .catch(error => console.error(`Error fetching stories for user ${prevUserId}:`, error));
             }
-            const prevUserId = allUsersWithStories[currentUserIndex];
-            fetch(`/stories/user/${prevUserId}`)
-                .then(response => response.json())
-                .then(data => {
-                    currentStories = data || [];
-                    currentStoryIndex = data.length - 1;
-                    storySlider.querySelectorAll('.story-user-card').forEach(c => c.classList.remove('active'));
-                    storySlider.querySelectorAll('.story-user-card')[currentUserIndex].classList.add('active');
-                    displayCurrentStory();
-                })
-                .catch(error => console.error(`Error fetching stories for user ${prevUserId}:`, error));
         }
         displayCurrentStory();
     };
 
     function updateNavigation(card) {
-        const prevBtn = card.querySelector('.nav-btn.prev');
+        const prevBtn = card.querySelector('.play-pause-btn');
         const nextBtn = card.querySelector('.nav-btn.next');
         if (prevBtn && nextBtn) {
             const hasMultipleStories = currentStories.length > 1;
@@ -277,10 +258,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.closeStoryViewer = function() {
+        if (timerInterval) clearInterval(timerInterval);
         toggleModal(storyViewerModal, false);
         storyDisplayArea.innerHTML = '';
         currentStories = [];
         currentStoryIndex = 0;
+    };
+
+    // --- Story Creation Modal ---
+    const storyCreationModal = document.getElementById('storyCreationModal');
+    const openStoryCreationModalButton = document.getElementById('openStoryCreationModal');
+    const closeStoryCreationModal = document.getElementById('closeStoryCreationModal');
+    const storyItemsContainer = document.getElementById('story-items-container');
+    const storyCountSpan = document.getElementById('story-count');
+    const maxStories = 10;
+    let storyIndex = storyItemsContainer ? storyItemsContainer.querySelectorAll('.story-item-block').length : 0;
+
+    if (storyCreationModal && openStoryCreationModalButton && closeStoryCreationModal) {
+        openStoryCreationModalButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleModal(storyCreationModal, true);
+        });
+        closeStoryCreationModal.addEventListener('click', () => toggleModal(storyCreationModal, false));
+        storyCreationModal.addEventListener('click', (e) => {
+            if (e.target === storyCreationModal) toggleModal(storyCreationModal, false);
+        });
+    }
+
+    const updateStoryCount = () => {
+        const count = storyItemsContainer ? storyItemsContainer.querySelectorAll('.story-item-block').length : 0;
+        if (storyCountSpan) {
+            storyCountSpan.textContent = `${count}/${maxStories} stories`;
+            storyItemsContainer.querySelectorAll('.story-item-block').forEach((block, index) => {
+                const removeBtn = block.querySelector('.remove-story-item');
+                const counter = block.querySelector('.story-counter');
+                if (removeBtn) removeBtn.style.display = count > 1 ? 'inline-block' : 'none';
+                if (counter) counter.textContent = `${index + 1}/${maxStories} stories`;
+            });
+        }
     };
 
     // --- Post Creation Modal ---
@@ -296,72 +311,109 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleModal(postCreationModal, true);
             });
         });
-
         closePostCreationModal.addEventListener('click', () => {
             toggleModal(postCreationModal, false);
         });
     }
 
-    const addMediaBtn = document.getElementById('add-media-item');
-    const mediaContainer = document.getElementById('media-inputs-container');
-    const mediaCountSpan = document.getElementById('media-count');
-    let itemIndex = mediaContainer.querySelectorAll('.media-item').length || 0;
-    const maxItems = 20;
+    const storyMediaInput = document.querySelector('#media-upload-story');
+    const storyMediaCountText = document.querySelector('#story-media-count');
+    const storyMediaPreview = document.querySelector('#story-media-preview');
+    const captionsContainer = document.querySelector('#captions-container');
+    const postMediaInput = document.querySelector('#media-upload-post');
+    const postMediaCountText = document.querySelector('#post-media-count');
+    const postMediaPreview = document.querySelector('#post-media-preview');
 
-    function updateMediaCount() {
-        const currentCount = mediaContainer.querySelectorAll('.media-item').length;
-        mediaCountSpan.textContent = `${currentCount}/${maxItems} items`;
-
-        mediaContainer.querySelectorAll('.media-item').forEach(item => {
-            const removeButton = item.querySelector('.remove-media-item');
-            if (removeButton) {
-                removeButton.style.display = currentCount > 1 ? 'inline-block' : 'none';
+    function generateMediaPreview(input, previewContainer, maxFiles, captionsContainer = null) {
+        previewContainer.innerHTML = '';
+        if (captionsContainer) captionsContainer.innerHTML = '';
+        const files = Array.from(input.files).slice(0, maxFiles);
+        const dt = new DataTransfer();
+        files.forEach((file, index) => {
+            const reader = new FileReader();
+            const previewItem = document.createElement('div');
+            previewItem.classList.add('media-preview-item');
+            previewItem.setAttribute('data-index', index);
+            if (file.type.startsWith('image/')) {
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    previewItem.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                reader.onload = function(e) {
+                    const video = document.createElement('video');
+                    video.src = e.target.result;
+                    video.controls = true;
+                    video.style.maxWidth = '100px';
+                    previewItem.appendChild(video);
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('audio/')) {
+                reader.onload = function(e) {
+                    const audio = document.createElement('audio');
+                    audio.src = e.target.result;
+                    audio.controls = true;
+                    previewItem.appendChild(audio);
+                };
+                reader.readAsDataURL(file);
             }
-        });
+            const removeBtn = document.createElement('button');
+            removeBtn.classList.add('remove-media-btn');
+            removeBtn.textContent = '×';
+            removeBtn.onclick = function(event) {
+                event.stopPropagation();
+                const idx = parseInt(previewItem.getAttribute('data-index'));
+                previewItem.remove();
+                if (captionsContainer) {
+                    const captionGroup = captionsContainer.querySelector(`.caption-group[data-index="${idx}"]`);
+                    if (captionGroup) captionGroup.remove();
+                }
+                const newFiles = Array.from(input.files).filter((_, i) => i !== idx);
+                const newDt = new DataTransfer();
+                newFiles.forEach(f => newDt.items.add(f));
+                input.files = newDt.files;
+                generateMediaPreview(input, previewContainer, maxFiles, captionsContainer);
+            };
+            previewItem.appendChild(removeBtn);
+            previewContainer.appendChild(previewItem);
 
-        if (addMediaBtn) {
-            addMediaBtn.disabled = currentCount >= maxItems;
-            addMediaBtn.classList.toggle('opacity-50', currentCount >= maxItems);
-        }
+            if (captionsContainer) {
+                const captionGroup = document.createElement('div');
+                captionGroup.classList.add('caption-group');
+                captionGroup.setAttribute('data-index', index);
+                const label = document.createElement('label');
+                label.textContent = `Caption for file ${index + 1}:`;
+                const textarea = document.createElement('textarea');
+                textarea.name = `captions[]`;
+                textarea.rows = 2;
+                textarea.placeholder = `Caption for ${file.name}`;
+                textarea.maxLength = 200;
+                captionGroup.appendChild(label);
+                captionGroup.appendChild(textarea);
+                captionsContainer.appendChild(captionGroup);
+            }
+
+            dt.items.add(file);
+        });
+        input.files = dt.files;
+        updateMediaCount(input, input === storyMediaInput ? storyMediaCountText : postMediaCountText, maxFiles);
     }
 
-    if (addMediaBtn) {
-        addMediaBtn.addEventListener('click', () => {
-            if (mediaContainer.querySelectorAll('.media-item').length >= maxItems) return;
-
-            const newItem = document.createElement('div');
-            newItem.classList.add('media-item');
-            newItem.setAttribute('data-index', itemIndex);
-
-            newItem.innerHTML = `
-                <div class="form-group">
-                    <label for="media_file_${itemIndex}">Upload File (Image/Video/Audio):</label>
-                    <input type="file" name="media_files[${itemIndex}]" id="media_file_${itemIndex}" accept="image/*,video/*,audio/*">
-                    <small>Max 50MB</small>
-                </div>
-                <div class="form-group">
-                    <label for="text_content_${itemIndex}">Or Add Text Content:</label>
-                    <textarea name="text_contents[${itemIndex}]" id="text_content_${itemIndex}" rows="2"></textarea>
-                </div>
-                <button type="button" class="remove-media-item">Remove</button>
-            `;
-
-            mediaContainer.appendChild(newItem);
-            itemIndex++;
-            updateMediaCount();
-        });
-
-        mediaContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('remove-media-item')) {
-                const item = event.target.closest('.media-item');
-                item.remove();
-                itemIndex = mediaContainer.querySelectorAll('.media-item').length;
-                updateMediaCount();
-            }
-        });
-
-        updateMediaCount();
+    function updateMediaCount(input, countText, maxFiles) {
+        const fileCount = input.files.length;
+        countText.textContent = `Media · ${fileCount}/${maxFiles} - You can add up to ${maxFiles} files.`;
     }
+
+    storyMediaInput?.addEventListener('change', function() {
+        generateMediaPreview(this, storyMediaPreview, 10, captionsContainer);
+    });
+
+    postMediaInput?.addEventListener('change', function() {
+        generateMediaPreview(this, postMediaPreview, 20);
+    });
 
     window.previewMedia = function(input) {
         const previewContainer = input.nextElementSibling;
@@ -369,7 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (input.files && input.files[0]) {
             const file = input.files[0];
             const reader = new FileReader();
-
             reader.onload = function(e) {
                 if (file.type.startsWith('image/')) {
                     const img = document.createElement('img');

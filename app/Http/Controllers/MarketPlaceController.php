@@ -28,6 +28,7 @@ class MarketPlaceController extends Controller
         return view('market.index', [
             'stories' => $stories,
             'items' => $items,
+            'user' => Auth::user(),
         ]);
     }
 

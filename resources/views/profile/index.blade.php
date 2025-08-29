@@ -20,6 +20,9 @@
         <div class="profile-info">
             <div class="top-row">
                 <h2>{{ $user->username }}</h2>
+                @if($user->is_verified)
+                     <i class="bi bi-check-circle-fill verified-badge" title="Verified User"></i>
+                 @endif
                 @if (auth()->id() === $user->id)
                     <button id="openEditForm" class="editbtn">Edit Profile</button>
                 @elseif (auth()->check())
@@ -27,7 +30,11 @@
                         data-user-id="{{ $user->id }}">
                         {{ auth()->user()->isFollowing($user) ? 'Following' : 'Follow' }}
                     </button>
-                    <button class="message-btn">Message</button>
+                    {{-- Fixed Form Action for Messaging --}}
+                    <form action="{{ route('conversations.create', ['user' => $user->id]) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="message-btn">Message</button>
+                    </form>
                     <button id="openReportModal" class="report-btn">Report User</button>
                 @endif
             </div>

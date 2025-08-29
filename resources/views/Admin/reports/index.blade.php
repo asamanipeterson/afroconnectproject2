@@ -1,33 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AfroConnect - Reports</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/mdi/css/materialdesignicons.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
-    <style>
-        body { display: flex; min-height: 100vh; }
-        .sidebar {
-            width: 250px;
-            background: #2c3e50;
-            color: white;
-            padding: 20px;
-            position: fixed;
-            height: 100%;
-        }
-        .sidebar a {
-            color: white;
-            display: block;
-            padding: 10px;
-            margin-bottom: 10px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .sidebar a:hover { background: #34495e; }
-        .sidebar a.active { background: #3498db; }
-        .main-panel {
+<style>
+    .main-panel {
             margin-left: 250px;
             padding: 20px;
             flex-grow: 1;
@@ -38,29 +10,11 @@
         .badge { font-size: 0.9em; }
         .btn-sm { margin-right: 5px; }
         .details-column { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h4 class="text-white mb-4">AfroConnect Admin</h4>
-        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="mdi mdi-view-dashboard me-2"></i> Dashboard
-        </a>
-        <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
-            <i class="mdi mdi-account-multiple me-2"></i> Users
-        </a>
-        <a href="" class="{{ request()->routeIs('admin.posts.index') ? 'active' : '' }}">
-            <i class="mdi mdi-post-outline me-2"></i> Posts
-        </a>
-        <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.index') ? 'active' : '' }}">
-            <i class="mdi mdi-flag me-2"></i> Reports
-        </a>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-panel">
-        <div class="content-wrapper">
+</style>
+@extends('Admin.dashboard')
+@section('adminContent')
+<div class="main-panel" style="background: #fff;">
+        <div class="content-wrapper" style="background: #fff;">
             <div class="row">
                 <div class="col-12 grid-margin">
                     <div class="card">
@@ -72,7 +26,7 @@
                             @if (session('error'))
                                 <div class="alert alert-danger">{{ session('error') }}</div>
                             @endif
-                            <!-- User Reports -->
+
                             <h5 class="mt-4">User Reports</h5>
                             <div class="table-responsive">
                                 <table class="table">
@@ -122,7 +76,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Post Reports -->
+
                             <h5 class="mt-4">Post Reports</h5>
                             <div class="table-responsive">
                                 <table class="table">
@@ -143,7 +97,7 @@
                                             <tr>
                                                 <td>{{ Str::limit($report->post->caption, 30, '...') }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.users.show', $report->post->user) }}">
+                                                    <a href="{{ route('admin.users.show', $report->post->user) }}" class="re">
                                                         {{ $report->post->user->username }}
                                                     </a>
                                                 </td>
@@ -180,6 +134,4 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

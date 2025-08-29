@@ -7,18 +7,9 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
-    <style>
-        .report-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-        .report-modal-content { background: white; width: 90%; max-width: 500px; margin: 100px auto; padding: 20px; border-radius: 8px; }
-        .report-modal-content h2 { margin-bottom: 20px; }
-        .report-modal-content .form-label { font-weight: 500; }
-        .report-modal-content .form-control { resize: vertical; }
-        .report-modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-        .verified-badge { color: #3498db; margin-left:0px; font-size: 0.9em; }
-    </style>
 @endsection
 
 @section('content')
@@ -30,7 +21,8 @@
                 $user = $firstPost->user;
                 $userHasStories = isset($stories[$user->id]) && $stories[$user->id]->isNotEmpty();
                 $shareUrl = urlencode(route('posts.show', $firstPost->id));
-                $shareText = urlencode($firstPost->caption ?: 'Check out this post!');
+                $shareText = urlencode($firstPost->caption ?: 'Check out this post on afroConnect!');
+                $shareHashtags = urlencode('afroConnect');
             @endphp
             <div class="post-card" data-post-id="{{ $firstPost->id }}">
                 <div class="post-header">
@@ -47,7 +39,7 @@
                                 {{ $user->username }}
                                 @if($user->is_verified)
                                 <i class="bi bi-check-circle-fill verified-badge" title="Verified User"></i>
-                            @endif
+                                @endif
                             </a>
                             <span class="post-time">{{ \App\Helpers\TimeFormatter::formatDiffForHumansAbbreviated($firstPost->created_at) }}</span>
                         </div>
@@ -60,7 +52,7 @@
                     <div class="post-menu-dropdown">
                         <div class="menu-dot"><i class="bi bi-three-dots"></i></div>
                         <div class="dropdown-content">
-                            <a href="#" class="dropdown-item report-post" data-post-id="{{ $firstPost->id }}"><i class="bi bi-flag"></i> Report</a>
+                            <a href="#" class="dropdown-item report-post" data-post-id="{{ $firstPost->id }}"><i class="bi bi-flag"></i>Report</a>
                             <a href="#" class="dropdown-item not-interested" data-post-id="{{ $firstPost->id }}"><i class="bi bi-eye-slash"></i> Not interested</a>
                             <a href="#" class="dropdown-item share-post" data-post-id="{{ $firstPost->id }}"><i class="bi bi-share"></i> Share</a>
                             <a href="{{ route('post.bookmark', $firstPost->id) }}" class="dropdown-item"><i class="bi bi-bookmark"></i> Saved</a>
@@ -165,7 +157,7 @@
                             <input type="text" class="comment-input" placeholder="Add a comment..." name="content" required>
                         </form>
                         <button type="button" class="submit-comment-button" data-post-id="{{ $firstPost->id }}">
-                            <svg width="30" height="30" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21.0808 4.08454c.0817-.26553.0099-.55446-.1865-.7509-.1964-.19644-.4854-.2682-.7509-.1865L1.75863 8.80399c-.2994.09213-.51001.36063-.52817.67336-.01816.31273.15995.60385.44668.72995l8.57186 3.7716 3.7716 8.5719c.1262.2867.4173.4648.73.4467.3127-.0182.5812-.2288.6734-.5282l5.6568-18.38476ZM10.6505 12.5168 4.12458 9.64541 19.2305 4.99743l-4.648 15.10597-2.8714-6.526 3.3496-3.3495L14 9.16725l-3.3495 3.34955Z"></path></svg>
+                            <svg width="30" height="30" fill="currentColor" viewBox="0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21.0808 4.08454c.0817-.26553.0099-.55446-.1865-.7509-.1964-.19644-.4854-.2682-.7509-.1865L1.75863 8.80399c-.2994.09213-.51001.36063-.52817.67336-.01816.31273.15995.60385.44668.72995l8.57186 3.7716 3.7716 8.5719c.1262.2867.4173.4648.73.4467.3127-.0182.5812-.2288.6734-.5282l5.6568-18.38476ZM10.6505 12.5168 4.12458 9.64541 19.2305 4.99743l-4.648 15.10597-2.8714-6.526 3.3496-3.3495L14 9.16725l-3.3495 3.34955Z"></path></svg>
                         </button>
                     </div>
                 </div>
@@ -190,8 +182,8 @@
                                 <textarea class="form-control" id="details-{{ $firstPost->id }}" name="details" rows="4" maxlength="500"></textarea>
                             </div>
                             <div class="report-modal-actions">
-                                <button type="button" class="btn btn-secondary cancel-report-btn">Cancel</button>
-                                <button type="submit" class="btn btn-danger">Submit Report</button>
+                                <button type="button" class="cancel-btn btn-danger cancel-report-btn">Cancel</button>
+                                <button type="submit" class="submits-btn btn-danger">Submit Report</button>
                             </div>
                         </form>
                     </div>
@@ -225,38 +217,61 @@
                         @endif
                         <div class="social-media-list">
                             <h3>Share to Social Media</h3>
-                            <a href="https://twitter.com/intent/tweet?url={{ $shareUrl }}&text={{ $shareText }}" target="_blank" class="social-media-button twitter">
-                                <i class="fab fa-twitter"></i> Twitter/X
-                            </a>
-                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ $shareUrl }}" target="_blank" class="social-media-button facebook">
-                                <i class="fab fa-facebook-f"></i> Facebook
-                            </a>
-                            <a href="https://api.whatsapp.com/send?text={{ $shareText }}%20{{ $shareUrl }}" target="_blank" class="social-media-button whatsapp">
-                                <i class="fab fa-whatsapp"></i> WhatsApp
-                            </a>
-                            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ $shareUrl }}" target="_blank" class="social-media-button linkedin">
-                                <i class="fab fa-linkedin-in"></i> LinkedIn
-                            </a>
-                            <a href="mailto:?subject=Check out this post&body={{ $shareText }}%20{{ $shareUrl }}" class="social-media-button email">
-                                <i class="fas fa-envelope"></i> Email
-                            </a>
-                            <a href="https://www.instagram.com/share?url={{ $shareUrl }}&text={{ $shareText }}" target="_blank" class="social-media-button instagram">
-                                <i class="fab fa-instagram"></i> Instagram
-                            </a>
-                            <a href="https://www.tiktok.com/share?url={{ $shareUrl }}&text={{ $shareText }}" target="_blank" class="social-media-button tiktok">
-                                <i class="fab fa-tiktok"></i> TikTok
-                            </a>
-                            <a href="https://www.youtube.com/share?url={{ $shareUrl }}&text={{ $shareText }}" target="_blank" class="social-media-button youtube">
-                                <i class="fab fa-youtube"></i> YouTube
-                            </a>
-                            <a href="https://www.snapchat.com/share?url={{ $shareUrl }}&text={{ $shareText }}" target="_blank" class="social-media-button snapchat">
-                                <i class="fab fa-snapchat-ghost"></i> Snapchat
-                            </a>
+                            <div class="social-media-grid">
+                                <a href="https://twitter.com/intent/tweet?url={{ $shareUrl }}&text={{ $shareText }}&hashtags={{ $shareHashtags }}" target="_blank" class="social-media-button twitter">
+                                    <div class="social-media-icon"><i class="fab fa-twitter"></i></div>
+                                    <span>Twitter/X</span>
+                                </a>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ $shareUrl }}" target="_blank" class="social-media-button facebook">
+                                    <div class="social-media-icon"><i class="fab fa-facebook-f"></i></div>
+                                    <span>Facebook</span>
+                                </a>
+                                <a href="https://api.whatsapp.com/send?text={{ $shareText }}%20{{ $shareUrl }}" target="_blank" class="social-media-button whatsapp">
+                                    <div class="social-media-icon"><i class="fab fa-whatsapp"></i></div>
+                                    <span>WhatsApp</span>
+                                </a>
+                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ $shareUrl }}" target="_blank" class="social-media-button linkedin">
+                                    <div class="social-media-icon"><i class="fab fa-linkedin-in"></i></div>
+                                    <span>LinkedIn</span>
+                                </a>
+                                <a href="https://www.instagram.com/?url={{ $shareUrl }}" target="_blank" class="social-media-button instagram">
+                                    <div class="social-media-icon"><i class="fab fa-instagram"></i></div>
+                                    <span>Instagram</span>
+                                </a>
+                                <a href="https://pinterest.com/pin/create/button/?url={{ $shareUrl }}&description={{ $shareText }}" target="_blank" class="social-media-button pinterest">
+                                    <div class="social-media-icon"><i class="fab fa-pinterest"></i></div>
+                                    <span>Pinterest</span>
+                                </a>
+                                <a href="https://reddit.com/submit?url={{ $shareUrl }}&title={{ $shareText }}" target="_blank" class="social-media-button reddit">
+                                    <div class="social-media-icon"><i class="fab fa-reddit"></i></div>
+                                    <span>Reddit</span>
+                                </a>
+                                <a href="https://t.me/share/url?url={{ $shareUrl }}&text={{ $shareText }}" target="_blank" class="social-media-button telegram">
+                                    <div class="social-media-icon"><i class="fab fa-telegram"></i></div>
+                                    <span>Telegram</span>
+                                </a>
+                                <a href="https://www.tiktok.com/share?url={{ $shareUrl }}" target="_blank" class="social-media-button tiktok">
+                                    <div class="social-media-icon"><i class="fab fa-tiktok"></i></div>
+                                    <span>TikTok</span>
+                                </a>
+                                <a href="https://www.snapchat.com/scan?attachmentUrl={{ $shareUrl }}" target="_blank" class="social-media-button snapchat">
+                                    <div class="social-media-icon"><i class="fab fa-snapchat"></i></div>
+                                    <span>Snapchat</span>
+                                </a>
+                                <a href="mailto:?subject=Check out this post on afroConnect&body={{ $shareText }}%0A%0A{{ $shareUrl }}" class="social-media-button email">
+                                    <div class="social-media-icon"><i class="fas fa-envelope"></i></div>
+                                    <span>Email</span>
+                                </a>
+                                <button class="social-media-button copy-link" onclick="copyToClipboard('{{ route('posts.show', $firstPost->id) }}')">
+                                    <div class="social-media-icon"><i class="fas fa-link"></i></div>
+                                    <span>Copy Link</span>
+                                </button>
+                            </div>
                         </div>
                         @if(Auth::check())
                             <div class="share-modal-actions">
                                 <button class="cancel-share-btn">Cancel</button>
-                                <button class="confirm-share-btn" data-post-id="{{ $firstPost->id }}">Share with Followers</button>
+                                <button class="confirm-share-btn" data-post-id="{{ $firstPost->id }}">Share</button>
                             </div>
                         @endif
                     </div>
@@ -273,21 +288,28 @@
     <script src="{{ asset('js/welcome.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Report Modal Logic
             const reportButtons = document.querySelectorAll('.report-post');
             reportButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     const postId = button.getAttribute('data-post-id');
                     const modal = document.getElementById(`reportModal-${postId}`);
-                    modal.style.display = 'block';
+                    modal.style.display = 'flex';
+                    setTimeout(() => {
+                        modal.classList.add('show');
+                        document.body.classList.add('modal-open');
+                    }, 10);
                 });
             });
 
-            const cancelButtons = document.querySelectorAll('.cancel-report-btn');
-            cancelButtons.forEach(button => {
+            const cancelReportButtons = document.querySelectorAll('.cancel-report-btn');
+            cancelReportButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const modal = button.closest('.report-modal');
+                    modal.classList.remove('show');
                     modal.style.display = 'none';
+                    document.body.classList.remove('modal-open');
                 });
             });
 
@@ -301,6 +323,30 @@
                     detailsTextarea.required = select.value === 'other';
                 });
             });
+
+            // Copy to clipboard function
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Link copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        alert('Link copied to clipboard!');
+                    } catch (err) {
+                        alert('Failed to copy link. Please try again.');
+                    }
+                    document.body.removeChild(textArea);
+                });
+            }
+
+            // Make copyToClipboard available globally
+            window.copyToClipboard = copyToClipboard;
         });
     </script>
 @endsection

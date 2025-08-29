@@ -7,28 +7,33 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\PostMedia;
 use App\Models\User;
-use App\Notifications\PostShared;
+use App\Models\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+
 
 class PostController extends Controller
 {
     public function store(Request $request)
     {
-        // // Debug incoming request data and uploaded files
-
-
         $request->validate([
-            'caption' => 'nullable|string|max:2200',
-            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avif|max:50000',
+            'caption' => 'nullable|string|max:1000',
+            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avif,mp3,wav,ogg|max:50000',
             'text_contents.*' => 'nullable|string|max:1000',
-            'sound_files.*' => 'nullable|file|mimes:mp3,wav|max:10000',
         ]);
 
-        if (empty($request->file('media_files')) && empty($request->input('text_contents'))) {
+        // Check if at least one media file or non-empty text content is provided
+        $textContents = $request->input('text_contents', []);
+        $hasValidText = !empty(array_filter($textContents, fn($text) => !empty(trim($text))));
+        if (empty($request->file('media_files')) && !$hasValidText) {
             throw ValidationException::withMessages([
-                'general' => 'You must provide at least one media file or text content.'
+                'general' => 'You must provide at least one media file or text content.',
             ]);
+        }
+
+        if (count($request->file('media_files', [])) > 20) {
+            throw ValidationException::withMessages(['media_files' => 'You can upload up to 20 media files.']);
         }
 
         $user = Auth::user();
@@ -45,47 +50,37 @@ class PostController extends Controller
 
         // Handle Media Files
         if ($request->hasFile('media_files')) {
-            foreach ($request->file('media_files') as $index => $file) {
+            foreach ($request->file('media_files') as $file) {
                 if (!$file) continue;
 
                 $mimeType = $file->getMimeType();
-                $fileType = str_starts_with($mimeType, 'image') ? 'image' : (str_starts_with($mimeType, 'video') ? 'video' : 'unknown');
+                $fileType = str_starts_with($mimeType, 'image') ? 'image' : (str_starts_with($mimeType, 'video') ? 'video' : (str_starts_with($mimeType, 'audio') ? 'audio' : 'unknown'));
 
                 $path = $file->store('posts/media', 'public');
-
-                $soundPath = null;
-                if ($request->hasFile("sound_files.$index")) {
-                    $soundPath = $request->file("sound_files.$index")->store('posts/audio', 'public');
-                }
 
                 PostMedia::create([
                     'post_id' => $post->id,
                     'file_path' => $path,
                     'file_type' => $fileType,
                     'mime_type' => $mimeType,
-                    'sound_path' => $soundPath,
+                    'sound_path' => null,
                     'order' => $order++,
                 ]);
             }
         }
 
         // Handle Text Content
-        if ($request->input('text_contents')) {
-            foreach ($request->input('text_contents') as $index => $text) {
-                if (empty($text)) continue;
-
-                $soundPath = null;
-                if ($request->hasFile("sound_files.$index")) {
-                    $soundPath = $request->file("sound_files.$index")->store('posts/audio', 'public');
-                }
+        if ($hasValidText) {
+            foreach ($textContents as $text) {
+                if (empty(trim($text))) continue;
 
                 PostMedia::create([
                     'post_id' => $post->id,
                     'file_path' => null,
                     'file_type' => 'text',
                     'mime_type' => null,
-                    'text_content' => $text,
-                    'sound_path' => $soundPath,
+                    'text_content' => trim($text),
+                    'sound_path' => null,
                     'order' => $order++,
                 ]);
             }
@@ -97,15 +92,13 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::with(['user', 'likes', 'comments.replies.user'])->findOrFail($id);
-
-        // If the post belongs to a post group, fetch all related media in the same group
         $media = Post::where('post_group_id', $post->post_group_id)
             ->with('media')
             ->orderBy('created_at', 'desc')
             ->get();
-
         return view('posts.show', compact('post', 'media'));
     }
+
     public function report(Post $post)
     {
         return response()->json([
@@ -126,19 +119,16 @@ class PostController extends Controller
     {
         $post->media()->delete();
         $post->delete();
-
         return redirect()->back()->with('success', 'Post deleted successfully.');
     }
 
     public function modal($id)
     {
         $post = Post::with(['user', 'likes', 'comments.replies.user'])->findOrFail($id);
-
         $media = Post::where('post_group_id', $post->post_group_id)
             ->with('media')
             ->orderBy('created_at', 'desc')
             ->get();
-
         return response()->json([
             'html' => view('posts.show', compact('post', 'media'))->render(),
         ]);
@@ -148,20 +138,43 @@ class PostController extends Controller
     {
         $request->validate([
             'post_id' => 'required|exists:posts,id',
-            'follower_ids' => 'required|array',
-            'follower_ids.*' => 'exists:users,id'
+            'followers' => 'required|array',
+            'followers.*' => 'exists:users,id',
         ]);
 
         $post = Post::findOrFail($request->post_id);
-        $followers = User::whereIn('id', $request->follower_ids)->get();
+        $followers = User::whereIn('id', $request->followers)->get();
+
+        \Log::info('Starting share process for post: ' . $post->id);
+        \Log::info('Followers to notify: ' . $followers->pluck('id')->implode(','));
 
         foreach ($followers as $follower) {
-            // Ensure the user is actually followed by the authenticated user
             if (Auth::user()->isFollowing($follower)) {
-                $follower->notify(new PostShared($post, Auth::user()));
+                \Log::info('Notifying follower: ' . $follower->id);
+                $follower->notify(new \App\Notifications\PostShared($post, Auth::user()));
+                \Log::info('Notification sent to follower: ' . $follower->id);
             }
         }
 
-        return response()->json(['success' => true]);
+        \Log::info('Share process completed');
+        return response()->json(['message' => 'Post shared successfully']);
+    }
+    public function shareWithPost(Request $request, Post $post)
+    {
+        // This method expects the post ID in the URL
+        $request->validate([
+            'followers' => 'required|array',
+            'followers.*' => 'exists:users,id',
+        ]);
+
+        $followers = User::whereIn('id', $request->followers)->get();
+
+        foreach ($followers as $follower) {
+            if (Auth::user()->isFollowing($follower)) {
+                $follower->notify(new \App\Notifications\PostShared($post, Auth::user()));
+            }
+        }
+
+        return response()->json(['message' => 'Post shared successfully']);
     }
 }

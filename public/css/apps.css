@@ -15,7 +15,7 @@ body {
 }
 
 body.dark-mode {
-  background: #1a1a1a;
+  background: #000;
   color: #e9ecef;
 }
 
@@ -50,7 +50,7 @@ body.modal-open {
 }
 
 body.dark-mode .main-layout {
-  background: #1a1a1a;
+  background: #000;
 }
 
 @media (max-width: 1387px) {

@@ -105,4 +105,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Report::class, 'reported_user_id');
     }
+    // app/Models/User.php
+
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'participants')
+            ->withTimestamps()
+            ->latest();
+    }
 }

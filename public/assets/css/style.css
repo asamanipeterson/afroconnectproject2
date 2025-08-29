@@ -19219,7 +19219,8 @@ body.avgrund-active {
     color: #000000;
     font-size: .75rem;
     font-weight: 700; }
-  .context-menu-list .context-menu-item.context-menu-hover {
+  .context-menu-list .context-
+  .context-menu-hover {
     background: #000000; }
     .context-menu-list .context-menu-item.context-menu-hover span {
       color: #ffffff; }
@@ -20765,11 +20766,15 @@ div.tagsinput {
 }
 
 /* Sidebar */
- .sidebar {
+ .sidebar{
     background:#2c3e50;
     font-weight: normal;
+    position: fixed;
+    top:0;
+    z-index: 99999;
     padding: 0;
     width:240px;
+    height: 100%;
     z-index: 11;
     transition: width 0.25s ease, background 0.25s ease;
     -webkit-transition: width 0.25s ease, background 0.25s ease;
@@ -21124,6 +21129,9 @@ div.tagsinput {
       /* background: #0f1015; */
       color: color(white);
     }
+    .sidebar .nav .menu-items{
+        margin:10px 0;
+    }
     .sidebar .nav .menu-items:nth-child(5n+1) .nav-link .menu-icon i {
       color: #0090e7;
     }
@@ -21145,7 +21153,7 @@ div.tagsinput {
   .sidebar-offcanvas {
     position: fixed;
     max-height: calc(100vh - 70px);
-    top: 70px;
+    top:0px;
     bottom: 0;
     overflow: auto;
     right: -244px;

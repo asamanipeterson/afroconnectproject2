@@ -38,10 +38,19 @@ class AuthController extends Controller
     public function loginLogic(Request $request)
     {
         $credentials = $request->only('email', 'password');
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect(route('welcome'));
+
+            // Check if the user is an admin (e.g., based on a 'is_admin' column)
+            $user = Auth::user();
+            if ($user->user_type ?? false) { // Adjust 'is_admin' to your actual column name
+                return redirect()->route('admin.dashboard');
+            } else {
+                return redirect()->route('welcome');
+            }
         }
+
         return back()->withErrors(['email' => 'Invalid credentials.']);
     }
 

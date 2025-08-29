@@ -45,7 +45,7 @@ class UserManagementController extends Controller
             $user->update(['is_verified' => true]);
             return redirect()->route('admin.users.index')->with('success', 'User verified successfully.');
         }
-        return redirect()->route('admin.users.index')->with('error', 'User has ' . $user->followers_count . ' followers, needs at least 1 for verification.');
+        return redirect()->route('admin.dashboard')->with('error', 'User has ' . $user->followers_count . ' followers, needs at least 1 for verification.');
     }
 
     public function suspend(User $user)
@@ -54,18 +54,18 @@ class UserManagementController extends Controller
             $user->update(['is_suspended' => true]);
             return redirect()->route('admin.users.index')->with('success', 'User suspended successfully.');
         }
-        return redirect()->route('admin.users.index')->with('error', 'User has insufficient reports to be suspended.');
+        return redirect()->route('admin.dashboard')->with('error', 'User has insufficient reports to be suspended.');
     }
 
     public function unsuspend(User $user)
     {
         $user->update(['is_suspended' => false]);
-        return redirect()->route('admin.users.index')->with('success', 'User unsuspended successfully.');
+        return redirect()->route('admin.dashboard')->with('success', 'User unsuspended successfully.');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.');
     }
 }

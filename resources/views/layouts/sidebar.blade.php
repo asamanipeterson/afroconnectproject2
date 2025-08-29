@@ -63,9 +63,12 @@
         </div>
         <span class="nav-label">Notifications</span>
     </a>
-    <a href="" class="nav-item {{ request()->routeIs('messages.index') ? 'active' : '' }}">
-        <i class="bi bi-chat"></i><span>Messages</span>
+   @if(isset($latestConversation))
+    <a href="{{ route('conversations.show', $latestConversation) }}" class="nav-item">
+        <i class="bi bi-chat"></i>
+        <span>Messages</span>
     </a>
+    @endif
     <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">
         <i class="bi bi-plus-circle"></i><span>Create Story</span>
     </a>
@@ -231,4 +234,27 @@
 </div>
 
 <script src="{{ asset('js/sidebar.js') }}"></script>
+<script>
+function createConversation(event, url) {
+    event.preventDefault(); // Prevent default link behavior
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = response.url; // Redirect to the response URL
+        } else {
+            console.error('Error:', response.status);
+            if (response.status === 403) {
+                alert('Access forbidden. Please check your permissions.');
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
 

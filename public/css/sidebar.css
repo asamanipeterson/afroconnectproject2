@@ -12,7 +12,7 @@ body {
 }
 
 body.dark-mode {
-    background-color: #1a1a1a;
+    background-color: #000;
     color: #e9ecef;
 }
 
@@ -31,7 +31,8 @@ body.dark-mode {
 }
 
 body.dark-mode .sidebar {
-    background-color: #1a1a1a;
+    background-color: #000;
+    border:1px solid #55555551;
 }
 
 /* Profile Box Styles */
@@ -42,11 +43,14 @@ body.dark-mode .sidebar {
     text-align: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 1rem;
+    border:2px solid #999;
 }
 
 body.dark-mode .profile-box {
-    background: #2c2c2c;
+    background: #000;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    border:2px solid #55555551;
+    border-radius:10px;
 }
 
 .cover-picture {
@@ -67,7 +71,7 @@ body.dark-mode .profile-box {
 }
 
 body.dark-mode .cover-placeholder {
-    background: #333;
+    background: #3b3a3a51;
 }
 
 .cover-placeholder i {
@@ -95,7 +99,7 @@ body.dark-mode .cover-placeholder span {
 }
 
 body.dark-mode .profile-picture {
-    border: 4px solid #2c2c2c;
+    border: 4px solid #55555551;
 }
 
 body.dark-mode .profile-box h3 {
@@ -141,17 +145,18 @@ body.dark-mode .stats span {
 }
 
 .btn {
-    background: #0056b3;
-    color: white;
+    background:transparent;
+    color:#0478f5;
     padding: 0.5rem 1rem;
     border-radius: 5px;
+    border:1px solid #0056b3;
     text-decoration: none;
     transition: background 0.3s ease;
     display: inline-block;
 }
 
 .btn:hover {
-    background: #0378f5;
+    background: #0057b338;
 }
 
 /* Navigation & Nav Items */
@@ -175,7 +180,7 @@ body.dark-mode .stats span {
 }
 
 body.dark-mode .navigation {
-    background: #2c2c2c;
+    background: #000;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
@@ -213,15 +218,15 @@ body.dark-mode .nav-label {
 .nav-item {
     display: flex;
     align-items: center;
-    padding: .5rem 0.5rem;
+    padding:.5rem 1rem;
     color: #333;
     text-decoration: none;
     border-radius: 5px;
-    margin-bottom: 0.7rem;
+    margin-bottom: 1.3rem;
     white-space: nowrap;
     font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    font-size: 14px;
+    font-size:16px;
 }
 
 
@@ -229,8 +234,12 @@ body.dark-mode .nav-label {
     background: #0056b3;
     color: white;
 }
+.nav-item .active:hover {
+    background: #2f8ff6;
+    color: white;
+}
 .nav-item:hover {
-    background: #34495e;
+    background: #01254b;
 }
 
 
@@ -630,7 +639,7 @@ body.dark-mode .settings-modal .close-btn {
 }
 
 body.dark-mode .search-modal-content {
-    background: #2c2c2c;
+    background: #000;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
@@ -783,7 +792,7 @@ body.dark-mode .search-modal-result-item a {
     }
     .navigation {
         height: 100vh;
-        width: 60px;
+        width:80px;
         padding: 0;
         background: #ffffff;
         display: flex;
@@ -792,6 +801,7 @@ body.dark-mode .search-modal-result-item a {
         position: fixed;
         left: 0;
         top: 0;
+        border-right:2px solid  #55555551;
     }
     .navigation a {
         font-size: 16px;
@@ -807,10 +817,10 @@ body.dark-mode .search-modal-result-item a {
         display: block;
     }
     body.dark-mode .navigation {
-        background: #2c2c2c;
+        background: #000;
     }
     body.dark-mode .nav-item {
-        border-bottom: 1px solid #444;
+        border-bottom: 2px solid #55555551;
         color: #fff;
     }
     .nav-item i {

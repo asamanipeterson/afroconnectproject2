@@ -25,14 +25,29 @@ body.dark {
 }
 /* style the message button */
 .message-btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding:5px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
+    padding: 5px 12px;
+    border-radius: 8px;
     font-size: 0.85rem;
+    font-weight:500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #007bff;
+    margin-left:10px;
+    background-color: transparent;
+    color: #007bff;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+.message-btn:hover{
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: #007bff;
+}
+body.dark-mode .message-btn:hover{
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: #007bff;
+}
+body.dark-mode .message-btn{
+     color: #66b3ff;
 }
 .profile-header {
     display: flex;
@@ -97,12 +112,13 @@ body.dark {
     padding: 5px 12px;
     border-radius: 8px;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight:500;
     cursor: pointer;
     transition: all 0.2s;
     border: 1px solid #007bff;
-    background-color: #007bff;
-    color: white;
+
+    background-color: transparent;
+    color: #007bff;
     font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
@@ -111,11 +127,10 @@ body.dark-mode .follow-btn {
 }
 
 .follow-btn:hover {
-    background-color: #0069d9;
+    background-color: rgba(0, 123, 255, 0.1);
     border-color: #0062cc;
 }
 body.dark-mode .follow-btn:hover {
-    background-color: #007bff;
     border-color: #007bff;
 }
 
@@ -134,21 +149,32 @@ body.dark-mode .follow-btn.following {
 body.dark-mode .follow-btn.following:hover {
     background-color: rgba(102, 179, 255, 0.1);
 }
-
-.editbtn {
-    background: #007bff;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    border: none;
+.verified-badge { color: #3498db; margin-left:0px; font-size: 0.9em; }
+.editbtn{
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight:500;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.2s;
+    border: 1px solid #007bff;
+    margin-left:10px;
+    background-color: transparent;
+    color: #007bff;
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .editbtn:hover {
-    background: #0056b3;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: #007bff;
 }
-
+body.dark-mode .editbtn{
+     color: #66b3ff;
+}
+body.dark-mode .editbtn:hover{
+    background-color: rgba(102, 179, 255, 0.1);
+}
 .posts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -316,4 +342,58 @@ body.dark .edit-modal-content textarea {
         width: 95%;
         padding: 20px;
     }
+}
+.report-btn{
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight:500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgb(230, 8, 8);
+
+    background-color: transparent;
+    color: rgb(230, 8, 8);
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+.report-btn:hover{
+    background-color: rgba(255, 0, 0, 0.1);
+    border-color: rgb(230, 8, 8);
+}
+body.dark-mode .report-btn{
+    color: rgb(255, 54, 54);
+}
+body.dark-mode .report-btn:hover{
+    background-color: rgba(255, 0, 0, 0.1);
+    border-color: rgb(230, 8, 8);
+}
+.text-post p{
+    font-size:25px;
+    text-align:center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top:200px;
+    color:#fff;
+}
+.remove-image {
+    /* background-color: #ff4444; */
+    color:#cc0000;
+    border: none;
+    margin-top: 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    position: absolute;
+    top:5px;
+    left:150px;
+    /* margin-left: 10px; */
+}
+.remove-image:hover {
+    color: #cc0000;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 15px;
 }

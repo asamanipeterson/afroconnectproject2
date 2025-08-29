@@ -2,18 +2,19 @@
 
 namespace App\Notifications;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 
-class PostShared extends Notification
+class PostShared extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $post;
-    protected $sharer;
+    public $post;
+    public $sharer;
 
     public function __construct(Post $post, User $sharer)
     {
@@ -23,16 +24,24 @@ class PostShared extends Notification
 
     public function via($notifiable)
     {
-        return ['database']; // You can add 'mail' or other channels if needed
+        return ['database']; // Or ['mail', 'database'] if you want email too
     }
 
-    public function toArray($notifiable)
+    public function toDatabase($notifiable)
     {
         return [
+            'message' => $this->sharer->username . ' shared a post with you!',
             'post_id' => $this->post->id,
             'sharer_id' => $this->sharer->id,
-            'sharer_username' => $this->sharer->username,
-            'message' => "{$this->sharer->username} shared a post with you."
         ];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('New Post Shared With You')
+            ->line($this->sharer->username . ' shared a post with you!')
+            ->action('View Post', url('/posts/' . $this->post->id))
+            ->line('Thank you for using our application!');
     }
 }

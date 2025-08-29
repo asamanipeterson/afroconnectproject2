@@ -5,15 +5,15 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'AfroConnect')</title>
 @yield('styles')
-<link rel="stylesheet" href="{{ asset('css/apps.css') }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-<link rel="shortcut icon" href="assets/images/favicon.png" />
-<link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
+        <link rel="stylesheet" href="{{ asset('css/apps.css') }}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <link rel="shortcut icon" href="assets/images/favicon.png" />
+        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
 
         <link rel="stylesheet" href="{{ asset('css/apps.css') }}">
         <link rel="stylesheet" href="{{ asset('css/topbar.css') }}">
         <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
-        {{-- <link rel="stylesheet" href="{{ asset('css/main_content.css') }}"> --}}
+        <link rel="stylesheet" href="{{ asset('css/main_content.css') }}">
         <link rel="stylesheet" href="{{ asset('css/rightbar.css') }}">
         {{-- <link rel="stylesheet" href="{{ asset('css/rightbar.css') }}"> --}}
         <link rel="preconnect" href="https://fonts.googleapis.com">

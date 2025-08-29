@@ -504,41 +504,43 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.querySelectorAll('.confirm-share-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const postId = this.getAttribute('data-post-id');
-            const modal = this.closest('.share-modal');
-            const checkboxes = modal.querySelectorAll('input[name="followers"]:checked');
-            const followerIds = Array.from(checkboxes).map(cb => cb.value);
+    button.addEventListener('click', function () {
+        const postId = this.getAttribute('data-post-id');
+        const modal = this.closest('.share-modal');
+        const checkboxes = modal.querySelectorAll('input[name="followers"]:checked');
+        const followers = Array.from(checkboxes).map(cb => cb.value); // Change from follower_ids to followers
 
-            if (followerIds.length === 0) {
-                alert('Please select at least one follower to share with.');
-                return;
+        if (followers.length === 0) {
+            alert('Please select at least one follower to share with.');
+            return;
+        }
+
+        fetch('/posts/share', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                post_id: postId,
+                followers: followers // Change from follower_ids to followers
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message || 'Failed to share post'); });
             }
-
-            fetch('/posts/share', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    post_id: postId,
-                    follower_ids: followerIds
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Post shared successfully!');
-                    modal.style.display = 'none';
-                } else {
-                    alert('Failed to share post: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while sharing the post.');
-            });
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || 'Post shared successfully!');
+            modal.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while sharing the post.');
         });
     });
+});
 });

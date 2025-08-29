@@ -6,7 +6,7 @@
     background-color: #f0f2f5;
 }
 body.dark-mode .main-contents {
-    background-color: #18191a;
+    background-color: #000;
 }
 /* Image Gallery Section */
 .image-gallery-container {
@@ -24,7 +24,7 @@ body.dark-mode .main-contents {
     overflow: hidden;
 }
 body.dark-mode .main-image-wrapper {
-    background-color: #242526;
+    background-color: #000;
 }
 .main-image {
     position: absolute;
@@ -112,7 +112,7 @@ body.dark-mode .placeholder-image-main {
     margin-bottom: 24px;
 }
 body.dark-mode .details-header {
-    background-color: #242526; /* Dark mode background for details header */
+    background-color: #000; /* Dark mode background for details header */
 }
 .item-title {
     font-size: 28px;
@@ -149,7 +149,7 @@ body.dark-mode .item-listed {
 body.dark-mode .details-body .details-card,
 body.dark-mode .details-body .seller-info-card,
 body.dark-mode .details-body .description-card {
-    background-color: #242526; /* Dark mode background for cards */
+    background-color: #000; /* Dark mode background for cards */
 }
 .details-body h3 {
     font-size: 18px;

@@ -33,7 +33,7 @@
                 <h3>Details</h3>
                 <p><strong>Condition:</strong> {{ $item->condition }}</p>
                 <p><strong>Category:</strong> {{ $item->category }}</p>
-                <p><strong>Location:</strong> {{ $item->location }}</p>
+                <p><strong>Location:</strong>📍 {{ $item->location }}</p>
             </div>
 
             <div class="seller-info-card">

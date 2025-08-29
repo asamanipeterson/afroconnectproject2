@@ -1,10 +1,9 @@
+@include('layouts.head')
 
-@section('styles')
-    <link rel="stylesheet" href="{{ asset('css/main_content.css') }}">
 <div class="main-content">
     @if (!Request::is('user/*'))
-        {{-- @if(!Request::is('marketplace') && !Request::is('marketplace/*')) --}}
-            <div class="story-bar">
+        <!-- Story Bar -->
+        <div class="story-bar">
             @php
                 $userHasStories = isset($stories[auth()->id()]) && $stories[auth()->id()]->isNotEmpty();
             @endphp
@@ -12,7 +11,7 @@
                 <div class="story-avatar-wrapper @if($userHasStories) has-stories @endif">
                     @if(auth()->user()->profile_picture)
                         <img src="{{ auth()->user()->profile_picture_url }}" class="story-avatar" alt="Your Profile"
-                        @if($userHasStories) onclick="openStoryViewer({{ auth()->id() }})" @endif>
+                             @if($userHasStories) onclick="openStoryViewer({{ auth()->id() }})" @endif>
                     @else
                         <i class="bi bi-person-circle story-avatar"
                            @if($userHasStories) onclick="openStoryViewer({{ auth()->id() }})" @endif></i>
@@ -34,55 +33,52 @@
                 @endif
             @endforeach
         </div>
-{{-- @endif --}}
+
+        <!-- Story Creation Modal -->
         <div class="modal" id="storyCreationModal">
             <div class="modal-content">
                 <div class="modal-headers">
-                    <h2>Create Stories</h2>
+                    <h2>Create Story</h2>
                     <button class="close-btn" id="closeStoryCreationModal">×</button>
                 </div>
                 <div class="form-container">
                     <form action="{{ route('stories.store') }}" method="POST" enctype="multipart/form-data" id="storyCreationForm">
                         @csrf
-                        <div id="story-items-container">
-                            <div class="story-item-block" data-index="0">
-                                <div class="form-group">
-                                    <label>Caption:</label>
-                                    <input type="text" name="caption[]" placeholder="Add a caption">
+                        <div class="photo-section">
+                            <label for="media-upload-story" class="photo-upload-box">
+                                <div class="upload-icon-wrapper">
+                                    <span class="upload-icon">📸</span>
                                 </div>
-                                <div class="form-group">
-                                    <label>Upload Media (Image/Video):</label>
-                                    <input type="file" name="media[]" accept="image/*,video/*" onchange="previewMedia(this)">
-                                    <div class="media-preview mt-2"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Text Story:</label>
-                                    <textarea name="text_content[]" rows="3" placeholder="Write something..."></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label>Background Color:</label>
-                                    <input type="color" name="background[]" value="#3B82F6" class="color-picker" style="width: 100px; color:#3b82f6;">
-                                </div>
-                                <hr>
-                            </div>
+                                <p class="add-photos-text">Add media (images, videos, audio)</p>
+                                <p class="drag-drop-text">or drag and drop</p>
+                                <input type="file" id="media-upload-story" name="media[]" multiple accept="image/jpeg,image/png,image/gif,video/mp4,video/quicktime" class="photo-input">
+                            </label>
+                            <p class="media-count" id="story-media-count">Media · 0/10 - You can add up to 10 files.</p>
+                            <div class="media-preview" id="story-media-preview"></div>
+                            <div class="captions-container" id="captions-container"></div>
                         </div>
-                        <button type="button" id="addStoryBlock" class="story-btn">+ Add Another Story</button>
-                        <span id="story-count" class="ml-2">1/10 stories</span>
+                        <div class="form-group">
+                            <label for="text_content">Text Content (Optional):</label>
+                            <textarea name="text_content" id="text_content" rows="3" placeholder="Write something..."></textarea>
+                            <small>Max 1000 characters.</small>
+                        </div>
                         <div class="form-submit-container">
-                            <button type="submit" class="story-btn submit-btn">Submit Stories</button>
+                            <button type="submit" class="submit-btn">Create Story</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
+        <!-- Story Viewer Modal -->
         <div id="storyViewerModal" class="story-viewer-modal">
             <span class="close-story-viewer-btn" onclick="closeStoryViewer()">×</span>
             <div class="story-viewer-content">
-                <div class="story-slider"></div>
+                <div class="story-slider" id="storySlider"></div>
             </div>
         </div>
 
+        <!-- Post Creation Section -->
         <div class="post-creation-section">
             @if(auth()->user()->profile_picture)
                 <img src="{{ auth()->user()->profile_picture_url }}" class="avatar" alt="Profile Picture">
@@ -99,7 +95,7 @@
     <div class="content">
         @yield('content')
     </div>
-
+    <!-- Post Creation Modal -->
     <div class="modal" id="postCreationModal">
         <div class="modal-content">
             <div class="modal-headers">
@@ -109,40 +105,44 @@
             <div class="form-container">
                 <form action="{{ route('create-post.submit') }}" method="POST" enctype="multipart/form-data" id="postForm">
                     @csrf
+                    @error('general')
+                        <div class="error" style="color: red; margin-bottom: 10px;">{{ $message }}</div>
+                    @enderror
                     <div class="form-group">
                         <label for="caption">Caption:</label>
-                        <textarea name="caption" id="caption" rows="3"></textarea>
+                        <textarea name="caption" id="caption" rows="3" placeholder="Add a caption"></textarea>
                     </div>
-                    <div id="media-inputs-container">
-                        <h3>Media & Text Content (Max 10):</h3>
-                        <div class="media-item " data-index="0">
-                            <div class="form-group">
-                                <label for="media_file_0">Upload File (Image/Video/Audio):</label>
-                                <input type="file" name="media_files[0]" id="media_file_0" accept="image/*,video/*,audio/*">
-                                <small>Max 50MB (jpeg, png, jpg, gif, mp4, mov, mp3, wav)</small>
+                    <div class="photo-section">
+                        <label for="media-upload-post" class="photo-upload-box">
+                            <div class="upload-icon-wrapper">
+                                <span class="upload-icon">📸</span>
                             </div>
-                            <div class="form-group">
-                                <label for="text_content_0">Or Add Text Content:</label>
-                                <textarea name="text_contents[0]" id="text_content_0" rows="2"></textarea>
-                                <small>Max 1000 characters.</small>
-                            </div>
-                                            <button type="button" class="remove-media-item">Remove</button>
-                        </div>
+                            <p class="add-photos-text">Add media (images, videos, audio)</p>
+                            <p class="drag-drop-text">or drag and drop</p>
+                            <input type="file" id="media-upload-post" name="media_files[]" multiple accept="image/*,video/*,audio/*" class="photo-input" maxlength="20">
+                        </label>
+                        <p class="media-count" id="post-media-count">Media · 0/20 - You can add up to 20 files.</p>
+                        <div class="media-preview" id="post-media-preview"></div>
                     </div>
                     <div class="form-group">
-                        <button type="button" id="add-media-item" class="add-media-item">Add Another Media Item</button>
-                        <span id="media-count">1/20 items</span>
+                        <label for="text_content">Text Content (Optional):</label>
+                        <textarea name="text_contents[]" id="text_content" rows="3" placeholder="Write something..."></textarea>
+                        <small>Max 1000 characters.</small>
                     </div>
                     <div class="form-submit-container">
-                        <button type="submit" class="create-post-btn submit-btn">Create Post</button>
+                        <button type="submit" class="submit-btn">Create Post</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    {{-- <div class="content">
+        @yield('content')
+    </div> --}}
+
     <script>
         window.authUserId = {{ auth()->id() }};
     </script>
-     <script src="{{ asset('js/main_content.js') }}"></script>
+    <script src="{{ asset('js/main_content.js') }}"></script>
 </div>

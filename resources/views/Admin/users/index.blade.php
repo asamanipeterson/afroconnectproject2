@@ -8,21 +8,22 @@
     <link href="https://cdn.jsdelivr.net/npm/mdi/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
     <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; }
         .main-panel { padding: 20px; }
         .content-wrapper { max-width: 1200px; margin: auto; }
         .card { border-radius: 8px; }
         .table-responsive { margin-top: 20px; }
         .badge { font-size: 0.9em; }
         .btn-sm { margin-right: 5px; }
-        .sidebar {
+        .sidebars {
             width: 250px;
-            background: #2c3e50;
+            background: #191c24;
             color: white;
             padding: 20px;
             position: fixed;
             height: 100%;
         }
-        .sidebar a {
+        .sidebars a {
             color: white;
             display: block;
             padding: 10px;
@@ -30,12 +31,12 @@
             text-decoration: none;
             border-radius: 5px;
         }
-        .sidebar a:hover { background: #34495e; }
-        .sidebar a.active { background: #3498db; }
+       .sidebars a:hover { background: #272a32; }
+        .sidebars a.active { background: #01164f; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <div class="sidebars">
         <h4 class="text-white mb-4">AfroConnect Admin</h4>
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <i class="mdi mdi-view-dashboard me-2"></i> Dashboard
@@ -167,9 +168,7 @@
                                                             <p><strong>Verified:</strong> {{ $user->is_verified ? 'Yes' : 'No' }}</p>
                                                             <p><strong>Suspended:</strong> {{ $user->is_suspended ? 'Yes' : 'No' }}</p>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>

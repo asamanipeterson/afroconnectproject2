@@ -1,10 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-<<<<<<< HEAD
-=======
 
->>>>>>> c0d373d (admin side working left small touches)
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Post;
@@ -12,54 +9,51 @@ use App\Models\Story;
 use App\Models\User;
 use App\Models\Like;
 use App\Models\Comment;
-<<<<<<< HEAD
-//use App\Models\Share; // ✅ Only if you have a shares table/model
-=======
->>>>>>> c0d373d (admin side working left small touches)
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     public function homepage()
     {
+        // Get the authenticated user. This will be null if no user is logged in.
         $user = Auth::user();
-        $user_type = $user->user_type;
 
-        if ($user_type === 'admin') {
-            // Posts per day
+        // Check if a user is authenticated AND if they are an admin
+        if ($user && $user->user_type === 'admin') {
+            // Posts per day for the last 7 days
             $postsPerDay = [];
             $usersPerDay = [];
 
             for ($i = 6; $i >= 0; $i--) {
                 $date = Carbon::today()->subDays($i)->toDateString();
-
                 $postsCount = Post::whereDate('created_at', $date)->count();
                 $usersCount = User::whereDate('created_at', $date)->count();
-
                 $postsPerDay[] = ['date' => $date, 'count' => $postsCount];
                 $usersPerDay[] = ['date' => $date, 'count' => $usersCount];
             }
 
-            // ✅ Engagement counts from DB
+            // Engagement counts
             $likesCount = Like::count();
             $commentsCount = Comment::count();
-            //$sharesCount = class_exists(Share::class) ? Share::count() : 0;
+
+            // Get all users with follower and report counts, excluding the current admin
+            $users = User::withCount(['followers', 'reports'])
+                ->where('id', '!=', $user->id)
+                ->get();
 
             return view('Admin.dashboard', [
-                'totalUsers'   => User::count(),
-                'totalPosts'   => Post::count(),
-                'postsPerDay'  => $postsPerDay,
-                'usersPerDay'  => $usersPerDay,
-                'likesCount'   => $likesCount,
-<<<<<<< HEAD
-                'commentsCount'=> $commentsCount,
-=======
+                'totalUsers'    => User::count(),
+                'totalPosts'    => Post::count(),
+                'postsPerDay'   => $postsPerDay,
+                'usersPerDay'   => $usersPerDay,
+                'likesCount'    => $likesCount,
                 'commentsCount' => $commentsCount,
->>>>>>> c0d373d (admin side working left small touches)
-                //'sharesCount'  => $sharesCount,
+                'users'         => $users,
             ]);
         }
 
+        // Logic for regular authenticated users and guests
         // Get posts with grouped media
         $posts = Post::with([
             'user',
@@ -72,57 +66,27 @@ class HomeController extends Controller
 
         $postGroups = $posts;
 
-        // ✅ Get IDs of users the authenticated user follows
-        $followingIds = $user->following()->pluck('users.id');
+        // Initialize stories as an empty collection to prevent errors for guests
+        $stories = collect();
 
-        // ✅ Include own stories too
-        $visibleUserIds = $followingIds->push($user->id);
+        // Fetch stories only if a user is authenticated
+        if ($user) {
+            $followingIds = $user->following()->pluck('users.id');
+            // Include the current user's own ID to show their stories too
+            $visibleUserIds = $followingIds->push($user->id);
 
-        // ✅ Fetch active stories for current user + followed users
-        $stories = Story::with('user')
-            ->active()
-            ->whereIn('user_id', $visibleUserIds)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('user_id');
+            $stories = Story::with('user')
+                ->active()
+                ->whereIn('user_id', $visibleUserIds)
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->groupBy('user_id');
+        }
 
         return view('welcome', [
             'user'       => $user,
             'postGroups' => $postGroups,
             'stories'    => $stories,
-<<<<<<< HEAD
-=======
-        ]);
-    }
-
-    public function usertable()
-    {
-        $totalUsers = User::count();
-        $totalPosts = Post::count();
-        $postsPerDay = [];
-        $usersPerDay = [];
-
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::today()->subDays($i)->toDateString();
-
-            $postsCount = Post::whereDate('created_at', $date)->count();
-            $usersCount = User::whereDate('created_at', $date)->count();
-
-            $postsPerDay[] = ['date' => $date, 'count' => $postsCount];
-            $usersPerDay[] = ['date' => $date, 'count' => $usersCount];
-        }
-
-        // ✅ Engagement counts from DB
-        $likesCount = Like::count();
-        $commentsCount = Comment::count();
-        return view('adminPages.usertable', [
-            'totalUsers' => $totalUsers,
-            'totalPosts' => $totalPosts,
-            'postsPerDay'  => $postsPerDay,
-            'usersPerDay'  => $usersPerDay,
-            'likesCount'   => $likesCount,
-            'commentsCount' => $commentsCount,
->>>>>>> c0d373d (admin side working left small touches)
         ]);
     }
 }
