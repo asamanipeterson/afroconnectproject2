@@ -15,6 +15,8 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\AdminController;
+
 
 use App\Events\TestMessageReceived;
 
@@ -24,10 +26,9 @@ Route::get('/broadcast-test', function () {
 });
 
 Route::controller(HomeController::class)->group(function () {
-    Route::get('/', 'homepage')->name('welcome')->middleware('auth');
-    Route::get('/admin', 'homepage')->name('admin.dashboard')->middleware('auth');
+    Route::get('/', 'userHomepage')->name('welcome')->middleware('auth');
+    Route::get('/admin', 'adminDashboard')->name('admin.dashboard')->middleware('auth');
 });
-
 Route::controller(AuthController::class)->group(function () {
     Route::get('register', 'registerPage')->name('register')->middleware('guest');
     Route::post('register', 'registerLogic')->name('register.submit')->middleware('guest');
@@ -37,6 +38,9 @@ Route::controller(AuthController::class)->group(function () {
     Route::patch('update-profile', 'updateProfile')->name('update-profile')->middleware('auth');
     Route::get('/search-users', 'search')->name('users.search');
     Route::get('user/{user}', 'show')->name('user.profile')->middleware('auth');
+    Route::get('/otp/verify',  'showOtpVerificationPage')->name('otp.verify.page');
+    Route::post('/otp/verify', 'verifyOtpLogic')->name('otp.verify.logic');
+    Route::post('/otp/resend', 'resendOtpLogic')->name('otp.resend.logic');
 });
 
 // Route::controller(PostController::class)->middleware('auth')->group(function () {
@@ -130,7 +134,7 @@ Route::controller(ReportController::class)->prefix('reports')->middleware(['auth
 });
 
 Route::controller(ConversationController::class)->group(function () {
-    Route::get('/conversations', 'index')->name('conversations.index');
+    Route::get('/conversations', 'index')->name('conversations.index')->middleware('auth');
     Route::get('/conversations/{conversation}',  'show')->name('conversations.show')->middleware('auth');
     Route::post('/conversations/create/{user}',  'createOrOpen')->name('conversations.create');
 })->middleware('auth');
@@ -139,3 +143,9 @@ Route::post('/messages/{conversation}', [MessageController::class, 'store'])->na
 Route::get('/messages/{message}/audio', [MessageController::class, 'getAudio'])
     ->name('messages.audio')
     ->middleware('auth');
+
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::post('/promote-user', [AdminController::class, 'promoteUser'])->name('admin.promoteUser');
+    Route::post('/demote-user', [AdminController::class, 'demoteUser'])->name('admin.demoteUser');
+});

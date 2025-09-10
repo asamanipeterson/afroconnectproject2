@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('item_photos', function (Blueprint $table) {
             $table->id();
             // This is the foreign key that must reference the `items` table's `id`.
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('item_id'); // Must match items.id
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->string('path');
             $table->timestamps();
         });

@@ -333,7 +333,7 @@ body.dark-mode .profile-nav-icon {
 .menu-trigger {
     display: flex;
     align-items: center;
-    padding: 0.5rem 0rem;
+    padding: 0.5rem 1rem;
     color: #333;
     text-decoration: none;
     border-radius: 5px;
@@ -390,11 +390,16 @@ body.dark-mode .sidebar-dropdown {
     text-decoration: none;
     white-space: nowrap;
 }
-
+.dropdown-items svg{
+    fill: #333;
+}
 body.dark-mode .dropdown-items {
     color: #e9ecef;
 }
 
+body.dark-mode .dropdown-item svg{
+    fill: #e9ecef;
+}
 .dropdown-items i {
     margin-right: 0.5rem;
 }

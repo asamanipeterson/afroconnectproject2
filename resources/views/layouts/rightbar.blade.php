@@ -1,36 +1,31 @@
 @if (!Request::is('user/*') && !Request::is('marketplace') && !Request::is('marketplace/*'))
 <aside class="rightbar">
-    <div class="messages">
-        <div class="messages-header">
-            <h4>Messages</h4>
-            <div class="search-container">
-                <input type="text" class="search" placeholder="Search...">
-            </div>
-            <div class="tabs">
-                <span class="tab active">Primary</span>
-                <span class="tab">General</span>
-                <span class="tab">Requests(4)</span>
-            </div>
-        </div>
-        <ul class="message-list">
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Roger Korsgaard"> @else <i class="bi bi-person-circle avatar"></i> @endif Roger Korsgaard</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Terry Torff"> @else <i class="bi bi-person-circle avatar"></i> @endif Terry Torff</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Angel Bergson"> @else <i class="bi bi-person-circle avatar"></i> @endif Angel Bergson</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Emerson Gouse"> @else <i class="bi bi-person-circle avatar"></i> @endif Emerson Gouse</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Corey Baptista"> @else <i class="bi bi-person-circle avatar"></i> @endif Corey Baptista</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Zain Culhane"> @else <i class="bi bi-person-circle avatar"></i> @endif Zain Culhane</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Randy Lipshutz"> @else <i class="bi bi-person-circle avatar"></i> @endif Randy Lipshutz</li>
-            <li>@if(auth()->user()->profile_picture) <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="avatar" alt="Craig Botosh"> @else <i class="bi bi-person-circle avatar"></i> @endif Craig Botosh</li>
-            <li><a href="#">View All</a></li>
-        </ul>
-    </div>
-    <div class="events">
-        <h4>Events</h4>
-        <ul class="event-list">
-            <li>10 Events Invites</li>
-            <li>Design System Collaboration - Thu - Harpoon Mall, YK</li>
-            <li>Web Dev 2.0 Meetup - Yoshkar-Ola, Russia</li>
-            <li>Prada's Invitation Birthday</li>
+    <div class="who-to-follow">
+        <h4>Who to Follow</h4>
+        <ul class="follow-list">
+            {{-- This is a conceptual loop. You will need to pass the $suggestedUsers variable from your controller. --}}
+            @foreach ($suggestedUsers as $user)
+            <li class="follow-item">
+                <a href="{{ route('user.profile', $user->username) }}" class="user-link">
+                    {{-- Display user's profile picture or a placeholder icon --}}
+                    @if ($user->profile_picture)
+                        <img src="{{ asset('storage/' . $user->profile_picture) }}" class="avatar" alt="{{ $user->name }}">
+                    @else
+                        <i class="bi bi-person-circle avatar"></i>
+                    @endif
+                    <span class="user-name">{{ $user->username }}</span>
+                </a>
+
+                {{-- Your provided follow button logic --}}
+                @if(Auth::check() && Auth::id() !== $user->id)
+                    <button class="follow-btn {{ Auth::user()->isFollowing($user) ? 'following' : '' }}" data-user-id="{{ $user->id }}">
+                        {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
+                    </button>
+                @endif
+            </li>
+            @endforeach
+
+            {{-- <li class="view-all"><a href="{{ route('users.suggestions') }}">View All Suggestions</a></li> --}}
         </ul>
     </div>
 </aside>

@@ -16,7 +16,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         // Fetch users the authenticated user follows
         $followedUsers = Auth::user()->following()->pluck('followed_id');
-
+        $suggestedUsers = collect();
         // Fetch active stories from followed users (last 24 hours)
         $stories = Story::whereIn('user_id', $followedUsers)
             ->where('created_at', '>=', Carbon::now()->subHours(24))
@@ -25,7 +25,13 @@ class NotificationController extends Controller
             ->get()
             ->groupBy('user_id');
 
-        return view('Notification.index', compact('notifications', 'stories', 'user'));
+        $suggestedUsers = User::where('id', '!=', $user->id)
+            ->whereNotIn('id', $followedUsers)
+            ->inRandomOrder() // Optional: gets a random selection
+            ->limit(5)        // Optional: shows up to 5 users
+            ->get();
+
+        return view('Notification.index', compact('notifications', 'stories', 'user', 'suggestedUsers'));
     }
 
     public function markAsRead($id)

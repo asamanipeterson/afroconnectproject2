@@ -25,12 +25,12 @@
 
                 <h2 class="login-title">Welcome back 👋</h2>
 
-                <button type="button" class="apple-login-button">
+                {{-- <button type="button" class="apple-login-button">
                     <i class="bi bi-apple apple-logo"></i>
                     Log In with Apple
-                </button>
+                </button> --}}
 
-                <div class="divider"><span>or</span></div>
+                {{-- <div class="divider"><span>or</span></div> --}}
 
                 <x-login-field label="Email" name="email" type="email" placeholder="Enter your email" />
                 <x-login-field label="Password" name="password" type="password" placeholder="Enter your password" />
@@ -52,8 +52,23 @@
                 </p>
             </form>
         </div>
-         <div class="login-image">
-            <img src="{{asset('login-img.jpg') }}" alt="Login Illustration" />
+        <div class="cards-container">
+            <div class="card card-1">
+                <img src="{{ asset('login.webp') }}" alt="Card Image 1">
+                <h3>Connecting people</h3>
+            </div>
+            <div class="card card-2">
+                <img src="{{ asset('login2.webp') }}" alt="Card Image 2">
+                <h3>Sharing experiences</h3>
+            </div>
+            <div class="card card-3">
+                <img src="{{ asset('login3.jpg') }}" alt="Card Image 3">
+                <h3>Building communities</h3>
+            </div>
+            <div class="card card-4">
+                <img src="{{ asset('celebrate.webp') }}" alt="Card Image 4">
+                <h3>Celebrating culture</h3>
+            </div>
         </div>
     </div>
 

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 <html lang="en">
+<head>
     @include('layouts.head')
+</head>
 <body>
 <div class="d-flex">
     @section('content')
@@ -45,20 +47,21 @@
                 </div>
             </div>
 
-            <!-- This is the updated form tag -->
             <form action="{{ route('marketplace.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf <!-- This is crucial for form security -->
+                @csrf
 
                 <div class="photo-section">
-                    <label for="photo-upload" class="photo-upload-box">
+                    <label for="new-listing-photo-upload" class="photo-upload-box">
                         <div class="upload-icon-wrapper">
                             <span class="upload-icon">📸</span>
                         </div>
                         <p class="add-photos-text">Add photos</p>
                         <p class="drag-drop-text">or drag and drop</p>
-                        <input type="file" id="photo-upload" name="photos[]" multiple accept="image/*" class="photo-input" maxlength="10">
+                        <input type="file" id="new-listing-photo-upload" name="photos[]" multiple accept="image/*" class="new-listing-photo-input" maxlength="10">
                     </label>
                     <p class="photo-count">Photos · 0/10 - You can add up to 10 photos.</p>
+
+                    <div id="photo-preview-container" class="photo-preview-container"></div>
                 </div>
 
                 <section class="required-fields">
@@ -118,18 +121,78 @@
         </div>
         </div>
     </div>
-@endsection
+    @endsection
 </div>
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const photoInput = document.querySelector('.photo-input');
-        const photoCountText = document.querySelector('.photo-count');
+        console.log('New Listing Photo Script Loaded!');
 
-        photoInput.addEventListener('change', function() {
-            const fileCount = this.files.length;
-            photoCountText.textContent = `Photos · ${fileCount}/10 - You can add up to 10 photos.`;
+        const photoInput = document.querySelector('.new-listing-photo-input');
+        const photoCountText = document.querySelector('.photo-count');
+        const photoPreviewContainer = document.getElementById('photo-preview-container');
+
+        let selectedFiles = [];
+
+        function updatePhotoCount() {
+            photoCountText.textContent = `Photos · ${selectedFiles.length}/10 - You can add up to 10 photos.`;
+            console.log('Photo count updated to:', selectedFiles.length);
+        }
+
+        function renderPreviews() {
+            photoPreviewContainer.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.classList.add('photo-preview-item');
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" class="preview-image">
+                        <span class="close-btn" data-index="${index}">&times;</span>
+                    `;
+                    photoPreviewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+            console.log('Preview images rendered.');
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            photoInput.files = dataTransfer.files;
+
+            renderPreviews();
+            updatePhotoCount();
+        }
+
+        photoInput.addEventListener('change', function(e) {
+            console.log('New Listing File selection changed!', e.target.files);
+            const newFiles = Array.from(e.target.files);
+            selectedFiles = selectedFiles.concat(newFiles).slice(0, 10);
+
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            photoInput.files = dataTransfer.files;
+
+            renderPreviews();
+            updatePhotoCount();
+        });
+
+        photoPreviewContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('close-btn')) {
+                const index = e.target.getAttribute('data-index');
+                removeFile(index);
+            }
         });
     });
 </script>
+@endpush
 </body>
 </html>

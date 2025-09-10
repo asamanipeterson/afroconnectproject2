@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PragmaRX\Countries\Package\Countries;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -18,15 +20,13 @@ class AuthController extends Controller
             ->pluck('name.common', 'name.common')
             ->toArray();
 
-
-
         return view('auth.register', compact('countries'));
     }
 
     public function registerLogic(AuthRequest $request)
     {
         $data = $request->validated();
-        User::create($data);
+        $user = User::create($data);
         return redirect('login')->with('success', 'Registration successful. Please log in.');
     }
 
@@ -37,21 +37,84 @@ class AuthController extends Controller
 
     public function loginLogic(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if (Auth::attempt($credentials)) {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            $user->generateOtp();
+            session(['otp_user_id' => $user->id]);
+
+            return redirect()->route('otp.verify.page')->with('success', 'A verification code has been sent to your email.');
+        }
+
+        return back()->withErrors(['email' => 'Invalid credentials.']);
+    }
+
+    public function showOtpVerificationPage()
+    {
+        return view('auth.otp-verify');
+    }
+
+    public function verifyOtpLogic(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $userId = session('otp_user_id');
+
+        if (!$userId) {
+            return redirect()->route('login')->withErrors(['error' => 'Your session has expired. Please log in again.']);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['error' => 'Invalid user. Please log in again.']);
+        }
+
+        $otpRecord = DB::table('one_time_pass_codes')
+            ->where('user_id', $user->id)
+            ->where('code', $request->otp)
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
+
+        if ($otpRecord) {
+            Auth::login($user);
+            DB::table('one_time_pass_codes')->where('id', $otpRecord->id)->delete();
+            $request->session()->forget('otp_user_id');
             $request->session()->regenerate();
 
-            // Check if the user is an admin (e.g., based on a 'is_admin' column)
-            $user = Auth::user();
-            if ($user->user_type ?? false) { // Adjust 'is_admin' to your actual column name
+            if ($user->user_type === 'admin') {
                 return redirect()->route('admin.dashboard');
             } else {
                 return redirect()->route('welcome');
             }
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+        return back()->withErrors(['otp' => 'The provided OTP is invalid or has expired.']);
+    }
+
+    public function resendOtpLogic(Request $request)
+    {
+        $userId = session('otp_user_id');
+
+        if (!$userId) {
+            return redirect()->route('login')->withErrors(['error' => 'Your session has expired. Please log in again.']);
+        }
+
+        $user = User::find($userId);
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['error' => 'Invalid user. Please log in again.']);
+        }
+
+        $user->generateOtp();
+
+        return back()->with('success', 'A new verification code has been sent to your email.');
     }
 
     public function logout(Request $request)
@@ -118,8 +181,11 @@ class AuthController extends Controller
             return response()->json(['users' => []]);
         }
 
-        $users = User::where('username', 'LIKE', "%{$query}%")
-            ->orWhere('location', 'LIKE', "%{$query}%")
+        $users = User::where('user_type', '!=', 'admin')
+            ->where(function ($q) use ($query) {
+                $q->where('username', 'LIKE', "%{$query}%")
+                    ->orWhere('location', 'LIKE', "%{$query}%");
+            })
             ->select('id', 'username', 'location', 'profile_picture')
             ->take(10)
             ->get();

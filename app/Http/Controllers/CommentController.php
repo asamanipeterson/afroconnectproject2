@@ -10,6 +10,10 @@ use App\Events\NewCommentPosted;
 
 class CommentController extends Controller
 {
+    /**
+     * Display a listing of the comments for a post.
+     * This is likely for a separate comment page.
+     */
     public function index(Post $post)
     {
         $comments = $post->comments()
@@ -21,22 +25,35 @@ class CommentController extends Controller
         return view('comments.index', compact('post', 'comments'));
     }
 
+    /**
+     * Store a new comment for a post.
+     */
     public function store(Request $request, Post $post)
     {
+        // 1. Validate the incoming request data.
         $request->validate([
             'content' => 'required|string|max:500',
         ]);
 
+        // 2. Create the comment in the database.
         $comment = $post->comments()->create([
             'user_id' => Auth::id(),
             'content' => $request->content,
         ]);
 
+        // 3. Eager load the user relationship to make it available for the response and event.
         $comment->load('user');
 
-        // 🔥 Broadcast to others in real-time
-        broadcast(new NewCommentPosted($comment))->toOthers();
+        // 🔥 FIX: The problem was here. We must pass simple data to the event, not the full model.
+        // The event's constructor needs to be updated to accept these specific parameters.
+        broadcast(new NewCommentPosted(
+            $comment->id,
+            $comment->content,
+            $comment->user_id,
+            $comment->user->username
+        ))->toOthers();
 
+        // 4. Return a successful JSON response to the JavaScript.
         return response()->json([
             'message' => 'Comment posted successfully!',
             'comment' => $comment,
@@ -47,6 +64,9 @@ class CommentController extends Controller
         ], 201);
     }
 
+    /**
+     * Store a new reply for a comment.
+     */
     public function replyStore(Request $request, Comment $comment)
     {
         $request->validate([

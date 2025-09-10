@@ -18,7 +18,7 @@
             @if(auth()->user()->profile_picture)
                 <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture" alt="Profile Picture">
             @else
-                <i class="bi bi-person-circle "></i>
+                <img src="{{ asset('default-avatar.png') }}" class="profile-picture">
             @endif
 
         <a href="{{ route('user.profile', auth()->user()) }}"><p>@ {{ auth()->user()->username }}</p></a>
@@ -63,12 +63,19 @@
         </div>
         <span class="nav-label">Notifications</span>
     </a>
-   @if(isset($latestConversation))
-    <a href="{{ route('conversations.show', $latestConversation) }}" class="nav-item">
+    <a href="{{ route('conversations.index') }}" class="nav-item {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'active' : '' }}">
+    <div class="icon-wrapper" style="position: relative;">
         <i class="bi bi-chat"></i>
-        <span>Messages</span>
+        {{-- Check for unread messages in the latest conversation --}}
+        @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+            <span class="notifications-badge">
+                {{ $unreadMessageCount }}
+            </span>
+        @endif
+    </div>
+    <span>Messages</span>
+</a>
     </a>
-    @endif
     <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">
         <i class="bi bi-plus-circle"></i><span>Create Story</span>
     </a>
@@ -133,32 +140,32 @@
         </div>
         <div class="category-container">
             <ul class="category-list">
-                <li><a href="{{ url('/category/phones') }}">Phones</a></li>
-                <li><a href="{{ url('/category/vehicles') }}">Vehicles</a></li>
-                <li><a href="{{ url('/category/clothing') }}">Clothing</a></li>
-                <li><a href="{{ url('/category/games') }}">Games</a></li>
-                <li><a href="{{ url('/category/electronics') }}">Electronics</a></li>
-                <li><a href="{{ url('/category/african-crafts') }}">African Crafts</a></li>
-                <li><a href="{{ url('/category/african-textiles') }}">African Textiles</a></li>
-                <li><a href="{{ url('/category/jewelry') }}">Jewelry</a></li>
-                <li><a href="{{ url('/category/home-decor') }}">Home Decor</a></li>
-                <li><a href="{{ url('/category/furniture') }}">Furniture</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'phones']) }}">Phones</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'vehicles']) }}">Vehicles</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'clothing']) }}">Clothing</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'games']) }}">Games</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'electronics']) }}">Electronics</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'african-crafts']) }}">African Crafts</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'african-textiles']) }}">African Textiles</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'jewelry']) }}">Jewelry</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'home-decor']) }}">Home Decor</a></li>
+                <li><a href="{{ route('marketshowroom', ['category' => 'furniture']) }}">Furniture</a></li>
                 <div class="hidden-categories" id="hiddenCategoryItems">
-                    <li><a href="{{ url('/category/books') }}">Books</a></li>
-                    <li><a href="{{ url('/category/sports') }}">Sports Equipment</a></li>
-                    <li><a href="{{ url('/category/beauty') }}">Beauty Products</a></li>
-                    <li><a href="{{ url('/category/toys') }}">Toys</a></li>
-                    <li><a href="{{ url('/category/appliances') }}">Appliances</a></li>
-                    <li><a href="{{ url('/category/music') }}">Musical Instruments</a></li>
-                    <li><a href="{{ url('/category/art') }}">Art & Collectibles</a></li>
-                    <li><a href="{{ url('/category/pets') }}">Pet Supplies</a></li>
-                    <li><a href="{{ url('/category/food') }}">Food & Beverages</a></li>
-                    <li><a href="{{ url('/category/african-spices') }}">African Spices</a></li>
-                    <li><a href="{{ url('/category/tools') }}">Tools & Hardware</a></li>
-                    <li><a href="{{ url('/category/baby') }}">Baby Products</a></li>
-                    <li><a href="{{ url('/category/health') }}">Health & Wellness</a></li>
-                    <li><a href="{{ url('/category/garden') }}">Garden & Outdoor</a></li>
-                    <li><a href="{{ url('/category/african-beadwork') }}">African Beadwork</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'books']) }}">Books</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'sports']) }}">Sports Equipment</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'beauty']) }}">Beauty Products</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'toys']) }}">Toys</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'appliances']) }}">Appliances</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'music']) }}">Musical Instruments</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'art']) }}">Art & Collectibles</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'pets']) }}">Pet Supplies</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'food']) }}">Food & Beverages</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'african-spices']) }}">African Spices</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'tools']) }}">Tools & Hardware</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'baby']) }}">Baby Products</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'health']) }}">Health & Wellness</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'garden']) }}">Garden & Outdoor</a></li>
+                    <li><a href="{{ route('marketshowroom', ['category' => 'african-beadwork']) }}">African Beadwork</a></li>
                 </div>
             </ul>
             <div class="more-button" id="moreCategoryButton">
@@ -167,7 +174,6 @@
         </div>
     </div>
 </div>
-<!-- Settings Modal -->
 <div class="modal settings-modal" id="settingsModal">
     <div class="settings-modal-content">
         <button class="close-btn" id="closeSettingsModal">×</button>
@@ -182,7 +188,6 @@
     </div>
 </div>
 
-<!-- Edit Profile Modal -->
 <div class="modal" id="profileModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -219,7 +224,6 @@
     </div>
 </div>
 
-<!-- Search Modal -->
 <div class="modal search-modal" id="searchModal">
     <div class="search-modal-content">
         <div class="modal-header">
@@ -257,4 +261,3 @@ function createConversation(event, url) {
     .catch(error => console.error('Error:', error));
 }
 </script>
-

@@ -58,7 +58,6 @@
         </div>
     </div>
 </div>
-
 <script>
     // Initialize image navigation functionality
     function initializeImageNavigation() {

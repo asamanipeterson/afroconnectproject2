@@ -1006,3 +1006,8 @@ body.dark-mode .media-item {
 .profile-link:hover {
     text-decoration: underline;
 }
+#media-upload-story,
+    /* Hide the media upload input for posts */
+    #media-upload-post {
+        display: none;
+    }

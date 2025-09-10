@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Comment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
@@ -12,34 +11,50 @@ class NewCommentPosted implements ShouldBroadcast
 {
     use InteractsWithSockets, SerializesModels;
 
-    public $comment;
+    public $id;
+    public $content;
+    public $user;
+    public $postId;
 
-    public function __construct(Comment $comment)
+    /**
+     * Create a new event instance.
+     * We pass simple, serializable data instead of the full model.
+     */
+    public function __construct(int $id, string $content, array $user, int $postId)
     {
-        $this->comment = $comment;
+        $this->id = $id;
+        $this->content = $content;
+        $this->user = $user;
+        $this->postId = $postId;
     }
 
+    /**
+     * Get the channels the event should broadcast on.
+     */
     public function broadcastOn(): Channel
     {
-        return new Channel('post.' . $this->comment->post_id);
+        // The channel name must be consistent with the front-end listener.
+        return new Channel('post.' . $this->postId);
     }
 
+    /**
+     * The event's broadcast name.
+     */
     public function broadcastAs(): string
     {
         return 'NewComment';
     }
 
+    /**
+     * Get the data to broadcast.
+     * This method defines the payload received by the front-end.
+     */
     public function broadcastWith(): array
     {
         return [
-            'id' => $this->comment->id,
-            'content' => $this->comment->content,
-            'created_at' => $this->comment->created_at->toDateTimeString(),
-            'user' => [
-                'id' => $this->comment->user->id,
-                'username' => $this->comment->user->username,
-                'avatar' => $this->comment->user->avatar ?? null, // optional
-            ],
+            'id' => $this->id,
+            'content' => $this->content,
+            'user' => $this->user,
         ];
     }
 }

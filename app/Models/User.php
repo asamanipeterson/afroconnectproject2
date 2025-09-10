@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use App\Models\OneTimePassCode;
 
 class User extends Authenticatable
 {
@@ -112,5 +116,30 @@ class User extends Authenticatable
         return $this->belongsToMany(Conversation::class, 'participants')
             ->withTimestamps()
             ->latest();
+    }
+
+    public function oneTimePassword()
+    {
+        return $this->hasOne(OneTimePassCode::class);
+    }
+
+    public function generateOtp()
+    {
+        // Generate OTP
+        $otpCode = rand(100000, 999999);
+
+        // Delete old OTP if exists
+        $this->oneTimePassword()->delete();
+
+        // Save new OTP
+        $this->oneTimePassword()->create([
+            'code' => $otpCode,
+            'expires_at' => Carbon::now()->addMinutes(10),
+        ]);
+
+        // Send OTP mail
+        Mail::to($this->email)->send(new OtpMail($otpCode));
+
+        return $otpCode; // optional, in case you want to log/debug
     }
 }

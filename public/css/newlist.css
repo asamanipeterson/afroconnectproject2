@@ -1,364 +1,438 @@
-/* style.css */
-body{
-    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-}
-.main-formcontainer{
-    display: flex;
-    justify-content: center;
-}
-.form-container {
-    background-color: #fafafd00;
-    border-radius: 12px;
-    padding: 24px;
-    max-width: 600px;
-    width: 100%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.049);
-}
-.main-container{
-    display: flex;
-    justify-content: center;
-}
-.form-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
+/* CSS provided by the user */
+        body {
+            font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
 
-.form-header h1 {
-    font-size: 24px;
-    font-weight: bold;
-    margin: 0;
-}
+        .main-formcontainer {
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background-color: #fafafd00;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.049);
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .form-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .profile-pic {
+            border-radius: 50%;
+            margin-right: 12px;
+            width: 50px;
+            height: 50px;
+        }
+
+        .profile-icon {
+            font-size: 50px;
+            color: #8e8e93;
+            margin-right: 12px;
+        }
+
+        .seller-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .seller-name {
+            font-weight: bold;
+            font-size: 16px;
+            font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .listing-details {
+            font-size: 14px;
+            color: #8e8e93;
+        }
+
+        .public-icon {
+            font-size: 12px;
+        }
+
+        .photo-section {
+            margin-bottom: 24px;
+        }
+
+        .photo-upload-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            background-color: #1b1b1b22;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .photo-upload-box:hover {
+            border-color: #007bff;
+        }
+
+        .photo-upload-box .upload-icon-wrapper {
+            background-color: #e9ecef;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .photo-upload-box .upload-icon {
+            font-size: 24px;
+            color: #495057;
+        }
+
+        .photo-upload-box .add-photos-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #343a40;
+            margin: 0;
+        }
+
+        .photo-upload-box .drag-drop-text {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        /* HIDE THE DEFAULT BROWSER FILE INPUT */
+        .photo-section .new-listing-photo-input {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .photo-count {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .upload-icon-wrapper {
+            background-color: #48484a;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .upload-icon {
+            font-size: 24px;
+        }
+
+        .add-photos-text {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .drag-drop-text {
+            color: #8e8e93;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .photo-count {
+            font-size: 14px;
+            color: #8e8e93;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .phone-upload-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #48484a;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .phone-upload-option label {
+            font-size: 14px;
+            flex-grow: 1;
+        }
+
+        .phone-upload-option a {
+            color: #0a84ff;
+            text-decoration: none;
+        }
+
+        .try-it-btn {
+            background-color: #0a84ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .required-fields h2, .more-details h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .required-description {
+            color: #8e8e93;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .title-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #fafafd00;
+            border:1px solid #373738;
+            color: #000;
+            font-size: 16px;
+        }
+
+        body.dark-mode .title-input {
+            color: #fff;
+        }
+
+        .price-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #fafafd00;
+            border:1px solid #373738;
+            color: #000;
+            font-size: 16px;
+        }
+
+        body.dark-mode .price-input {
+            color: #fff;
+        }
+
+        .category-select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #fafafd00;
+            border:1px solid #373738;
+            color: #000;
+            font-size: 16px;
+        }
+
+        /* Updated dark mode style for category-select */
+        body.dark-mode .category-select {
+            color: #fff;
+        }
+
+        /* Ensure options are visible in dark mode */
+        body.dark-mode .category-select option {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
 
 
+        .condition-select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #fafafd00;
+            border:1px solid #373738;
+            color: #000;
+            font-size: 16px;
+        }
 
-.seller-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 24px;
+        /* Updated dark mode style for condition-select */
+        body.dark-mode .condition-select {
+            color: #fff;
+        }
 
-}
+        /* Ensure options are visible in dark mode */
+        body.dark-mode .condition-select option {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
 
-.profile-pic {
-    border-radius: 50%;
-    margin-right: 12px;
-    width: 50px;
-    height: 50px;
-}
-.profile-icon {
-    font-size: 50px;
-    color: #8e8e93;
-    margin-right: 12px;
-}
-.seller-details {
-    display: flex;
-    flex-direction: column;
-}
+        .description-textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #fafafd00;
+            border:1px solid #373738;
+            color: #000;
+            font-size: 20px;
+            height: 100px;
+        }
 
-.seller-name {
-    font-weight: bold;
-    font-size: 16px;
-    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+        body.dark-mode .description-textarea {
+            color: #fff;
+        }
 
-.listing-details {
-    font-size: 14px;
-    color: #8e8e93;
-}
+        .more-details {
+            margin-top: 24px;
+        }
 
-.public-icon {
-    font-size: 12px;
-}
+        .more-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
 
-.photo-section {
-    margin-bottom: 24px;
-}
+        .expand-icon {
+            transform: rotate(180deg);
+            font-size: 20px;
+            color: #8e8e93;
+        }
 
-.photo-upload-box {
-    /* Set up the container for the upload area */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 20px;
-    border: 2px dashed #ccc;
-    border-radius: 12px;
-    background-color: #1b1b1b22;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative; /* Needed to correctly position the visually hidden input */
-}
+        .more-details-subtext {
+            font-size: 14px;
+            color: #8e8e93;
+            margin-bottom: 16px;
+        }
 
-.photo-upload-box:hover {
-    border-color: #007bff;
-    /* background-color: #f0f8ff; */
-}
+        .location-input {
+            display: flex;
+            align-items: center;
+            background-color: #fafafd00;
+            border: 1px solid #373738;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
 
-.photo-upload-box .upload-icon-wrapper {
-    /* Style the container for the icon */
-    background-color: #e9ecef;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-}
+        .location-input input {
+            margin-bottom: 0;
+            background-color: transparent;
+            border: none;
+            width: 100%;
+            font-size: 16px;
+        }
 
-.photo-upload-box .upload-icon {
-    /* Style the icon itself */
-    font-size: 24px;
-    color: #495057;
-}
+        /* Updated dark mode style for location input */
+        body.dark-mode .location-input input {
+            color: #fff;
+        }
 
-.photo-upload-box .add-photos-text {
-    /* Style the main text */
-    font-size: 16px;
-    font-weight: 600;
-    color: #343a40;
-    margin: 0;
-}
+        .location-input input:focus {
+            outline: none;
+        }
 
-.photo-upload-box .drag-drop-text {
-    /* Style the secondary text */
-    font-size: 14px;
-    color: #6c757d;
-    margin: 0;
-}
+        .location-icon {
+            margin-right: 8px;
+            color: #8e8e93;
+        }
 
-.photo-section .photo-input {
-    /* This is the key part: visually hide the input but keep it functional */
-    opacity: 0;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    cursor: pointer;
-    z-index: 1; /* Place it above other content for a larger clickable area */
-}
+        .add-item-btn {
+            width: 100%;
+            background-color: #0a84ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 24px;
+        }
 
-.photo-count {
-    margin-top: 8px;
-    font-size: 14px;
-    color: #6c757d;
-}
+        /* Styling for the photo preview container */
+        .photo-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
 
+        /* Styling for each individual preview item */
+        .photo-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-.upload-icon-wrapper {
-    background-color: #48484a;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-}
+        /* Styling for the preview image itself */
+        .photo-preview-item .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.upload-icon {
-    font-size: 24px;
-}
+        /* Styling for the close button */
+        .photo-preview-item .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
 
-.add-photos-text {
-    font-weight: bold;
-    margin: 0;
-}
-
-.drag-drop-text {
-    color: #8e8e93;
-    font-size: 14px;
-    margin: 0;
-}
-
-.photo-count {
-    font-size: 14px;
-    color: #8e8e93;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.phone-upload-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #48484a;
-    padding: 12px;
-    border-radius: 8px;
-}
-
-.phone-upload-option label {
-    font-size: 14px;
-    flex-grow: 1;
-}
-
-.phone-upload-option a {
-    color: #0a84ff;
-    text-decoration: none;
-}
-
-.try-it-btn {
-    background-color: #0a84ff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.required-fields h2, .more-details h2 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 0;
-    margin-bottom: 8px;
-}
-
-.required-description {
-    color: #8e8e93;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 16px;
-}
-
-.title-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #fafafd00;
-    border:1px solid #373738;
-    color: #000;
-    font-size: 16px;
-}
-body.dark-mode .title-input {
-    color: #8e8e93;
-}
-.price-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #fafafd00;
-    border:1px solid #373738;
-    color: #000;
-    font-size: 16px;
-}
-body.dark-mode .price-input {
-    color: #8e8e93;
-}
-.category-select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #fafafd00;
-    border:1px solid #373738;
-    color: #000;
-    font-size: 16px;
-}
-
-.condition-select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #fafafd00;
-    border:1px solid #373738;
-    color: #000;
-    font-size: 16px;
-}
-body.dark-mode .category-select{
-    color: #8e8e93;
-}
-body.dark-mode .condition-select{
-    color: #8e8e93;
-}
-
-.description-textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #fafafd00;
-    border:1px solid #373738;
-    color: #000;
-    font-size: 16px;
-    height: 100px;
-}
-body.dark-mode .description-textarea {
-    color: #8e8e93;
-}
-.more-details {
-    margin-top: 24px;
-}
-
-.more-details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-}
-
-.expand-icon {
-    transform: rotate(180deg);
-    font-size: 20px;
-    color: #8e8e93;
-}
-
-.more-details-subtext {
-    font-size: 14px;
-    color: #8e8e93;
-    margin-bottom: 16px;
-}
-
-.location-input{
-    display: flex;
-    align-items: center;
-    background-color: #fafafd00;
-    border: 1px solid #373738;
-    border-radius: 8px;
-    padding:12px;
-    margin-bottom: 16px;
-}
-
-.location-input input {
-    margin-bottom: 0;
-    background-color: transparent;
-    border: none;
-    width: 100%;
-    font-size: 16px;
-}
-body.dark-mode .location-input input {
-    color:#fff;
-}
-.location-input input:focus {
-    outline: none;
-}
-.location-icon {
-    margin-right: 8px;
-    color: #8e8e93;
-}
-
-.add-item-btn {
-    width: 100%;
-    background-color: #0a84ff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 24px;
-}
+        /* Hover effect for the close button */
+        .photo-preview-item .close-btn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }

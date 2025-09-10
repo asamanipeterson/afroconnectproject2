@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Story;
-use App\Models\User;
+use App\Models\User; // <-- Make sure this line is here
 use App\Models\Like;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
@@ -14,47 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    public function homepage()
+    public function userHomepage()
     {
-        // Get the authenticated user. This will be null if no user is logged in.
         $user = Auth::user();
-
-        // Check if a user is authenticated AND if they are an admin
-        if ($user && $user->user_type === 'admin') {
-            // Posts per day for the last 7 days
-            $postsPerDay = [];
-            $usersPerDay = [];
-
-            for ($i = 6; $i >= 0; $i--) {
-                $date = Carbon::today()->subDays($i)->toDateString();
-                $postsCount = Post::whereDate('created_at', $date)->count();
-                $usersCount = User::whereDate('created_at', $date)->count();
-                $postsPerDay[] = ['date' => $date, 'count' => $postsCount];
-                $usersPerDay[] = ['date' => $date, 'count' => $usersCount];
-            }
-
-            // Engagement counts
-            $likesCount = Like::count();
-            $commentsCount = Comment::count();
-
-            // Get all users with follower and report counts, excluding the current admin
-            $users = User::withCount(['followers', 'reports'])
-                ->where('id', '!=', $user->id)
-                ->get();
-
-            return view('Admin.dashboard', [
-                'totalUsers'    => User::count(),
-                'totalPosts'    => Post::count(),
-                'postsPerDay'   => $postsPerDay,
-                'usersPerDay'   => $usersPerDay,
-                'likesCount'    => $likesCount,
-                'commentsCount' => $commentsCount,
-                'users'         => $users,
-            ]);
-        }
-
-        // Logic for regular authenticated users and guests
-        // Get posts with grouped media
         $posts = Post::with([
             'user',
             'likes',
@@ -66,13 +28,13 @@ class HomeController extends Controller
 
         $postGroups = $posts;
 
-        // Initialize stories as an empty collection to prevent errors for guests
+        // Initialize stories and suggestedUsers as an empty collection for guests
         $stories = collect();
+        $suggestedUsers = collect();
 
-        // Fetch stories only if a user is authenticated
+
         if ($user) {
             $followingIds = $user->following()->pluck('users.id');
-            // Include the current user's own ID to show their stories too
             $visibleUserIds = $followingIds->push($user->id);
 
             $stories = Story::with('user')
@@ -81,12 +43,42 @@ class HomeController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->groupBy('user_id');
+
+            // --- THIS IS THE NEW CODE BLOCK ---
+            $suggestedUsers = User::where('id', '!=', $user->id)
+                ->whereNotIn('id', $followingIds)
+                ->inRandomOrder() // Optional: gets a random selection
+                ->limit(5)        // Optional: shows up to 5 users
+                ->get();
+            // ------------------------------------
         }
 
         return view('welcome', [
-            'user'       => $user,
-            'postGroups' => $postGroups,
-            'stories'    => $stories,
+            'user'           => $user,
+            'postGroups'     => $postGroups,
+            'stories'        => $stories,
+            'suggestedUsers' => $suggestedUsers, // <-- Pass the new variable to the view
+        ]);
+    }
+
+    public function adminDashboard()
+    {
+        $postsPerDay = [];
+        $usersPerDay = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i)->toDateString();
+            $postsPerDay[] = ['date' => $date, 'count' => Post::whereDate('created_at', $date)->count()];
+            $usersPerDay[] = ['date' => $date, 'count' => User::whereDate('created_at', $date)->count()];
+        }
+
+        return view('Admin.dashboard', [
+            'totalUsers'    => User::count(),
+            'totalPosts'    => Post::count(),
+            'postsPerDay'   => $postsPerDay,
+            'usersPerDay'   => $usersPerDay,
+            'likesCount'    => Like::count(),
+            'commentsCount' => Comment::count(),
+            'users'         => User::withCount(['followers', 'reports'])->get(),
         ]);
     }
 }

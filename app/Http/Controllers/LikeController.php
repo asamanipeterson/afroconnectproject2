@@ -44,8 +44,8 @@ class LikeController extends Controller
                 $post->user->notify(new PostLikedNotification($user, $post));
             }
 
-            // Broadcast the PostLiked event to others
-            broadcast(new PostLiked($post->id, $likesCount, $user))->toOthers();
+            // Broadcast the PostLiked event to others, passing the user's ID
+            broadcast(new PostLiked($post->id, $likesCount, $user->id))->toOthers();
 
             return response()->json([
                 'message' => 'Post liked successfully.',

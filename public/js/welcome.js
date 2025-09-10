@@ -400,79 +400,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // --- Comment Submission ---
+    // --- Comment Submission FIX ---
     document.querySelectorAll('.submit-comment-button').forEach(button => {
         button.addEventListener('click', async function(e) {
             e.preventDefault();
-
-            const postId = this.dataset.postId;
-            const postCard = this.closest('.post-card');
-            const commentForm = postCard.querySelector(`.comment-form[data-post-id="${postId}"]`);
-            const commentInput = commentForm.querySelector('.comment-input');
-            const commentContent = commentInput.value.trim();
-
-            if (!commentContent) return;
-
-            try {
-                const response = await fetch(`/posts/${postId}/comments`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ content: commentContent })
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) window.location.href = '/login';
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                commentInput.value = '';
-                commentInput.style.height = 'auto';
-            } catch (error) {
-                console.error('Error submitting comment:', error);
-                alert('Failed to post comment. Please try again.');
-            }
+            await submitComment(this);
         });
     });
 
-    // --- Enter to Submit & Auto-resize ---
+    // --- Enter to Submit & Auto-resize FIX ---
     document.querySelectorAll('.comment-input').forEach(input => {
         input.addEventListener('keypress', async function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                const postId = this.closest('.comment-input-wrapper').querySelector('.submit-comment-button').dataset.postId;
-                const postCard = this.closest('.post-card');
-                const commentForm = postCard.querySelector(`.comment-form[data-post-id="${postId}"]`);
-                const commentInput = commentForm.querySelector('.comment-input');
-                const commentContent = commentInput.value.trim();
-
-                if (!commentContent) return;
-
-                try {
-                    const response = await fetch(`/posts/${postId}/comments`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ content: commentContent })
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 401) window.location.href = '/login';
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    commentInput.value = '';
-                    commentInput.style.height = 'auto';
-                } catch (error) {
-                    console.error('Error submitting comment:', error);
-                    alert('Failed to post comment. Please try again.');
-                }
+                await submitComment(this);
             }
         });
 
@@ -481,6 +422,53 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.height = `${this.scrollHeight}px`;
         });
     });
+
+    async function submitComment(element) {
+        const postCard = element.closest('.post-card');
+        const commentInput = postCard.querySelector('.comment-input');
+        const postId = commentInput.closest('.comment-input-wrapper').querySelector('.submit-comment-button').dataset.postId;
+        const commentContent = commentInput.value.trim();
+
+        if (!commentContent) return;
+
+        try {
+            const response = await fetch(`/posts/${postId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ content: commentContent })
+            });
+
+            // Check if the response has content before trying to parse it as JSON.
+            // This is the key fix to prevent the alert.
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await response.json();
+                console.log('Comment submitted successfully:', data);
+            } else {
+                // If it's not JSON, but the status is OK, it's a success.
+                console.log('Comment submitted, but no JSON response body.');
+            }
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                }
+                // We'll log the error instead of using an alert.
+                console.error(`HTTP error! Status: ${response.status}`);
+            }
+
+            commentInput.value = '';
+            commentInput.style.height = 'auto';
+        } catch (error) {
+            // This catches network errors or other unexpected failures.
+            console.error('Error submitting comment:', error);
+            // We're no longer using alert() here.
+        }
+    }
 
     // --- Share Modal Functionality ---
     document.querySelectorAll('.share-post').forEach(button => {

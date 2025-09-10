@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
 
-    <!-- Custom CSS -->
     <link href="{{ asset('css/register.css') }}" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Favicon -->
     {{-- <link rel="shortcut icon" href="" type="image/x-icon"> --}}
      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
 </head>
@@ -25,14 +22,14 @@
                 @csrf
 
                 <h2 class="login-title">Register Here to join the African family 👋</h2>
-                <div class="divider"><span>or</span></div>
+                {{-- <div class="divider"><span></span></div> --}}
 
                 <x-register-field label="Email" name="email" type="email" placeholder="Enter your email" />
                 <x-register-field name="username" label="Username" placeholder="Username" />
                 <x-register-field label="Password" name="password" type="password" placeholder="Enter your password" />
                 <x-register-field label="Confirm Password" name="password_confirmation" type="password" placeholder="Confirm your password" />
                 <x-register-field name="phone" type="tel" label="Phone Number" placeholder="Enter your phone number" />
-                <x-register-field name="dob" type="date" label="Date of Birth" placeholder="Date of Birth" />
+                <x-register-field name="dob" type="date" label="Date of Birth" placeholder="Date of Birth" style="color:#fff"/>
                 <div class="form-options">
                     <x-register-field name="gender" type="select" label="Gender" placeholder="Gender"
                         :options="[
@@ -65,25 +62,34 @@
                                         :options="$countries"
                             />
                  </div>
-                <div class="options-row">
-                    <label>
-                        <input type="checkbox" name="remember">
-                        Remember Me
-                    </label>
-                    <a href="#">Forgot password?</a>
-                </div>
+
 
                 <div class="submit-container">
                     <input type="submit" class="login-button" value="Register Here" />
                 </div>
 
                 <p class="signup-prompt">
-                    Don’t have an account? <a href="{{ route('login') }}">Sign In</a>
+                    Already have an account? <a href="{{ route('login') }}">Sign In</a>
                 </p>
             </form>
         </div>
-         <div class="login-image">
-             <img src="{{asset('login-img.jpg') }}" alt="Login Illustration" />
+        <div class="cards-container">
+            <div class="card card-1">
+                <img src="{{ asset('login.webp') }}" alt="Card Image 1">
+                <h3>Connecting people</h3>
+            </div>
+            <div class="card card-2">
+                <img src="{{ asset('login2.webp') }}" alt="Card Image 2">
+                <h3>Sharing experiences</h3>
+            </div>
+            <div class="card card-3">
+                <img src="{{ asset('login3.jpg') }}" alt="Card Image 3">
+                <h3>Building communities</h3>
+            </div>
+            <div class="card card-4">
+                <img src="{{ asset('celebrate.webp') }}" alt="Card Image 4">
+                <h3>Celebrating culture</h3>
+            </div>
         </div>
     </div>
 
@@ -104,4 +110,3 @@
     </script>
 </body>
 </html>
-

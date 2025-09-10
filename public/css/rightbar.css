@@ -1,10 +1,16 @@
-body{
+/*==========================================================
+  FULL STYLESHEET FOR THE RIGHT SIDEBAR
+  ==========================================================*/
+
+/* General Body and Font Styles */
+body {
     font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
+
 /* Rightbar Layout */
 .rightbar {
-    width:300px;
+    width: 300px;
     padding: 1rem;
     transition: width 0.3s ease;
     box-sizing: border-box;
@@ -15,49 +21,52 @@ body{
     height: 100vh;
 }
 
-/* Messages Section */
-.messages, .events {
+/*----------------------------------------------------------
+  Reusable Component Styles (for all sections)
+  ----------------------------------------------------------*/
+
+.messages,
+.events,
+.who-to-follow {
     background: white;
-    padding:.5rem;
+    padding: .5rem;
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 1rem;
 }
-body.dark-mode .messages,
-body.dark-mode .events {
-    background: #000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-.messages-header {
-    margin-bottom: 1rem;
-}
-.messages-header h4 {
+
+.messages h4,
+.events h4,
+.who-to-follow h4 {
     margin-bottom: 0.5rem;
     font-size: 14px;
     color: #333;
 }
-body.dark-mode .messages-header h4 {
-    color: #e9ecef;
+
+/*----------------------------------------------------------
+  Specific Section Styles (Messages, Events, Follow)
+  ----------------------------------------------------------*/
+
+/* Messages Section */
+.messages-header {
+    margin-bottom: 1rem;
 }
+
 .messages .search-container input {
     padding: 0.5rem 1rem;
     border-radius: 20px;
     border: 1px solid #ccc;
-    width:80%;
+    width: 80%;
     font-size: 12px;
     background: white;
     color: #222;
 }
-body.dark-mode .messages .search-container input {
-    background: #000;
-    border-color: #55555551;
-    color: #e9ecef;
-}
+
 .tabs {
     display: flex;
-    /* gap:3px; */
     margin-top: 0.5rem;
 }
+
 .tabs .tab {
     padding: 5px 10px;
     border-radius: 5px;
@@ -66,70 +75,190 @@ body.dark-mode .messages .search-container input {
     color: #666;
     transition: background 0.3s, color 0.3s;
 }
-body.dark-mode .tabs .tab {
-    color: #bbb;
-}
+
 .tabs .tab.active {
     background: #007bff;
     color: white;
 }
-body.dark-mode .tabs .tab.active {
-    background: #0056b3;
+
+/* Message List and Events List */
+.message-list,
+.event-list,
+.follow-list {
+    max-height: 300px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Message List */
-.message-list, .event-list {
-    max-height: 300px; /* Constrain height with scroll */
-    overflow-y: auto;
-    scrollbar-width: none;
-}
-.message-list li, .event-list li {
+.message-list li,
+.event-list li,
+.follow-item {
     padding: 0.5rem 0;
     border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
     color: #333;
-    font-size:14px;
+    font-size: 14px;
 }
-body.dark-mode .message-list li,
-body.dark-mode .event-list li {
-    border-bottom: 1px solid #55555551;
-    color: #e9ecef;
+
+.message-list li:last-child,
+.event-list li:last-child,
+.follow-item:last-child {
+    border-bottom: none;
 }
-.message-list .avatar {
+
+/* Avatar Styles */
+.message-list .avatar,
+.user-link .avatar {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     object-fit: cover;
     margin-right: 10px;
 }
-.message-list i.avatar {
+
+.message-list i.avatar,
+.user-link i.avatar {
     font-size: 30px;
     color: #666;
 }
-body.dark-mode .message-list i.avatar {
-    color: #999;
-}
-.message-list li:last-child, .event-list li:last-child {
-    border-bottom: none; /* No border for the last item */
-}
-.message-list a {
+
+/* Links and Buttons */
+.message-list a,
+.view-all a {
     color: #007bff;
     font-size: 12px;
     display: block;
     text-align: right;
-    width: 100%; /* Allows it to push to the right */
+    width: 100%;
 }
-body.dark-mode .message-list a {
+
+/* "Who to Follow" Section */
+.follow-item {
+    justify-content: space-between;
+}
+
+.user-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    flex-grow: 1;
+}
+
+.follow-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.follow-btn:hover {
+    background-color: #0056b3;
+}
+
+.follow-btn.following {
+    background-color: #ccc;
+    color: #333;
+    cursor: default;
+}
+
+.follow-btn.following:hover {
+    background-color: #ccc;
+}
+
+/*----------------------------------------------------------
+  Dark Mode Styles
+  ----------------------------------------------------------*/
+
+body.dark-mode .messages,
+body.dark-mode .events,
+body.dark-mode .who-to-follow {
+    background: #000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .messages h4,
+body.dark-mode .events h4,
+body.dark-mode .who-to-follow h4 {
+    color: #e9ecef;
+}
+
+body.dark-mode .messages .search-container input {
+    background: #000;
+    border-color: #55555551;
+    color: #e9ecef;
+}
+
+body.dark-mode .tabs .tab {
+    color: #bbb;
+}
+
+body.dark-mode .tabs .tab.active {
+    background: #0056b3;
+}
+
+body.dark-mode .message-list li,
+body.dark-mode .event-list li,
+body.dark-mode .follow-item {
+    border-bottom: 1px solid #55555551;
+    color: #e9ecef;
+}
+
+body.dark-mode .message-list i.avatar,
+body.dark-mode .user-link i.avatar {
+    color: #999;
+}
+
+body.dark-mode .message-list a,
+body.dark-mode .view-all a {
     color: #66b3ff;
 }
 
-/* Events Section */
-.events h4 {
-    margin-bottom: 0.5rem;
-    font-size: 14px;
-    color: #333;
-}
-body.dark-mode .events h4 {
+body.dark-mode .user-link {
     color: #e9ecef;
+}
+
+body.dark-mode .follow-btn {
+    background-color: #0056b3;
+}
+
+body.dark-mode .follow-btn:hover {
+    background-color: #004595;
+}
+
+body.dark-mode .follow-btn.following {
+    background-color: #55555551;
+    color: #e9ecef;
+}
+
+body.dark-mode .follow-btn.following:hover {
+    background-color: #55555551;
+}
+
+/* General Scrollbar (for better visual consistency) */
+.message-list::-webkit-scrollbar,
+.event-list::-webkit-scrollbar,
+.follow-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.message-list::-webkit-scrollbar-thumb,
+.event-list::-webkit-scrollbar-thumb,
+.follow-list::-webkit-scrollbar-thumb {
+    background-color: #c5c5c5;
+    border-radius: 10px;
+}
+
+body.dark-mode .message-list::-webkit-scrollbar-thumb,
+body.dark-mode .event-list::-webkit-scrollbar-thumb,
+body.dark-mode .follow-list::-webkit-scrollbar-thumb {
+    background-color: #444;
 }

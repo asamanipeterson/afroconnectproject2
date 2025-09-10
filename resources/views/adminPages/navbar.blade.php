@@ -9,52 +9,38 @@
         <ul class="navbar-nav w-100">
             <li class="nav-item w-100">
                 <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                    <input type="text" class="form-control" placeholder="Search products">
+                    <input type="text" class="form-control" placeholder="Search users">
                 </form>
             </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
-            <li class="nav-item dropdown d-none d-lg-block">
-                <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-bs-toggle="dropdown" aria-expanded="false" href="#">+ Create New Project</a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
-                    <h6 class="p-3 mb-0">Projects</h6>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-file-outline text-primary"></i>
+
+                        <li class="nav-item dropdown d-none d-lg-block">
+                            <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-bs-toggle="dropdown" aria-expanded="false" href="#">+ Add an Admin</a>
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
+                                <h6 class="p-3 mb-0">Select User to Promote</h6>
+                                <div class="dropdown-divider"></div>
+                                @foreach(\App\Models\User::where('user_type', 'user')->get() as $user)
+                                <a class="dropdown-item preview-item promote-admin" data-user-id="{{ $user->id }}">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            @if ($user->profile_picture)
+                                                                    <img class="img-xs rounded-circle" src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
+                                                @else
+                                                                <i class="mdi mdi-account text-primary"></i>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject ellipsis mb-1">{{ $user->username }}</p>
+                                    </div>
+                                </a>
+                                @endforeach
+                                <div class="dropdown-divider"></div>
+                                <p class="p-3 mb-0 text-center">All non-admin users</p>
                             </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject ellipsis mb-1">Software Development</p>
-                        </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-web text-info"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject ellipsis mb-1">UI Development</p>
-                        </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-layers text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject ellipsis mb-1">Software Testing</p>
-                        </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <p class="p-3 mb-0 text-center">See all projects</p>
-                </div>
-            </li>
+                        </li>
+
             <li class="nav-item nav-settings d-none d-lg-block">
                 <a class="nav-link" href="#">
                     <i class="mdi mdi-view-grid"></i>
@@ -104,59 +90,50 @@
             <li class="nav-item dropdown border-left">
                 <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                     <i class="mdi mdi-bell"></i>
-                    <span class="count bg-danger"></span>
+                    <span class="count bg-danger">{{ \App\Models\Report::where('status', 'pending')->count() + \App\Models\PostReport::where('status', 'pending')->count() }}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                    <h6 class="p-3 mb-0">Notifications</h6>
+                    <h6 class="p-3 mb-0">Reports</h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
+                    @foreach(\App\Models\Report::where('status', 'pending')->latest()->take(5)->get() as $report)
+                    <a class="dropdown-item preview-item" href="{{ route('admin.reports.show', $report->id) }}">
                         <div class="preview-thumbnail">
                             <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-calendar text-success"></i>
+                                <i class="mdi mdi-account-alert text-warning"></i>
                             </div>
                         </div>
                         <div class="preview-item-content">
-                            <p class="preview-subject mb-1">Event today</p>
-                            <p class="text-muted ellipsis mb-0"> Just a reminder that you have an event today </p>
+                            <p class="preview-subject mb-1">User Report: {{ $report->reported_user->username }}</p>
+                            <p class="text-muted ellipsis mb-0">Reason: {{ $report->reason }} - {{ $report->created_at->diffForHumans() }}</p>
                         </div>
                     </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
+                    @endforeach
+                    @foreach(\App\Models\PostReport::where('status', 'pending')->latest()->take(5)->get() as $postReport)
+                    <a class="dropdown-item preview-item" href="{{ route('admin.post-reports.show', $postReport->id) }}">
                         <div class="preview-thumbnail">
                             <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-settings text-danger"></i>
+                                <i class="mdi mdi-post text-info"></i>
                             </div>
                         </div>
                         <div class="preview-item-content">
-                            <p class="preview-subject mb-1">Settings</p>
-                            <p class="text-muted ellipsis mb-0"> Update dashboard </p>
+                            <p class="preview-subject mb-1">Post Report: Post #{{ $postReport->post_id }}</p>
+                            <p class="text-muted ellipsis mb-0">Reason: {{ $postReport->reason }} - {{ $postReport->created_at->diffForHumans() }}</p>
                         </div>
                     </a>
+                    @endforeach
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-dark rounded-circle">
-                                <i class="mdi mdi-link-variant text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <p class="preview-subject mb-1">Launch Admin</p>
-                            <p class="text-muted ellipsis mb-0"> New admin wow! </p>
-                        </div>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <p class="p-3 mb-0 text-center">See all notifications</p>
+                    <p class="p-3 mb-0 text-center">See all reports</p>
                 </div>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
                     <div class="navbar-profile">
-            @if (auth()->user() && auth()->user()->profile_picture)
-              <img class="img-xs rounded-circle" src="{{ asset(auth()->user()->profile_picture) }}" alt="Profile Picture">
-            @else
-              <i class="mdi mdi-account-circle img-xs rounded-circle"></i>
-            @endif
-                        <p class="mb-0 d-none d-sm-block navbar-profile-name">{{  auth()->user()->username ?? 'Guest' }}</p>
+                        @if (auth()->user() && auth()->user()->profile_picture)
+                            <img class="img-xs rounded-circle" src="{{ asset(auth()->user()->profile_picture) }}" alt="Profile Picture">
+                        @else
+                            <i class="mdi mdi-account-circle img-xs rounded-circle"></i>
+                        @endif
+                        <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ auth()->user()->username ?? 'Guest' }}</p>
                         <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                     </div>
                 </a>
@@ -194,3 +171,39 @@
         </button>
     </div>
 </nav>
+
+<xaiArtifact artifact_id="7dd6fb2b-60a1-4176-b977-711291b15194" artifact_version_id="f5c0992c-de5e-418f-a80c-d5a6c63cb740" title="navbar.js" contentType="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    const promoteAdminLinks = document.querySelectorAll('.promote-admin');
+
+    promoteAdminLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const userId = this.getAttribute('data-user-id');
+
+            if (confirm('Are you sure you want to promote this user to admin?')) {
+                fetch('/admin/promote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User promoted to admin successfully');
+                        this.closest('.dropdown-item').remove();
+                    } else {
+                        alert('Error promoting user: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while promoting the user');
+                });
+            }
+        });
+    });
+});
