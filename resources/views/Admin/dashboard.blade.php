@@ -43,7 +43,7 @@
             </a>
         </div>
         <div class="container-fluid page-body-wrapper">
-            {{-- @yield('adminContent') --}}
+            @yield('adminContent')
             @if(request()->routeIs('admin.dashboard'))
                 @include('adminPages.admincontent')
             @endif

@@ -134,7 +134,7 @@ class User extends Authenticatable
         // Save new OTP
         $this->oneTimePassword()->create([
             'code' => $otpCode,
-            'expires_at' => Carbon::now()->addMinutes(10),
+            'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
         // Send OTP mail

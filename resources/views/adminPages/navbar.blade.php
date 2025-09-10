@@ -14,33 +14,56 @@
             </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
-
-                        <li class="nav-item dropdown d-none d-lg-block">
-                            <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-bs-toggle="dropdown" aria-expanded="false" href="#">+ Add an Admin</a>
-                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
-                                <h6 class="p-3 mb-0">Select User to Promote</h6>
-                                <div class="dropdown-divider"></div>
-                                @foreach(\App\Models\User::where('user_type', 'user')->get() as $user)
-                                <a class="dropdown-item preview-item promote-admin" data-user-id="{{ $user->id }}">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-dark rounded-circle">
-                                            @if ($user->profile_picture)
-                                                                    <img class="img-xs rounded-circle" src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
-                                                @else
-                                                                <i class="mdi mdi-account text-primary"></i>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <p class="preview-subject ellipsis mb-1">{{ $user->username }}</p>
-                                    </div>
-                                </a>
-                                @endforeach
-                                <div class="dropdown-divider"></div>
-                                <p class="p-3 mb-0 text-center">All non-admin users</p>
+            <li class="nav-item dropdown d-none d-lg-block">
+                <a class="nav-link btn btn-success create-new-button" id="promoteButtonDropdown" data-bs-toggle="dropdown" aria-expanded="false" href="#">+ Promote to Admin</a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="promoteButtonDropdown">
+                    <h6 class="p-3 mb-0">Select User to Promote</h6>
+                    <div class="dropdown-divider"></div>
+                    @foreach(\App\Models\User::where('user_type', 'user')->get() as $user)
+                    <a class="dropdown-item preview-item promote-user" data-user-id="{{ $user->id }}">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-dark rounded-circle">
+                                @if ($user->profile_picture)
+                                <img class="img-xs rounded-circle" src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
+                                @else
+                                <i class="mdi mdi-account text-primary"></i>
+                                @endif
                             </div>
-                        </li>
-
+                        </div>
+                        <div class="preview-item-content">
+                            <p class="preview-subject ellipsis mb-1">{{ $user->username }}</p>
+                        </div>
+                    </a>
+                    @endforeach
+                    <div class="dropdown-divider"></div>
+                    <p class="p-3 mb-0 text-center">All non-admin users</p>
+                </div>
+            </li>
+            <li class="nav-item dropdown d-none d-lg-block">
+                <a class="nav-link btn btn-danger create-new-button" id="demoteButtonDropdown" data-bs-toggle="dropdown" aria-expanded="false" href="#">- Demote Admin</a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="demoteButtonDropdown">
+                    <h6 class="p-3 mb-0">Select Admin to Demote</h6>
+                    <div class="dropdown-divider"></div>
+                    @foreach(\App\Models\User::where('user_type', 'admin')->where('id', '!=', auth()->id())->get() as $user)
+                    <a class="dropdown-item preview-item demote-admin" data-user-id="{{ $user->id }}">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-dark rounded-circle">
+                                @if ($user->profile_picture)
+                                <img class="img-xs rounded-circle" src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
+                                @else
+                                <i class="mdi mdi-account text-danger"></i>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="preview-item-content">
+                            <p class="preview-subject ellipsis mb-1">{{ $user->username }}</p>
+                        </div>
+                    </a>
+                    @endforeach
+                    <div class="dropdown-divider"></div>
+                    <p class="p-3 mb-0 text-center">All other admin users</p>
+                </div>
+            </li>
             <li class="nav-item nav-settings d-none d-lg-block">
                 <a class="nav-link" href="#">
                     <i class="mdi mdi-view-grid"></i>
@@ -96,7 +119,7 @@
                     <h6 class="p-3 mb-0">Reports</h6>
                     <div class="dropdown-divider"></div>
                     @foreach(\App\Models\Report::where('status', 'pending')->latest()->take(5)->get() as $report)
-                    <a class="dropdown-item preview-item" href="{{ route('admin.reports.show', $report->id) }}">
+                    <a class="dropdown-item preview-item" href="{{ route('admin.reports.index', $report->id) }}">
                         <div class="preview-thumbnail">
                             <div class="preview-icon bg-dark rounded-circle">
                                 <i class="mdi mdi-account-alert text-warning"></i>
@@ -109,7 +132,7 @@
                     </a>
                     @endforeach
                     @foreach(\App\Models\PostReport::where('status', 'pending')->latest()->take(5)->get() as $postReport)
-                    <a class="dropdown-item preview-item" href="{{ route('admin.post-reports.show', $postReport->id) }}">
+                    <a class="dropdown-item preview-item" href="{{ route('admin.reports.index', $postReport->id) }}">
                         <div class="preview-thumbnail">
                             <div class="preview-icon bg-dark rounded-circle">
                                 <i class="mdi mdi-post text-info"></i>
@@ -129,9 +152,9 @@
                 <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
                     <div class="navbar-profile">
                         @if (auth()->user() && auth()->user()->profile_picture)
-                            <img class="img-xs rounded-circle" src="{{ asset(auth()->user()->profile_picture) }}" alt="Profile Picture">
+                        <img class="img-xs rounded-circle" src="{{ asset(auth()->user()->profile_picture) }}" alt="Profile Picture">
                         @else
-                            <i class="mdi mdi-account-circle img-xs rounded-circle"></i>
+                        <i class="mdi mdi-account-circle img-xs rounded-circle"></i>
                         @endif
                         <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ auth()->user()->username ?? 'Guest' }}</p>
                         <i class="mdi mdi-menu-down d-none d-sm-block"></i>
@@ -172,38 +195,57 @@
     </div>
 </nav>
 
-<xaiArtifact artifact_id="7dd6fb2b-60a1-4176-b977-711291b15194" artifact_version_id="f5c0992c-de5e-418f-a80c-d5a6c63cb740" title="navbar.js" contentType="text/javascript">
-document.addEventListener('DOMContentLoaded', function() {
-    const promoteAdminLinks = document.querySelectorAll('.promote-admin');
+<script>
+    $(document).ready(function() {
+        // CSRF Token for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-    promoteAdminLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        // Event handler for promoting a user
+        $('.promote-user').on('click', function(e) {
             e.preventDefault();
-            const userId = this.getAttribute('data-user-id');
 
-            if (confirm('Are you sure you want to promote this user to admin?')) {
-                fetch('/admin/promote', {
+            const userId = $(this).data('user-id');
+            if (confirm('Are you sure you want to promote this user to an admin?')) {
+                $.ajax({
+                    url: '{{ route('admin.promoteUser') }}', // Updated route name
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    data: { user_id: userId },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload(); // Reload the page to update the user lists
                     },
-                    body: JSON.stringify({ user_id: userId })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('User promoted to admin successfully');
-                        this.closest('.dropdown-item').remove();
-                    } else {
-                        alert('Error promoting user: ' + data.message);
+                    error: function(xhr) {
+                        const errorMessage = xhr.responseJSON.message || 'An unexpected error occurred.';
+                        alert(errorMessage);
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while promoting the user');
+                });
+            }
+        });
+
+        // Event handler for demoting an admin
+        $('.demote-admin').on('click', function(e) {
+            e.preventDefault();
+
+            const userId = $(this).data('user-id');
+            if (confirm('Are you sure you want to demote this admin to a regular user?')) {
+                $.ajax({
+                    url: '{{ route('admin.demoteUser') }}', // Updated route name
+                    method: 'POST',
+                    data: { user_id: userId },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload(); // Reload the page to update the user lists
+                    },
+                    error: function(xhr) {
+                        const errorMessage = xhr.responseJSON.message || 'An unexpected error occurred.';
+                        alert(errorMessage);
+                    }
                 });
             }
         });
     });
-});
+</script>

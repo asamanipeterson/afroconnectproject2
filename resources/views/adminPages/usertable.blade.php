@@ -15,34 +15,43 @@
     }
 </style>
 <div class="main-panel">
-        <div class="content-wrapper">
-            <div class="row">
-                <div class="col-12 grid-margin">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Active Users</h4>
-                            @if (session('success'))
+<div class="content-wrapper">
+    <div class="row ">
+      <div class="col-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Users Registered</h4>
+            @if (session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
                             @if (session('error'))
                                 <div class="alert alert-danger">{{ session('error') }}</div>
-                            @endif
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Followers</th>
-                                            <th>Reports</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+            @endif
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                        <th>Users</th>
+                        <th>Email</th>
+                        <th>Followers</th>
+                        <th>Reports</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                 </tr>
+                </thead>
+
+                <tbody>
                                         @foreach ($users as $user)
                                             <tr>
-                                                <td>{{ $user->username }}</td>
+                                                <td>
+                                                    @if ($user->profile_picture)
+                                                        <img class="img-xs rounded-circle" src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
+                                                    @else
+                                                        <i class="mdi mdi-account-circle img-xs rounded-circle" style="font-size:30px;"></i>
+                                                    @endif
+                                                    {{ $user->username }}
+
+                                                </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->followers_count }}</td>
                                                 <td>{{ $user->reports_count }}</td>
@@ -121,7 +130,7 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p><strong>Name:</strong> {{ $user->username }}</p>
+                                                            <p><strong>User:</strong> {{ $user->username }}</p>
                                                             <p><strong>Email:</strong> {{ $user->email }}</p>
                                                             <p><strong>Followers:</strong> {{ $user->followers_count }}</p>
                                                             <p><strong>Reports:</strong> {{ $user->reports_count }}</p>
@@ -136,12 +145,12 @@
                                             </div>
                                         @endforeach
                                     </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}

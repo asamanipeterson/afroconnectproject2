@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Report;
+use App\Models\PostReport;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller

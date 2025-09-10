@@ -20,10 +20,10 @@ use App\Http\Controllers\AdminController;
 
 use App\Events\TestMessageReceived;
 
-Route::get('/broadcast-test', function () {
-    broadcast(new TestMessageReceived('Hello from Laravel Reverb!'));
-    return 'Event has been broadcast!';
-});
+// Route::get('/broadcast-test', function () {
+//     broadcast(new TestMessageReceived('Hello from Laravel Reverb!'));
+//     return 'Event has been broadcast!';
+// });
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'userHomepage')->name('welcome')->middleware('auth');
@@ -114,7 +114,7 @@ Route::controller(MarketPlaceController::class)->prefix('marketplace')->middlewa
     Route::get('/items/{item}/data', 'getItemData');
 });
 
-Route::prefix('admin/users')->controller(UserManagementController::class)->middleware('auth')->group(function () {
+Route::prefix('/users')->controller(UserManagementController::class)->middleware('auth')->group(function () {
     Route::get('/', 'index')->name('admin.users.index');
     Route::get('/{user}', 'show')->name('admin.users.show');
     Route::patch('/{user}/block', 'block')->name('admin.users.block');
@@ -145,7 +145,7 @@ Route::get('/messages/{message}/audio', [MessageController::class, 'getAudio'])
     ->middleware('auth');
 
 
-Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::post('/promote-user', [AdminController::class, 'promoteUser'])->name('admin.promoteUser');
-    Route::post('/demote-user', [AdminController::class, 'demoteUser'])->name('admin.demoteUser');
+Route::prefix('admin')->controller(AdminController::class)->middleware('auth')->group(function () {
+    Route::post('/promote-user',  'promoteUser')->name('admin.promoteUser');
+    Route::post('/demote-user',  'demoteUser')->name('admin.demoteUser');
 });

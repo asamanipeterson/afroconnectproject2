@@ -149,34 +149,6 @@ body {
     flex-grow: 1;
 }
 
-.follow-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.follow-btn:hover {
-    background-color: #0056b3;
-}
-
-.follow-btn.following {
-    background-color: #ccc;
-    color: #333;
-    cursor: default;
-}
-
-.follow-btn.following:hover {
-    background-color: #ccc;
-}
-
-/*----------------------------------------------------------
-  Dark Mode Styles
-  ----------------------------------------------------------*/
 
 body.dark-mode .messages,
 body.dark-mode .events,
@@ -226,18 +198,7 @@ body.dark-mode .user-link {
     color: #e9ecef;
 }
 
-body.dark-mode .follow-btn {
-    background-color: #0056b3;
-}
 
-body.dark-mode .follow-btn:hover {
-    background-color: #004595;
-}
-
-body.dark-mode .follow-btn.following {
-    background-color: #55555551;
-    color: #e9ecef;
-}
 
 body.dark-mode .follow-btn.following:hover {
     background-color: #55555551;

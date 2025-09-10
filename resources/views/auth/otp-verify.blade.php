@@ -19,8 +19,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); */
-            background:#000;
+            background: #000;
             padding: 20px;
             font-family: 'Lexend', sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -60,7 +59,6 @@
             text-align: left;
         }
 
-        /* New styling for the OTP input container */
         .otp-input-container {
             display: flex;
             justify-content: space-between;
@@ -69,7 +67,7 @@
         }
 
         .otp-input {
-            width:100%;
+            width: 100%;
             height: 50px;
             text-align: center;
             font-size: 1.5rem;
@@ -94,7 +92,7 @@
             margin-top: 1rem;
         }
 
-        .submit-button, .resend-button, .otp-input-group {
+        .submit-button, .resend-button {
             width: 100%;
         }
 
@@ -163,9 +161,15 @@
             @csrf
             <div class="form-group">
                 <label class="form-label" for="otp">Enter OTP</label>
-                <div class="otp-input-group">
-                    <input type="text" name="otp" id="otp" class="otp-input" maxlength="6" required>
+                <div class="otp-input-container">
+                    <input type="text" id="otp-1" class="otp-input" maxlength="1" required>
+                    <input type="text" id="otp-2" class="otp-input" maxlength="1" required>
+                    <input type="text" id="otp-3" class="otp-input" maxlength="1" required>
+                    <input type="text" id="otp-4" class="otp-input" maxlength="1" required>
+                    <input type="text" id="otp-5" class="otp-input" maxlength="1" required>
+                    <input type="text" id="otp-6" class="otp-input" maxlength="1" required>
                 </div>
+                <input type="hidden" name="otp" id="hidden-otp-input">
                 @error('otp')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -182,14 +186,14 @@
             @csrf
             <button type="submit" class="resend-button" id="resend-button" disabled>Resend OTP</button>
         </form>
-
     </div>
 
     <script>
         const countdownEl = document.getElementById('countdown');
         const submitButton = document.querySelector('.submit-button');
         const resendButton = document.getElementById('resend-button');
-        const otpInput = document.getElementById('otp');
+        const otpInputs = document.querySelectorAll('.otp-input-container input');
+        const hiddenOtpInput = document.getElementById('hidden-otp-input');
         const otpForm = document.getElementById('otp-form');
         let totalTime = 300; // 5 minutes in seconds
 
@@ -197,8 +201,8 @@
             let minutes = Math.floor(totalTime / 60);
             let seconds = totalTime % 60;
 
-            minutes = minutes < 5 ? '0' + minutes : minutes;
-            seconds = seconds < 5 ? '0' + seconds : seconds;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
 
             countdownEl.textContent = `${minutes}:${seconds}`;
 
@@ -215,12 +219,51 @@
         const countdownInterval = setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // New code to auto-submit the form
-        otpInput.addEventListener('input', function() {
-            if (this.value.length === 6) {
-                otpForm.submit();
+        // Loop through each input field to add event listeners
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // If a user types, move to the next box
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+                updateHiddenInput();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                // Handle backspace to move to the previous input field
+                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // The key part: Handle the paste event on the FIRST input field only
+        otpInputs[0].addEventListener('paste', (e) => {
+            e.preventDefault(); // Stop the default paste behavior
+            const pasteData = e.clipboardData.getData('text').trim();
+
+            // Check if pasted data is a valid 6-digit number
+            if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
+                for (let i = 0; i < 6; i++) {
+                    otpInputs[i].value = pasteData.charAt(i);
+                }
+                updateHiddenInput();
+                otpForm.submit(); // Auto-submit after filling
             }
         });
+
+        function updateHiddenInput() {
+            let combinedValue = '';
+            otpInputs.forEach(input => {
+                combinedValue += input.value;
+            });
+            hiddenOtpInput.value = combinedValue;
+
+            if (combinedValue.length === 6) {
+                // Auto-submit after all inputs are filled by typing
+                otpForm.submit();
+            }
+        }
     </script>
 </body>
 </html>

@@ -6,9 +6,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Story;
-use App\Models\User; // <-- Make sure this line is here
+use App\Models\User;
 use App\Models\Like;
 use App\Models\Comment;
+use App\Models\PostReport;
+use App\Models\Report;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -47,17 +50,17 @@ class HomeController extends Controller
             // --- THIS IS THE NEW CODE BLOCK ---
             $suggestedUsers = User::where('id', '!=', $user->id)
                 ->whereNotIn('id', $followingIds)
-                ->inRandomOrder() // Optional: gets a random selection
-                ->limit(5)        // Optional: shows up to 5 users
+                ->where('user_type', 'user') // <-- Added this line to filter by user_type
+                ->inRandomOrder()
+                ->limit(5)
                 ->get();
-            // ------------------------------------
         }
 
         return view('welcome', [
             'user'           => $user,
             'postGroups'     => $postGroups,
             'stories'        => $stories,
-            'suggestedUsers' => $suggestedUsers, // <-- Pass the new variable to the view
+            'suggestedUsers' => $suggestedUsers,
         ]);
     }
 
@@ -78,7 +81,9 @@ class HomeController extends Controller
             'usersPerDay'   => $usersPerDay,
             'likesCount'    => Like::count(),
             'commentsCount' => Comment::count(),
-            'users'         => User::withCount(['followers', 'reports'])->get(),
+            'reportsCount'  => Report::count(),
+            'postsreport' => PostReport::count(),
+            'users'         => User::withCount(['followers', 'reports'])->where('id', '!=', Auth::id())->get(),
         ]);
     }
 }
