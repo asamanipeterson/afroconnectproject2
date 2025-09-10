@@ -1,4 +1,3 @@
-
 <style>
     .main-panel {
         margin-left: 250px; /* Adjust based on sidebar width */
@@ -64,7 +63,7 @@
             <div class="row">
               <div class="col-9">
                 <div class="d-flex align-items-center align-self-start">
-                  <h3 class="mb-0">{{$commentsCount+$likesCount}}</h3>
+                  <h3 class="mb-0">{{$likesCount+$commentsCount}}</h3>
                   <p class="text-danger ms-2 mb-0 font-weight-medium">(Comments + likes)</p>
                 </div>
               </div>
@@ -84,7 +83,7 @@
             <div class="row">
               <div class="col-9">
                 <div class="d-flex align-items-center align-self-start">
-                  <h3 class="mb-0">{{$reportsCount+$postsreport}}</h3>
+                  <h3 class="mb-0">{{$totalReports}}</h3>
                   {{-- <p class="text-success ms-2 mb-0 font-weight-medium"></p> --}}
                 </div>
               </div>
@@ -394,80 +393,48 @@
 </div>
  <script>
     // pass PHP variables safely to JS
-    const usersPerDay = @json($usersPerDay ?? []);
-    const postsPerDay = @json($postsPerDay ?? []);
+    const reportsChartData = @json($reportsChartData ?? []);
+    const engagementData = @json($engagementData ?? []);
     const likesCount = @json($likesCount ?? 0);
     const commentsCount = @json($commentsCount ?? 0);
-    const sharesCount = @json($sharesCount ?? 0);
-    const engagementPerDay = @json($engagementPerDay ?? []);
-    const totalUsers = @json($totalUsers ?? 0);
 
     document.addEventListener('DOMContentLoaded', function () {
-      // --- POSTS CHART ---
 
-
-      // --- USERS CHART ---
-    const usersCanvas = document.getElementById('usersChart');
-
-    if (usersCanvas && usersPerDay.length) {
-      const userLabels = usersPerDay.map(item => {
-        const d = new Date(item.date);
-        return `${d.getDate()}/${d.getMonth() + 1}`;
-      });
-      const userCounts = usersPerDay.map(item => item.count);
-
-      new Chart(usersCanvas.getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: userLabels,
-          datasets: [{
-            label: 'Users Registered Per Day',
-            data: userCounts,
-            backgroundColor: [
-              'rgba(13, 110, 253, 0.6)',
-              'rgba(40, 167, 69, 0.6)',
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(255, 193, 7, 0.6)',
-              'rgba(111, 66, 193, 0.6)'
-            ],
-            borderColor: [
-              'rgba(13, 110, 253, 1)',
-              'rgba(40, 167, 69, 1)',
-              'rgba(255, 99, 132, 1)',
-              'rgba(255, 193, 7, 1)',
-              'rgba(111, 66, 193, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: true,
-              position: 'top'
-            },
-            title: {
-              display: true,
-              text: 'Users Registered Per Day'
+      // --- ENGAGEMENT DOUGHNUT (from DB counts) ---
+      const engagementCanvas = document.getElementById('engagementChart');
+      if (engagementCanvas) {
+        new Chart(engagementCanvas.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Likes', 'Comments'],
+            datasets: [{
+              data: [likesCount, commentsCount,],
+              backgroundColor: ['#1cc88a', '#36b9cc'],
+              hoverBackgroundColor: ['#17a673', '#2c9faf'],
+              borderWidth: 0,
+              cutout: '00%'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 10, padding: 20 } }
             }
           }
-        }
-      });
-    } else {
-      console.error('Canvas element not found or no data available');
-    }
+        });
+      }
 
-      // --- REPORTS CHART (kept static) ---
+      // --- REPORTS CHART (now dynamic) ---
       const reportsCanvas = document.getElementById('reportsChart');
-      if (reportsCanvas) {
+      if (reportsCanvas && reportsChartData.labels && reportsChartData.data) {
         new Chart(reportsCanvas.getContext('2d'), {
           type: 'line',
           data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: reportsChartData.labels,
             datasets: [{
-              label: 'Reports',
-              data: [12, 19, 15, 20, 14, 25, 18],
+              label: 'Daily Reports',
+              data: reportsChartData.data,
               borderColor: '#e74a3b',
               backgroundColor: 'rgba(231, 74, 59, 0.05)',
               borderWidth: 2,
@@ -490,30 +457,5 @@
           }
         });
       }
-
-      // --- ENGAGEMENT DOUGHNUT (from DB counts) ---
-      const engagementCanvas = document.getElementById('engagementChart');
-      if (engagementCanvas) {
-        new Chart(engagementCanvas.getContext('2d'), {
-          type: 'doughnut',
-          data: {
-            labels: ['Likes', 'Comments', 'Shares'],
-            datasets: [{
-              data: [likesCount, commentsCount, sharesCount],
-              backgroundColor: ['#1cc88a', '#36b9cc', '#f6c23e'],
-              hoverBackgroundColor: ['#17a673', '#2c9faf', '#dda20a'],
-              borderWidth: 0,
-              cutout: '00%'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom', labels: { boxWidth: 10, padding: 20 } }
-            }
-          }
-        });
-      }
     });
-  </script>
+</script>

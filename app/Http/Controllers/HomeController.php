@@ -66,24 +66,48 @@ class HomeController extends Controller
 
     public function adminDashboard()
     {
+        // Daily data for charts
         $postsPerDay = [];
         $usersPerDay = [];
+        $reportsChartData = [
+            'labels' => [],
+            'data' => []
+        ];
+
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i)->toDateString();
             $postsPerDay[] = ['date' => $date, 'count' => Post::whereDate('created_at', $date)->count()];
             $usersPerDay[] = ['date' => $date, 'count' => User::whereDate('created_at', $date)->count()];
+
+            $reportsChartData['labels'][] = Carbon::today()->subDays($i)->format('D');
+            $userReportsCount = Report::whereDate('created_at', $date)->count();
+            $postReportsCount = PostReport::whereDate('created_at', $date)->count();
+            $reportsChartData['data'][] = $userReportsCount + $postReportsCount;
         }
 
+        // Total counts
+        $totalUsers = User::count();
+        $totalPosts = Post::count();
+        $likesCount = Like::count();
+        $commentsCount = Comment::count();
+        $reportsCount = Report::count();
+        $postsreport = PostReport::count();
+        $totalReports = $reportsCount + $postsreport; // This is the fix
+
+        $users = User::withCount(['followers', 'reports'])->where('id', '!=', Auth::id())->get();
+
         return view('Admin.dashboard', [
-            'totalUsers'    => User::count(),
-            'totalPosts'    => Post::count(),
-            'postsPerDay'   => $postsPerDay,
-            'usersPerDay'   => $usersPerDay,
-            'likesCount'    => Like::count(),
-            'commentsCount' => Comment::count(),
-            'reportsCount'  => Report::count(),
-            'postsreport' => PostReport::count(),
-            'users'         => User::withCount(['followers', 'reports'])->where('id', '!=', Auth::id())->get(),
+            'totalUsers'     => $totalUsers,
+            'totalPosts'     => $totalPosts,
+            'postsPerDay'    => $postsPerDay,
+            'usersPerDay'    => $usersPerDay,
+            'likesCount'     => $likesCount,
+            'commentsCount'  => $commentsCount,
+            'reportsCount'   => $reportsCount,
+            'postsreport'    => $postsreport,
+            'totalReports'   => $totalReports, // Pass the new variable
+            'users'          => $users,
+            'reportsChartData' => $reportsChartData,
         ]);
     }
 }
