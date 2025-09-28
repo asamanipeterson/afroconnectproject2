@@ -1,9 +1,13 @@
-{{-- @include('layouts.head') --}}
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
 {{-- <link rel="stylesheet" href="{{ asset('css/main_content.css') }}"> --}}
 <aside class="sidebar">
+
+    {{-- ---------------------------------------------------------------- --}}
+    {{-- START: Profile Box - Entirely dependent on authenticated user --}}
+    @auth
     <div class="profile-box">
+        {{-- Cover Picture --}}
         @if(auth()->user()->cover_picture)
             <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture" alt="Cover Picture">
         @else
@@ -13,14 +17,14 @@
             </div>
         @endif
 
+        {{-- Profile Picture --}}
+        @if(auth()->user()->profile_picture)
+            <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture" alt="Profile Picture">
+        @else
+            <img src="{{ asset('default-avatar.png') }}" class="profile-picture">
+        @endif
 
-
-            @if(auth()->user()->profile_picture)
-                <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture" alt="Profile Picture">
-            @else
-                <img src="{{ asset('default-avatar.png') }}" class="profile-picture">
-            @endif
-
+        {{-- Username and Link --}}
         <a href="{{ route('user.profile', auth()->user()) }}"><p>@ {{ auth()->user()->username }}</p></a>
 
         @php
@@ -29,6 +33,7 @@
             $postsCount = auth()->user()->posts->count();
         @endphp
 
+        {{-- Stats --}}
         <div class="stats">
             <div><strong>{{ $followersCount }}</strong> <span>{{ $followersCount === 1 ? 'Follower' : 'Followers' }}</span></div>
             <div><strong>{{ $followingCount }}</strong> <span>{{ $followingCount <= 1 ? 'Following' : 'Followings' }}</span></div>
@@ -37,101 +42,162 @@
 
         <a href="#" class="btn" id="openProfileModalSidebar">Edit Profile</a>
     </div>
+    @endauth
+    {{-- END: Profile Box --}}
+    {{-- ---------------------------------------------------------------- --}}
+
 
     <div class="navigation">
     <a href="{{ route('welcome') }}" class="logo"><img src="{{ asset('2projlogo.png') }}" alt=""></a>
     <a href="{{ route('welcome') }}" class="nav-item {{ request()->routeIs('welcome') ? 'active' : '' }}">
-        <i class="bi bi-house-door"></i><span>Home</span>
+        <i class="bi {{ request()->routeIs('welcome') ? 'bi-house-door-fill' : 'bi-house-door' }}"></i><span>Home</span>
     </a>
     <a href="" class="nav-item {{ request()->routeIs('search') ? 'active' : '' }}" id="openSearchModal">
-        <i class="bi bi-search"></i><span>Search</span>
+        <i class="bi {{ request()->routeIs('search') ? 'bi-search-fill' : 'bi-search' }}"></i><span>Search</span>
     </a>
     <a href="{{ route('marketshowroom') }}" class="nav-item {{ request()->routeIs('marketshowroom') ? 'active' : '' }}">
-        <i class="bi bi-handbag"></i><span>Market</span>
+        <i class="bi {{ request()->routeIs('marketshowroom') ? 'bi-handbag-fill' : 'bi-handbag' }}"></i><span>Market</span>
     </a>
-    <a href="" class="nav-item {{ request()->routeIs('live') ? 'active' : '' }}">
-        <i class="bi bi-camera-video"></i><span>Live</span>
-    </a>
-    <a href="{{ route('notifications.index') }}" class="nav-item notification-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}" id="notificationBell" style="font-size: 10px">
-        <div class="icon-wrapper" style="position: relative;">
-            <i class="bi bi-bell"></i>
-            @if(auth()->user()->unreadNotifications->count() > 0)
-                <span class="notifications-badge">
-                    {{ auth()->user()->unreadNotifications->count() }}
-                </span>
-            @endif
-        </div>
-        <span class="nav-label">Notifications</span>
-    </a>
-    <a href="{{ route('conversations.index') }}" class="nav-item {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'active' : '' }}">
-    <div class="icon-wrapper" style="position: relative;">
-        <i class="bi bi-chat"></i>
-        {{-- Check for unread messages in the latest conversation --}}
-        @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
-            <span class="notifications-badge">
-                {{ $unreadMessageCount }}
-            </span>
-        @endif
-    </div>
-    <span>Messages</span>
-</a>
-    </a>
-    <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">
-        <i class="bi bi-plus-circle"></i><span>Create Story</span>
-    </a>
-    <a href="" class="nav-item {{ request()->routeIs('posts.create') ? 'active' : '' }}" id="openPostModalSidebarNav">
-        <i class="bi bi-images"></i><span>Create Post</span>
-    </a>
-    <div class="menu-bar">
-        <a href="#" class="nav-item menu-trigger {{ request()->routeIs(['settings', 'logout']) ? 'active' : '' }}">
-            <i class="bi bi-list"></i><span>More</span>
+    <a href="{{ route('live') }}" class="nav-item {{ request()->routeIs('live') ? 'active' : '' }}">
+                <i class="bi {{ request()->routeIs('live') ? 'bi-camera-video-fill' : 'bi-camera-video' }}"></i><span>Live</span>
         </a>
-        <div class="dropdown-menu sidebar-dropdown">
-            <div class="settingsdrop">
-                <ul class="main-drop">
-                    <li class="main-li">
-                        <a href="" class="dropdown-items {{ request()->routeIs('settings') ? 'active' : '' }}" id="openSettingsModal">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-dark rounded-circle">
-                                    <i class="mdi mdi-settings text-success"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <p class="preview-subject" style="cursor: pointer">Settings</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="main-li">
-                        <a href="{{ route('logout') }}" class="dropdown-items">
-                             <div class="preview-thumbnail">
+
+    {{-- ---------------------------------------------------------------- --}}
+    {{-- START: Navigation Items dependent on authenticated user --}}
+    @auth
+        <a href="{{ route('notifications.index') }}" class="nav-item notification-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}" id="notificationBell" style="font-size: 10px">
+            <div class="icon-wrapper" style="position: relative;">
+                <i class="bi {{ request()->routeIs('notifications.index') ? 'bi-bell-fill' : 'bi-bell' }}"></i>
+                {{-- Notification Count (Problematic line if not guarded) --}}
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <span class="notifications-badge">
+                        {{ auth()->user()->unreadNotifications->count() }}
+                    </span>
+                @endif
+            </div>
+            <span class="nav-label">Notifications</span>
+        </a>
+        <a href="{{ route('conversations.index') }}" class="nav-item {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'active' : '' }}">
+            <div class="icon-wrapper" style="position: relative;">
+                <i class="bi {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'bi-chat-fill' : 'bi-chat' }}"></i>
+                {{-- Check for unread messages (assuming $unreadMessageCount is safely passed or defaults to 0) --}}
+                @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+                    <span class="notifications-badge">
+                        {{ $unreadMessageCount }}
+                    </span>
+                @endif
+            </div>
+            <span>Messages</span>
+        </a>
+        <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">
+            <i class="bi {{ request()->routeIs('stories.create') ? 'bi-plus-circle-fill' : 'bi-plus-circle' }}"></i><span>Create Story</span>
+        </a>
+        <a href="" class="nav-item {{ request()->routeIs('posts.create') ? 'active' : '' }}" id="openPostModalSidebarNav">
+            <i class="bi {{ request()->routeIs('posts.create') ? 'bi-images' : 'bi-images' }}"></i><span>Create Post</span>
+        </a>
+        <div class="menu-bar">
+            <a href="#" class="nav-items menu-trigger {{ request()->routeIs(['settings', 'logout']) ? 'active' : '' }}">
+                <i class="bi {{ request()->routeIs(['settings', 'logout']) ? 'bi-list' : 'bi-list' }}"></i><span>More</span>
+            </a>
+            <div class="dropdown-menu sidebar-dropdown">
+                <div class="settingsdrop">
+                    <ul class="main-drop">
+                        <li class="main-li">
+                            <a href="" class="dropdown-items {{ request()->routeIs('settings') ? 'active' : '' }}" id="openSettingsModal">
+                                <div class="preview-thumbnail">
                                     <div class="preview-icon bg-dark rounded-circle">
-                                        <i class="mdi mdi-logout text-danger"></i>
+                                        <i class="mdi mdi-settings text-success"></i>
                                     </div>
-                            </div>
-                            <div class="preview-item-content">
-                                    <p class="preview-subject">Log out</p>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject" style="cursor: pointer">Settings</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="main-li">
+                            <a href="{{ route('logout') }}" class="dropdown-items">
+                                <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-logout text-danger"></i>
+                                        </div>
+                                </div>
+                                <div class="preview-item-content">
+                                        <p class="preview-subject">Log out</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    @if (request()->routeIs(['marketplace.newlisting', 'marketshowroom']))
-        <a href="" class="nav-item {{ request()->routeIs('marketplace.categories') ? 'active' : '' }}" id="openCategoryModal">
-            <i class="bi bi-grid"></i><span>Categories</span>
-        </a>
-    @endif
-    <a href="{{ route('user.profile', auth()->user()) }}" class="nav-item profile-nav-link {{ request()->routeIs('user.profile') ? 'active' : '' }}">
-        @if(auth()->user()->profile_picture)
-            <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-nav-icon" alt="Profile Picture">
-        @else
-            <i class="bi bi-person-circle profile-nav-icon"></i>
+        @if (request()->routeIs(['marketplace.newlisting', 'marketshowroom']))
+            <a href="" class="nav-item {{ request()->routeIs('marketplace.categories') ? 'active' : '' }}" id="openCategoryModal">
+                <i class="bi {{ request()->routeIs('marketplace.categories') ? 'bi-grid-fill' : 'bi-grid' }}"></i><span>Categories</span>
+            </a>
         @endif
-        <span>Profile</span>
-    </a>
+        {{-- Profile Link at the bottom (Problematic line if not guarded) --}}
+        <a href="{{ route('user.profile', auth()->user()) }}" class="nav-item profile-nav-link {{ request()->routeIs('user.profile') ? 'active' : '' }}">
+            @if(auth()->user()->profile_picture)
+                <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-nav-icon" alt="Profile Picture">
+            @else
+                <i class="bi {{ request()->routeIs('user.profile') ? 'bi-person-fill' : 'bi-person' }} profile-nav-icon"></i>
+            @endif
+            <span>Profile</span>
+        </a>
+    @endauth
+    {{-- END: Navigation Items dependent on authenticated user --}}
+    {{-- ---------------------------------------------------------------- --}}
+
+    {{-- You could add a Log In / Register link here for guests using @guest --}}
+
 </div>
 </aside>
+
+{{-- ---------------------------------------------------------------- --}}
+{{-- START: Profile Modal - Must be wrapped as it contains auth()->user() access --}}
+@auth
+<div class="modal" id="profileModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Profile</h2>
+            <button class="close-btn" id="closeProfileModal">×</button>
+        </div>
+        <form action="{{ route('update-profile') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PATCH')
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture</label>
+                @if(auth()->user()->profile_picture)
+                    <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture-preview" alt="Current Profile Picture">
+                @endif
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ auth()->user()->bio ?? '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="cover_picture">Cover Picture</label>
+                @if(auth()->user()->cover_picture)
+                    <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture-preview" alt="Current Cover Picture">
+                @endif
+                <input type="file" id="cover_picture" name="cover_picture" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="website">Website</label>
+                <input type="url" id="website" name="website" placeholder="https://yourwebsite.com" value="{{ auth()->user()->website ?? '' }}">
+            </div>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+@endauth
+{{-- END: Profile Modal --}}
+{{-- ---------------------------------------------------------------- --}}
+
+
+{{-- Other Modals (Category, Search, Settings) that do NOT rely on auth()->user() can remain outside @auth --}}
+
 <div class="modals category-modal" id="categoryModal">
     <div class="category-modal-content">
         <div class="modals-header">
@@ -185,42 +251,6 @@
 </svg> Switch appearance</a></li>
             <li><a href="#" class="dropdown-item"><i class="bi bi-exclamation-circle"></i> Report a problem</a></li>
         </ul>
-    </div>
-</div>
-
-<div class="modal" id="profileModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Edit Profile</h2>
-            <button class="close-btn" id="closeProfileModal">×</button>
-        </div>
-        <form action="{{ route('update-profile') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PATCH')
-            <div class="form-group">
-                <label for="profile_picture">Profile Picture</label>
-                @if(auth()->user()->profile_picture)
-                    <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-picture-preview" alt="Current Profile Picture">
-                @endif
-                <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="bio">Bio</label>
-                <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ auth()->user()->bio ?? '' }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="cover_picture">Cover Picture</label>
-                @if(auth()->user()->cover_picture)
-                    <img src="{{ asset('storage/' . auth()->user()->cover_picture) }}" class="cover-picture-preview" alt="Current Cover Picture">
-                @endif
-                <input type="file" id="cover_picture" name="cover_picture" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="website">Website</label>
-                <input type="url" id="website" name="website" placeholder="https://yourwebsite.com" value="{{ auth()->user()->website ?? '' }}">
-            </div>
-            <button type="submit" class="submit-btn">Save Changes</button>
-        </form>
     </div>
 </div>
 

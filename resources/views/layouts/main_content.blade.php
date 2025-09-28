@@ -1,8 +1,7 @@
 @include('layouts.head')
 
 <div class="main-content">
-    @if (!Request::is('user/*'))
-        <!-- Story Bar -->
+    @if (!Request::is('user/*', 'live', 'marketplace'))
         <div class="story-bar">
             @php
                 $userHasStories = isset($stories[auth()->id()]) && $stories[auth()->id()]->isNotEmpty();
@@ -34,7 +33,6 @@
             @endforeach
         </div>
 
-        <!-- Story Creation Modal -->
         <div class="modal" id="storyCreationModal">
             <div class="modal-content">
                 <div class="modal-headers">
@@ -70,7 +68,6 @@
             </div>
         </div>
 
-        <!-- Story Viewer Modal -->
         <div id="storyViewerModal" class="story-viewer-modal">
             <span class="close-story-viewer-btn" onclick="closeStoryViewer()">×</span>
             <div class="story-viewer-content">
@@ -78,7 +75,6 @@
             </div>
         </div>
 
-        <!-- Post Creation Section -->
         <div class="post-creation-section">
             @if(auth()->user()->profile_picture)
                 <img src="{{ auth()->user()->profile_picture_url }}" class="avatar" alt="Profile Picture">
@@ -95,7 +91,6 @@
     <div class="content">
         @yield('content')
     </div>
-    <!-- Post Creation Modal -->
     <div class="modal" id="postCreationModal">
         <div class="modal-content">
             <div class="modal-headers">

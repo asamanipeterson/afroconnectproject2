@@ -11,11 +11,15 @@
             <div id="searchResults" class="search-results" style="display: none;"></div>
         </div>
     </div>
+
+    {{-- START: Check if user is authenticated --}}
+    @auth
     <div class="profile-section">
         <div class="icon-section">
             <div class="top-icons">
                 <a href="{{ route('notifications.index') }}" class="notification-icon">
                     <i class="bi bi-bell"></i>
+                    {{-- THIS IS THE LINE THAT WAS CAUSING THE ERROR --}}
                     @if(auth()->user()->unreadNotifications->count())
                         <span class="notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
                     @endif
@@ -34,7 +38,6 @@
         <span class="username">{{ auth()->user()->username }}</span>
         <div class="dropdown-menu" id="dropdownMenu">
             <div class="settings-hover">
-                {{-- <a href="#" class="dropdown-item" id="openSettings"><i class="bi bi-gear"></i> Settings</a> --}}
                 <a class="dropdown-item preview-item" id="openSettings" >
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
@@ -64,6 +67,15 @@
                   </a>
         </div>
     </div>
+    @else
+    {{-- Optional: Show login/register links when user is not logged in --}}
+    <div class="profile-section">
+        <a href="{{ route('login') }}" class="btn btn-sm btn-primary">Log In</a>
+        <a href="{{ route('register') }}" class="btn btn-sm btn-outline-primary">Sign Up</a>
+    </div>
+    @endauth
+    {{-- END: Check if user is authenticated --}}
+
 </div>
 @endif
 <script src="{{ asset('js/topbar.js') }}"></script>

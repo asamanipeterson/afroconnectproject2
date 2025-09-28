@@ -13,41 +13,46 @@
     <div class="navigation-sidebar">
         <a href="{{ route('welcome') }}" class="logo"><img src="{{ asset('2projlogo.png') }}" alt="afroConnect"></a>
         <a href="{{ route('welcome') }}" class="nav-item {{ request()->routeIs('welcome') ? 'active' : '' }}">
-            <i class="bi bi-house-door"></i>
+            <i class="bi {{ request()->routeIs('welcome') ? 'bi-house-door-fill' : 'bi-house-door' }}"></i>
         </a>
         <a href="" class="nav-item {{ request()->routeIs('search') ? 'active' : '' }}" id="openSearchModal">
-            <i class="bi bi-search"></i>
+            <i class="bi {{ request()->routeIs('search') ? 'bi-search-fill' : 'bi-search' }}"></i>
         </a>
         <a href="{{ route('marketshowroom') }}" class="nav-item {{ request()->routeIs('marketshowroom') ? 'active' : '' }}">
-            <i class="bi bi-handbag"></i>
+            <i class="bi {{ request()->routeIs('marketshowroom') ? 'bi-handbag-fill' : 'bi-handbag' }}"></i>
         </a>
-        <a href="" class="nav-item {{ request()->routeIs('live') ? 'active' : '' }}">
-            <i class="bi bi-camera-video"></i>
+        <a href="{{ route('live') }}" class="nav-item {{ request()->routeIs('live') ? 'active' : '' }}">
+                <i class="bi {{ request()->routeIs('live') ? 'bi-camera-video-fill' : 'bi-camera-video' }}"></i>
         </a>
         <a href="{{ route('notifications.index') }}" class="nav-item notification-link {{ request()->routeIs('notifications.index') ? 'active' : '' }}" id="notificationBell">
             <div class="icon-wrapper" style="position: relative;">
-                <i class="bi bi-bell"></i>
+                <i class="bi {{ request()->routeIs('notifications.index') ? 'bi-bell-fill' : 'bi-bell' }}"></i>
                 @if(auth()->user() && auth()->user()->unreadNotifications->count() > 0)
                     <span class="notifications-badge">
                         {{ auth()->user()->unreadNotifications->count() }}
                     </span>
                 @endif
             </div>
-
         </a>
-        {{-- <a href="#" class="nav-item {{ request()->routeIs('conversations.show') ? 'active' : '' }}" onclick="createConversation(event, '{{ route('conversations.show', $user ) }}')"> --}}
-            <a href="{{ route('conversations.show', auth()->user()->id) }}" class="nav-item {{ request()->routeIs('conversations.show') ? 'active' : '' }}">
-            <i class="bi bi-chat"></i>
+        <a href="{{ route('conversations.index') }}" class="nav-item {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'active' : '' }}">
+            <div class="icon-wrapper" style="position: relative;">
+                <i class="bi {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'bi-chat-fill' : 'bi-chat' }}"></i>
+                @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+                    <span class="notifications-badge">
+                        {{ $unreadMessageCount }}
+                    </span>
+                @endif
+            </div>
         </a>
         <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">
-            <i class="bi bi-plus-circle"></i>
+            <i class="bi {{ request()->routeIs('stories.create') ? 'bi-plus-circle-fill' : 'bi-plus-circle' }}"></i>
         </a>
         <a href="" class="nav-item {{ request()->routeIs('posts.create') ? 'active' : '' }}" id="openPostModalSidebarNav">
-            <i class="bi bi-images"></i>
+            <i class="bi {{ request()->routeIs('posts.create') ? 'bi-images' : 'bi-images' }}"></i>
         </a>
         <div class="menu-bar">
             <a href="#" class="nav-item menu-trigger {{ request()->routeIs(['settings', 'logout']) ? 'active' : '' }}">
-                <i class="bi bi-list"></i>
+                <i class="bi {{ request()->routeIs(['settings', 'logout']) ? 'bi-list' : 'bi-list' }}"></i>
             </a>
             <div class="dropdown-menu sidebar-dropdown">
                 <div class="settingsdrop">
@@ -82,18 +87,18 @@
         </div>
         @if (request()->routeIs(['marketplace.newlisting', 'marketshowroom']))
             <a href="" class="nav-item {{ request()->routeIs('marketplace.categories') ? 'active' : '' }}" id="openCategoryModal">
-                <i class="bi bi-grid"></i><span>Categories</span>
+                <i class="bi {{ request()->routeIs('marketplace.categories') ? 'bi-grid-fill' : 'bi-grid' }}"></i><span>Categories</span>
             </a>
         @endif
         <a href="{{ route('user.profile', auth()->user()) }}" class="nav-item profile-nav-link {{ request()->routeIs('user.profile') ? 'active' : '' }}">
             @if(auth()->user()->profile_picture)
                 <img src="{{ asset('storage/' . auth()->user()->profile_picture) }}" class="profile-nav-icon" alt="Profile Picture">
             @else
-                <i class="bi bi-person-circle profile-nav-icon"></i>
+                <i class="bi {{ request()->routeIs('user.profile') ? 'bi-person-fill' : 'bi-person' }} profile-nav-icon"></i>
             @endif
-            {{-- <span>Profile</span> --}}
         </a>
     </div>
+
     <div class="messages-container">
         <div class="conversations-sidebar">
             <div class="conversations-header">
@@ -123,7 +128,7 @@
                 @foreach($conversations as $convo)
                     @php
                         $otherUser = $convo->participants->where('id', '!=', Auth::id())->first();
-                        $latestMessage = $convo->messages->last();
+                        $latestMessage = $convo->messages->first();
                     @endphp
                     <div class="conversation-item {{ isset($activeConversation) && $convo->id == $activeConversation->id ? 'active' : '' }}"
                          data-conversation-id="{{ $convo->id }}"
@@ -149,7 +154,20 @@
                                 <div class="conversation-time">{{ $latestMessage ? $latestMessage->created_at->diffForHumans() : '' }}</div>
                             </div>
                             <div class="conversation-preview">
-                                {{ $latestMessage ? ($latestMessage->user_id == Auth::id() ? 'You: ' : '') . ($latestMessage->type === 'audio' ? 'Audio message' : $latestMessage->body) : 'No messages yet' }}
+                                @if($latestMessage)
+                                    @if($latestMessage->user_id == Auth::id())
+                                        You:
+                                    @endif
+                                    @if($latestMessage->type === 'audio')
+                                        Audio message
+                                    @elseif($latestMessage->type === 'shared_post')
+                                        Shared a post
+                                    @else
+                                        {{ Str::limit($latestMessage->body, 30) }}
+                                    @endif
+                                @else
+                                    No messages yet
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -157,9 +175,9 @@
             </div>
         </div>
         <div class="chat-container">
-            <div class="chat-header">
-                <div class="chat-user-info">
-                    @if (isset($activeConversation))
+            @if (isset($activeConversation))
+                <div class="chat-header">
+                    <div class="chat-user-info">
                         @php
                             $otherUser = $activeConversation->participants->where('id', '!=', Auth::id())->first();
                         @endphp
@@ -182,15 +200,9 @@
                                 <span class="chat-username">User Not Found</span>
                             </div>
                         @endif
-                    @else
-                        <div class="chat-user-info">
-                            <span class="chat-username">Select a conversation to start chatting</span>
-                        </div>
-                    @endif
+                    </div>
                 </div>
-            </div>
-            <div class="messages-area" id="messages-container">
-                @if (isset($activeConversation))
+                <div class="messages-area" id="messages-container">
                     @php
                         $currentDate = '';
                     @endphp
@@ -209,95 +221,141 @@
                                 $currentDate = $messageDate;
                             @endphp
                         @endif
-                        <div class="message-wrapper {{ $isCurrentUser ? 'message-wrapper-sent' : 'message-wrapper-received' }}">
-                            @if (!$isCurrentUser)
-                                @if($otherUser->profile_picture)
-                                    <img src="{{ asset('storage/' . $otherUser->profile_picture) }}" class="message-avatar" alt="{{ $otherUser->username }}">
-                                @else
-                                    <div class="message-avatar fallback-avatar">
-                                        {{ strtoupper(substr($otherUser->username, 0, 1)) }}
-                                    </div>
-                                @endif
-                            @endif
-                            <div class="message-bubble">
-                                <div class="message {{ $isCurrentUser ? 'message-sent' : 'message-received' }} {{ $message->type !== 'text' ? 'media-message' : '' }} {{ $isEmojiOnly ? 'emoji-only' : '' }}">
-                                    @if($message->type === 'audio')
-                                        <div class="custom-audio-player" data-src="{{ asset('storage/' . $message->audio_path) }}">
-                                            <button class="play-btn"><i class="bi bi-play-fill"></i></button>
-                                            <div class="waveform">
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                            </div>
-                                            <div class="audio-duration">0:00</div>
-                                        </div>
-                                    @elseif($message->type === 'image')
-                                        <img src="{{ asset('storage/' . $message->image_path) }}" alt="Image" class="message-image">
-                                    @elseif($message->type === 'video')
-                                        <video controls class="message-video">
-                                            <source src="{{ asset('storage/' . $message->video_path) }}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
+
+                        @if($message->type === 'shared_post' && $message->post)
+                            <div class="message-wrapper {{ $isCurrentUser ? 'message-wrapper-sent' : 'message-wrapper-received' }}">
+                                @if (!$isCurrentUser)
+                                    @if($otherUser->profile_picture)
+                                        <img src="{{ asset('storage/' . $otherUser->profile_picture) }}" class="message-avatar" alt="{{ $otherUser->username }}">
                                     @else
-                                        <div class="message-text">{{ $message->body }}</div>
+                                        <div class="message-avatar fallback-avatar">
+                                            {{ strtoupper(substr($otherUser->username, 0, 1)) }}
+                                        </div>
                                     @endif
-                                </div>
-                                <div class="message-timestamp {{ $isCurrentUser ? 'message-timestamp-sent' : 'message-timestamp-received' }}">
-                                    {{ $messageTime }}
+                                @endif
+                                <div class="message-bubble">
+                                    <div class="shared-post-message {{ $isCurrentUser ? 'message-sent' : 'message-received' }}">
+                                        <div class="shared-by-text">
+                                            {{ $isCurrentUser ? 'You shared a post' : $otherUser->username . ' shared a post' }}
+                                        </div>
+                                        <div class="shared-post-content">
+                                            @if($message->post->media->isNotEmpty())
+                                                @php $media = $message->post->media->first(); @endphp
+                                                @if($media->file_type === 'image')
+                                                    <img src="{{ asset('storage/' . $media->file_path) }}" alt="Post image" class="shared-post-image">
+                                                @elseif($media->file_type === 'video')
+                                                    <video src="{{ asset('storage/' . $media->file_path) }}" muted class="shared-post-video"></video>
+                                                @endif
+                                            @endif
+                                            @if($message->post->caption)
+                                                <p class="shared-post-caption">{{ Str::limit($message->post->caption, 50) }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="message-timestamp {{ $isCurrentUser ? 'message-timestamp-sent' : 'message-timestamp-received' }}">
+                                        {{ $messageTime }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="message-wrapper {{ $isCurrentUser ? 'message-wrapper-sent' : 'message-wrapper-received' }}">
+                                @if (!$isCurrentUser)
+                                    @if($otherUser->profile_picture)
+                                        <img src="{{ asset('storage/' . $otherUser->profile_picture) }}" class="message-avatar" alt="{{ $otherUser->username }}">
+                                    @else
+                                        <div class="message-avatar fallback-avatar">
+                                            {{ strtoupper(substr($otherUser->username, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                @endif
+                                <div class="message-bubble">
+                                    <div class="message {{ $isCurrentUser ? 'message-sent' : 'message-received' }} {{ $message->type !== 'text' ? 'media-message' : '' }} {{ $isEmojiOnly ? 'emoji-only' : '' }}">
+                                        @if($message->type === 'audio')
+                                            <div class="custom-audio-player" data-src="{{ asset('storage/' . $message->audio_path) }}">
+                                                <button class="play-btn"><i class="bi bi-play-fill"></i></button>
+                                                <div class="waveform">
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                    <span></span>
+                                                </div>
+                                                <div class="audio-duration">0:00</div>
+                                            </div>
+                                        @elseif($message->type === 'image')
+                                            <img src="{{ asset('storage/' . $message->image_path) }}" alt="Image" class="message-image">
+                                        @elseif($message->type === 'video')
+                                            <video controls class="message-video">
+                                                <source src="{{ asset('storage/' . $message->video_path) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        @else
+                                            <div class="message-text">{{ $message->body }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="message-timestamp {{ $isCurrentUser ? 'message-timestamp-sent' : 'message-timestamp-received' }}">
+                                        {{ $messageTime }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
-                @endif
-            </div>
-            <div class="message-input-container">
-                @if (isset($activeConversation))
-                <form action="{{ route('messages.store', $activeConversation) }}" method="POST" id="message-form" class="message-input-form" enctype="multipart/form-data">
-                    @csrf
-                    <button type="button" class="mic-btn" id="record-audio-button">
-                        <i class="bi bi-mic-fill"></i>
-                    </button>
-                    <input type="file" name="audio" id="audio-input" accept="audio/*" style="display: none;">
-                    <input type="text" name="body" class="message-input" placeholder="Message...">
-                    <button type="button" class="emoji-btn" id="open-emoji-picker">
-                        <i class="bi bi-emoji-smile"></i>
-                    </button>
-                    <label for="image-upload" class="image-upload-label">
-                        <i class="bi bi-image"></i>
-                    </label>
-                    <input type="file" name="image" id="image-upload" accept="image/*" style="display: none;">
-
-                    {{-- NEW: ADDED FOR VIDEO UPLOAD --}}
-                    <label for="video-upload" class="video-upload-label">
-                        <i class="bi bi-camera-video"></i>
-                    </label>
-                    <input type="file" name="video" id="video-upload" accept="video/*" style="display: none;">
-
-                    <button type="submit" class="message-send-btn">
-                        <i class="bi bi-send-fill"></i>
-                    </button>
-                </form>
-                @endif
-                <div id="recording-status" class="recording-status">
-                    <i class="bi bi-record-circle"></i> Recording... Speak now
                 </div>
-                <div id="audio-controls" class="audio-controls">
-                    <audio id="audio-preview" class="audio-preview" controls></audio>
-                    <div class="audio-controls-buttons">
-                        <button type="button" id="send-audio-button" class="send-audio-btn">
+                <div class="message-input-container">
+                    <form action="{{ route('messages.store', $activeConversation) }}" method="POST" id="message-form" class="message-input-form" enctype="multipart/form-data">
+                        @csrf
+                        <button type="button" class="mic-btn" id="record-audio-button">
+                            <i class="bi bi-mic-fill"></i>
+                        </button>
+                        <input type="file" name="audio" id="audio-input" accept="audio/*" style="display: none;">
+                        <input type="text" name="body" class="message-input" placeholder="Message...">
+                        <button type="button" class="emoji-btn" id="open-emoji-picker">
+                            <i class="bi bi-emoji-smile"></i>
+                        </button>
+                        <label for="image-upload" class="image-upload-label">
+                            <i class="bi bi-image"></i>
+                        </label>
+                        <input type="file" name="image" id="image-upload" accept="image/*" style="display: none;">
+                        <label for="video-upload" class="video-upload-label">
+                            <i class="bi bi-camera-video"></i>
+                        </label>
+                        <input type="file" name="video" id="video-upload" accept="video/*" style="display: none;">
+                        <button type="submit" class="message-send-btn">
                             <i class="bi bi-send-fill"></i>
                         </button>
-                        <button type="button" id="cancel-audio" class="cancel-audio-btn">Cancel</button>
+                    </form>
+                    <div id="recording-status" class="recording-status">
+                        <i class="bi bi-record-circle"></i> Recording... Speak now
+                    </div>
+                    <div id="audio-controls" class="audio-controls">
+                        <audio id="audio-preview" class="audio-preview" controls></audio>
+                        <div class="audio-controls-buttons">
+                            <button type="button" id="send-audio-button" class="send-audio-btn">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                            <button type="button" id="cancel-audio" class="cancel-audio-btn">Cancel</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="empty-chat-state">
+                    <div class="empty-chat-content">
+                        <div class="messenger-icon">
+                            <i class="bi bi-chat-dots" style="font-size: 60px;"></i>
+                        </div>
+                        <div class="empty-chat-title">Your messages</div>
+                        <div class="empty-chat-text">Send private photos and messages to a friend or group.</div>
+                        <button class="empty-chat-btn" id="openNewMessageModal">
+                            Send message
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 

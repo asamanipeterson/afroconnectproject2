@@ -764,7 +764,11 @@ body.dark-mode .media-item {
 #storyDisplayArea.loading {
     opacity: 0.5;
 }
-
+@media (max-width:1587px) {
+.post-creation-section{
+    margin:0 0 0 30px;
+}
+}
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .creation-button {

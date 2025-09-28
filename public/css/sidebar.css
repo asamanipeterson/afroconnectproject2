@@ -215,7 +215,7 @@ body.dark-mode .nav-label {
     color: #e9ecef;
 }
 
-.nav-item {
+.nav-item{
     display: flex;
     align-items: center;
     padding:.5rem 1rem;
@@ -231,18 +231,28 @@ body.dark-mode .nav-label {
 
 
 .nav-item.active {
-    background: #0056b3;
+    /* background: #0056b3; */
+    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: white;
 }
-.nav-item .active:hover {
-    background: #2f8ff6;
+.nav-item.active:hover {
+    /* background: #2f8ff6; */
+    background: linear-gradient(to right, #4d0f8f, #0a45aa);
+    /* background: linear-gradient(to right, #6b11cb70, #2574fc7a); */
     color: white;
 }
-.nav-item:hover {
-    background: #01254b;
+
+.nav-item:hover{
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
 }
+body.dark-mode .nav-item.active:hover{
+    background: linear-gradient(to right, #4d0f8f, #0a45aa);
+}
+body.dark-mode .nav-item:hover{
+    /* background: linear-gradient(to right, #4d0f8f, #0a45aa); */
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
 
-
+}
 
 .navigation .logo {
     margin: 5px 0 15px 0;
@@ -263,7 +273,7 @@ body.dark-mode .navigation .logo img {
 
 
 
-body.dark-mode .nav-item {
+body.dark-mode .nav-item{
     color: #e9ecef;
 }
 
@@ -283,12 +293,18 @@ body.dark-mode .nav-item {
 }
 
 .nav-items:hover {
-    background: #f0f0f0;
+    /* background: #f0f0f0; */
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
     color: #000;
 }
-
 body.dark-mode .nav-items:hover {
-    background: #3c3c3c;
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
+    /* background: linear-gradient(to right, #4d0f8f, #0a45aa); */
+    color: #e9ecef;
+}
+body.dark-mode .nav-item:hover {
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
+    /* background: linear-gradient(to right, #4d0f8f, #0a45aa); */
     color: #e9ecef;
 }
 
@@ -301,12 +317,15 @@ body.dark-mode .icon-wrapper i {
 }
 
 .nav-item:hover {
-    background: #f0f0f0;
+    /* background: #f0f0f0; */
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
+    /* background: linear-gradient(to right, #4d0f8f, #0a45aa); */
     color: #000;
+    /* color:#fff; */
 }
 
 body.dark-mode .nav-item:hover {
-    background: #3c3c3c;
+    background: linear-gradient(to right, #4d0f8f, #0a45aa);
     color: #e9ecef;
 }
 
@@ -350,11 +369,13 @@ body.dark-mode .menu-trigger {
 }
 
 .menu-trigger:hover {
-    background: #f0f0f0;
+    /* background: #f0f0f0; */
+    background: linear-gradient(to right, #6b11cb70, #2574fc7a);
 }
 
 body.dark-mode .menu-trigger:hover {
-    background: #3c3c3c;
+    /* background: #3c3c3c; */
+    background: linear-gradient(to right, #4d0f8f, #0a45aa);
 }
 
 .sidebar-dropdown {

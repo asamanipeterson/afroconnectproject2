@@ -14,7 +14,8 @@ class Message extends Model
         'user_id',
         'conversation_id',
         'audio_path',
-        'type'
+        'type',
+        'post_id'
     ];
 
     public function conversation()
@@ -25,5 +26,9 @@ class Message extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
     }
 }

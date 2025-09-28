@@ -7,6 +7,7 @@ use App\Models\Conversation;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Story;
+use App\Models\SharedPost;
 use Illuminate\Support\Facades\DB;
 
 class ConversationController extends Controller
@@ -16,15 +17,22 @@ class ConversationController extends Controller
      */
     public function index()
     {
-        // Retrieve all conversations for the main view
+        // Retrieve all conversations for the main view, ordered by most recent activity
         $conversations = Auth::user()->conversations()
             ->with(['participants', 'messages' => function ($query) {
-                $query->latest();
+                $query->latest()->limit(1); // ONLY GET THE LATEST MESSAGE
             }])
+            ->orderBy('updated_at', 'desc')
             ->get();
 
-        // Determine the "active" conversation, which is the latest one.
-        $activeConversation = Auth::user()->conversations()->latest()->first();
+        // Retrieve all posts shared with the authenticated user
+        $sharedPosts = SharedPost::where('recipient_id', Auth::id())
+            ->with(['sharer', 'post.user'])
+            ->latest()
+            ->get();
+
+        // Determine the "active" conversation, which is the latest one
+        $activeConversation = $conversations->first(); // Get the first conversation from the ordered list
 
         // Initialize unread message count
         $unreadMessageCount = 0;
@@ -40,7 +48,6 @@ class ConversationController extends Controller
         $user = Auth::user();
         if ($user) {
             $followingIds = $user->following()->pluck('users.id');
-            // Include the current user's own ID to show their stories too
             $visibleUserIds = $followingIds->push($user->id);
 
             $stories = Story::with('user')
@@ -51,7 +58,8 @@ class ConversationController extends Controller
                 ->groupBy('user_id');
         }
 
-        return view('conversation.index', compact('conversations', 'activeConversation', 'unreadMessageCount', 'stories'));
+        // Pass both conversations and shared posts to the view
+        return view('conversation.index', compact('conversations', 'activeConversation', 'unreadMessageCount', 'stories', 'sharedPosts'));
     }
 
     /**
@@ -66,14 +74,20 @@ class ConversationController extends Controller
             ->with(['participants', 'messages' => function ($query) {
                 $query->orderBy('created_at', 'desc')->limit(1);
             }])
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('updated_at', 'desc') // Order by most recently updated
             ->get();
+
+        // Retrieve all posts shared with the authenticated user
+        // $sharedPosts = SharedPost::where('recipient_id', Auth::id())
+        //     ->with(['sharer', 'post.user'])
+        //     ->latest()
+        //     ->get();
 
         // Get messages for the current conversation
         $messages = $conversation->messages()->with('user')->orderBy('created_at', 'asc')->get();
 
         return view('conversation.show', [
-            'activeConversation' => $conversation, // Use a consistent variable name
+            'activeConversation' => $conversation,
             'conversations' => $conversations,
             'messages' => $messages,
             'user' => auth()->user()

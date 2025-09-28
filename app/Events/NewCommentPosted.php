@@ -39,6 +39,7 @@ class NewCommentPosted implements ShouldBroadcast
 
     /**
      * The event's broadcast name.
+     * This must match what Echo is listening for (without the dot prefix)
      */
     public function broadcastAs(): string
     {
@@ -55,6 +56,7 @@ class NewCommentPosted implements ShouldBroadcast
             'id' => $this->id,
             'content' => $this->content,
             'user' => $this->user,
+            'post_id' => $this->postId // Added this to ensure consistency
         ];
     }
 }

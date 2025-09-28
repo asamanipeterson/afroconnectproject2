@@ -26,7 +26,9 @@ class AuthController extends Controller
     public function registerLogic(AuthRequest $request)
     {
         $data = $request->validated();
-        $user = User::create($data);
+        // Hash the password before creation (assuming this is done via mutator or explicitly here)
+        $data['password'] = Hash::make($data['password']);
+        User::create($data);
         return redirect('login')->with('success', 'Registration successful. Please log in.');
     }
 
@@ -44,11 +46,11 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+
         if ($user && Hash::check($request->password, $user->password)) {
             $user->generateOtp();
             session(['otp_user_id' => $user->id]);
-
-            return redirect()->route('otp.verify.page')->with('success', 'A verification code has been sent to your email.');
+            return redirect()->route('otp.verify.page')->with('success', 'A verification code has been sent to your email for security verification.');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials.']);
@@ -56,6 +58,9 @@ class AuthController extends Controller
 
     public function showOtpVerificationPage()
     {
+        if (!session('otp_user_id')) {
+            return redirect()->route('login')->withErrors(['error' => 'Your session has expired or you need to log in first.']);
+        }
         return view('auth.otp-verify');
     }
 
@@ -197,11 +202,11 @@ class AuthController extends Controller
     {
         return view('profile.index', compact(
             'user',
-            'groupedPosts',
-            'postsCount',
-            'followersCount',
-            'followingCount',
-            'isFollowing'
+            // 'groupedPosts',
+            // 'postsCount',
+            // 'followersCount',
+            // 'followingCount',
+            // 'isFollowing'
         ));
     }
 }

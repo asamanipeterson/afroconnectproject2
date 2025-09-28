@@ -44,23 +44,29 @@ class CommentController extends Controller
         // 3. Eager load the user relationship to make it available for the response and event.
         $comment->load('user');
 
-        // 🔥 FIX: The problem was here. We must pass simple data to the event, not the full model.
-        // The event's constructor needs to be updated to accept these specific parameters.
+        // FIX: Correctly pass data to match the event constructor
         broadcast(new NewCommentPosted(
             $comment->id,
             $comment->content,
-            $comment->user_id,
-            $comment->user->username
+            [ // This should be an array with user data
+                'id' => $comment->user->id,
+                'username' => $comment->user->username
+            ],
+            $comment->post_id // This should be the post ID
         ))->toOthers();
 
         // 4. Return a successful JSON response to the JavaScript.
         return response()->json([
             'message' => 'Comment posted successfully!',
-            'comment' => $comment,
-            'user' => [
-                'id' => $comment->user->id,
-                'username' => $comment->user->username,
-            ]
+            'comment' => [ // Updated structure to match what JS expects
+                'id' => $comment->id,
+                'content' => $comment->content,
+                'user' => [
+                    'id' => $comment->user->id,
+                    'username' => $comment->user->username,
+                ]
+            ],
+            'comments_count' => $post->comments()->count() // Added comments count
         ], 201);
     }
 

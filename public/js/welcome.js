@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const postId = card.dataset.postId;
             const commentsSection = card.querySelector('.recent-comments-section');
             const commentsCountDisplay = card.querySelector('.comments-count');
-            // const viewCommentsLink = card.querySelector('.view-comments-link');
             const likesCountSpan = card.querySelector('.likes-count');
 
             Echo.channel(`post.${postId}`)
-                .listen('.NewComment', (e) => {
-                    console.log('🟢 New comment broadcast received:', e);
+                // FIX: Removed the dot prefix from event name
+                .listen('NewComment', (e) => {
+                    console.log(`[Echo] 🟢 New comment broadcast received for post ${postId}:`, e);
 
                     const newCommentHtml = `
                         <div class="recent-comment-item mb-1">
@@ -23,27 +23,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (commentsSection) {
                         commentsSection.insertAdjacentHTML('afterbegin', newCommentHtml);
-
                         const currentComments = commentsSection.querySelectorAll('.recent-comment-item');
                         if (currentComments.length > 3) {
                             currentComments[currentComments.length - 1].remove();
                         }
+                    } else {
+                        console.error(`[Echo] Comments section not found for post ${postId}`);
                     }
-
-
 
                     if (commentsCountDisplay) {
                         const currentCount = parseInt(commentsCountDisplay.textContent) || 0;
                         commentsCountDisplay.textContent = `${currentCount + 1}`;
+                        console.log(`[Echo] Comments count updated to ${commentsCountDisplay.textContent} for post ${postId}.`);
+                    } else {
+                        console.error(`[Echo] Comments count display not found for post ${postId}`);
                     }
                 })
 
                 // --- Real-time Like Listener ---
                 .listen('.PostLiked', (e) => {
-                    console.log('❤️ Post liked/unliked by another user:', e);
-
+                    console.log(`[Echo] ❤️ Post liked/unliked broadcast received for post ${postId}:`, e);
                     if (likesCountSpan) {
                         likesCountSpan.textContent = `${e.likes_count}`;
+                        console.log(`[Echo] Likes count updated to ${likesCountSpan.textContent} for post ${postId}.`);
+                    } else {
+                        console.error(`[Echo] Likes count span not found for post ${postId}`);
                     }
                 });
         });
@@ -54,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const followBtn = e.target.closest('.follow-btn');
         if (followBtn) {
             const userId = followBtn.dataset.userId;
+            console.log(`[Follow] Follow button clicked for user ${userId}.`);
 
             fetch(`/toggle-follow/${userId}`, {
                 method: 'POST',
@@ -63,17 +68,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Accept': 'application/json',
                 },
             })
-            .then(res => res.json())
+            .then(res => {
+                console.log(`[Follow] Server response status: ${res.status}`);
+                if (!res.ok) {
+                    throw new Error(`[Follow] Server response was not ok: ${res.statusText}`);
+                }
+                return res.json();
+            })
             .then(data => {
+                console.log(`[Follow] AJAX response received:`, data);
                 if (data.status === 'followed') {
                     followBtn.classList.add('following');
                     followBtn.textContent = 'Following';
+                    console.log('[Follow] UI updated: User is now following.');
                 } else if (data.status === 'unfollowed') {
                     followBtn.classList.remove('following');
                     followBtn.textContent = 'Follow';
+                    console.log('[Follow] UI updated: User is now unfollowing.');
                 }
             })
-            .catch(error => console.error('Follow error:', error));
+            .catch(error => console.error('[Follow] Error:', error));
         }
     });
 
@@ -113,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function updateCarousel() {
             if (items.length === 0) return;
-
             const itemWidth = items[0].offsetWidth;
             if (itemWidth === 0 && items.length > 0) {
                 setTimeout(updateCarousel, 50);
@@ -134,7 +147,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (currentSlideEl) currentSlideEl.textContent = currentIndex + 1;
 
-            // Manage video playback
             items.forEach((item, i) => {
                 const video = item.querySelector('.post-video');
                 if (video) {
@@ -179,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!isDragging) return;
             const currentX = e.touches[0].clientX;
             const diffX = startX - currentX;
-
             if (Math.abs(diffX) > 30) {
                 if (diffX > 0 && currentIndex < items.length - 1) {
                     currentIndex++;
@@ -204,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function () {
             scrollLeftStart = carouselInner.scrollLeft;
             carouselInner.style.scrollBehavior = 'auto';
             carouselInner.style.cursor = 'grabbing';
-            // Added event listener to the document to handle mouseup even if it's outside the carousel
             document.addEventListener('mouseup', handleMouseUp);
         });
 
@@ -217,7 +227,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         carouselInner.addEventListener('mouseleave', () => {
             if (isMouseDown) {
-                // If the mouse leaves while dragging, treat it like a mouseup
                 handleMouseUp();
             }
         });
@@ -228,7 +237,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const finalScrollLeft = carouselInner.scrollLeft;
             const itemWidth = items[0]?.offsetWidth || 0;
             if (itemWidth > 0) {
-                // Calculate the new index based on the final scroll position
                 currentIndex = Math.round(finalScrollLeft / itemWidth);
                 updateCarousel();
             }
@@ -253,7 +261,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const timeDisplay = container.querySelector('.time-display');
             const muteBtn = container.querySelector('.mute-btn');
 
-            // Initialize icons
             if (video.paused) {
                 playPauseBtn.innerHTML = '<i class="bi bi-play-fill"></i>';
             } else {
@@ -265,7 +272,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 muteBtn.innerHTML = '<i class="bi bi-volume-up-fill"></i>';
             }
 
-            // Play/Pause
             playPauseBtn.addEventListener('click', () => {
                 if (video.paused) {
                     video.play();
@@ -276,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Mute
             muteBtn.addEventListener('click', () => {
                 video.muted = !video.muted;
                 if (video.muted) {
@@ -286,12 +291,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Seek bar
             seekBar.addEventListener('input', () => {
                 video.currentTime = (seekBar.value / 100) * video.duration;
             });
 
-            // Timer
             video.addEventListener('timeupdate', () => {
                 seekBar.value = (video.currentTime / video.duration) * 100 || 0;
                 const minutes = Math.floor(video.currentTime / 60);
@@ -299,7 +302,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 timeDisplay.textContent = `${minutes}:${seconds}`;
             });
 
-            // Ensure duration is loaded
             video.addEventListener('loadedmetadata', () => {
                 const minutes = Math.floor(video.duration / 60);
                 const seconds = Math.floor(video.duration % 60).toString().padStart(2, '0');
@@ -322,6 +324,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const heartIcon = button.querySelector('i');
         const likesCountSpan = button.closest('.post-card').querySelector('.likes-count');
 
+        console.log(`[Like] Action initiated for post ${postId}.`);
+
         try {
             const response = await fetch(`/posts/${postId}/like`, {
                 method: 'POST',
@@ -331,15 +335,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
+            console.log(`[Like] Server response status: ${response.status}`);
             if (!response.ok) {
                 if (response.status === 401) {
+                    console.error('[Like] Authentication error: User not logged in.');
                     window.location.href = '/login';
                 }
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`[Like] HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log(`[Like] AJAX response received:`, data);
 
+            // Update UI based on the response
             if (data.liked) {
                 heartIcon.classList.remove('bi-heart');
                 heartIcon.classList.add('bi-heart-fill', 'liked');
@@ -347,17 +355,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(() => {
                     heartIcon.style.transform = 'scale(1)';
                 }, 200);
+                console.log(`[Like] UI updated: Post is now liked.`);
             } else {
                 heartIcon.classList.remove('bi-heart-fill', 'liked');
                 heartIcon.classList.add('bi-heart');
+                console.log(`[Like] UI updated: Post is now unliked.`);
             }
 
             if (likesCountSpan) {
                 likesCountSpan.textContent = `${data.likes_count}`;
+                console.log(`[Like] Likes count updated to ${data.likes_count}.`);
+            } else {
+                console.error('[Like] Could not find the likes count span.');
             }
 
         } catch (error) {
-            console.error('Error handling like:', error);
+            console.error('[Like] Error handling like:', error);
         }
     }
 
@@ -366,34 +379,30 @@ document.addEventListener('DOMContentLoaded', function () {
         dot.addEventListener('click', function(e) {
             e.stopPropagation();
             const dropdown = this.closest('.post-menu-dropdown').querySelector('.dropdown-content');
-            console.log('Menu dot clicked, toggling dropdown:', dropdown); // Debug
+            console.log('[Dropdown] Menu dot clicked, toggling dropdown:', dropdown);
             if (dropdown) {
-                // Close other open dropdowns
                 document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
                     if (openDropdown !== dropdown) {
                         openDropdown.classList.remove('show');
                     }
                 });
-                // Toggle current dropdown
                 dropdown.classList.toggle('show');
-                console.log('Dropdown show class:', dropdown.classList.contains('show')); // Debug
+                console.log(`[Dropdown] Dropdown show class: ${dropdown.classList.contains('show')}`);
             } else {
-                console.error('Dropdown not found for menu dot:', this);
+                console.error('[Dropdown] Dropdown not found for menu dot:', this);
             }
         });
     });
 
-    // Close dropdowns on outside click
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.post-menu-dropdown')) {
             document.querySelectorAll('.dropdown-content.show').forEach(dropdown => {
                 dropdown.classList.remove('show');
-                console.log('Closed dropdown on outside click:', dropdown); // Debug
+                console.log('[Dropdown] Closed dropdown on outside click.');
             });
         }
     });
 
-    // Prevent dropdown from closing when clicking inside
     document.querySelectorAll('.dropdown-content').forEach(dropdown => {
         dropdown.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -404,15 +413,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.submit-comment-button').forEach(button => {
         button.addEventListener('click', async function(e) {
             e.preventDefault();
+            console.log('[Comment] Submit button clicked.');
             await submitComment(this);
         });
     });
 
-    // --- Enter to Submit & Auto-resize FIX ---
     document.querySelectorAll('.comment-input').forEach(input => {
         input.addEventListener('keypress', async function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
+                console.log('[Comment] Enter key pressed.');
                 await submitComment(this);
             }
         });
@@ -426,10 +436,17 @@ document.addEventListener('DOMContentLoaded', function () {
     async function submitComment(element) {
         const postCard = element.closest('.post-card');
         const commentInput = postCard.querySelector('.comment-input');
-        const postId = commentInput.closest('.comment-input-wrapper').querySelector('.submit-comment-button').dataset.postId;
+        const postId = postCard.dataset.postId;
         const commentContent = commentInput.value.trim();
+        const commentsCountDisplay = postCard.querySelector('.comments-count');
+        const commentsSection = postCard.querySelector('.recent-comments-section');
 
-        if (!commentContent) return;
+        console.log(`[Comment] Comment submission initiated for post ${postId}.`);
+
+        if (!commentContent) {
+            console.warn('[Comment] Comment content is empty, aborting submission.');
+            return;
+        }
 
         try {
             const response = await fetch(`/posts/${postId}/comments`, {
@@ -442,31 +459,52 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({ content: commentContent })
             });
 
-            // Check if the response has content before trying to parse it as JSON.
-            // This is the key fix to prevent the alert.
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const data = await response.json();
-                console.log('Comment submitted successfully:', data);
-            } else {
-                // If it's not JSON, but the status is OK, it's a success.
-                console.log('Comment submitted, but no JSON response body.');
-            }
-
+            console.log(`[Comment] Server response status: ${response.status}`);
             if (!response.ok) {
                 if (response.status === 401) {
+                    console.error('[Comment] Authentication error: User not logged in.');
                     window.location.href = '/login';
                 }
-                // We'll log the error instead of using an alert.
-                console.error(`HTTP error! Status: ${response.status}`);
+                throw new Error(`[Comment] HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('[Comment] AJAX response received:', data);
+
+            // Update UI with the new comment
+            const newCommentHtml = `
+                <div class="recent-comment-item mb-1">
+                    <a href="/profile/${data.comment.user.id}" class="comment-username font-weight-bold mr-1">
+                        ${data.comment.user.username}
+                    </a>
+                    <span class="comment-text">${data.comment.content}</span>
+                </div>
+            `;
+
+            if (commentsSection) {
+                commentsSection.insertAdjacentHTML('afterbegin', newCommentHtml);
+                const currentComments = commentsSection.querySelectorAll('.recent-comment-item');
+                if (currentComments.length > 3) {
+                    currentComments[currentComments.length - 1].remove();
+                }
+                console.log('[Comment] UI updated with new comment.');
+            } else {
+                console.error('[Comment] Comments section not found to update.');
+            }
+
+            if (commentsCountDisplay) {
+                commentsCountDisplay.textContent = `${data.comments_count}`;
+                console.log(`[Comment] Comments count updated to ${data.comments_count}.`);
+            } else {
+                console.error('[Comment] Comments count display not found.');
             }
 
             commentInput.value = '';
             commentInput.style.height = 'auto';
+            console.log('[Comment] Comment input field cleared.');
+
         } catch (error) {
-            // This catches network errors or other unexpected failures.
-            console.error('Error submitting comment:', error);
-            // We're no longer using alert() here.
+            console.error('[Comment] Error submitting comment:', error);
         }
     }
 
@@ -476,6 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const postId = this.getAttribute('data-post-id');
             const modal = document.getElementById(`shareModal-${postId}`);
+            console.log(`[Share] Opening share modal for post ${postId}.`);
             if (modal) {
                 modal.style.display = 'flex';
             }
@@ -485,6 +524,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.cancel-share-btn').forEach(button => {
         button.addEventListener('click', function () {
             const modal = this.closest('.share-modal');
+            console.log('[Share] Closing share modal.');
             if (modal) {
                 modal.style.display = 'none';
             }
@@ -492,42 +532,65 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.querySelectorAll('.confirm-share-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const postId = this.getAttribute('data-post-id');
-        const modal = this.closest('.share-modal');
-        const checkboxes = modal.querySelectorAll('input[name="followers"]:checked');
-        const followers = Array.from(checkboxes).map(cb => cb.value); // Change from follower_ids to followers
+        button.addEventListener('click', function () {
+            const postId = this.getAttribute('data-post-id');
+            const modal = this.closest('.share-modal');
+            const checkboxes = modal.querySelectorAll('input[name="followers"]:checked');
+            const followers = Array.from(checkboxes).map(cb => cb.value);
 
-        if (followers.length === 0) {
-            alert('Please select at least one follower to share with.');
-            return;
-        }
+            console.log(`[Share] Sharing post ${postId} with followers:`, followers);
 
-        fetch('/posts/share', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                post_id: postId,
-                followers: followers // Change from follower_ids to followers
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.message || 'Failed to share post'); });
+            if (followers.length === 0) {
+                alert('Please select at least one follower to share with.');
+                console.warn('[Share] No followers selected.');
+                return;
             }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message || 'Post shared successfully!');
-            modal.style.display = 'none';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert(error.message || 'An error occurred while sharing the post.');
+
+            fetch('/posts/share', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    post_id: postId,
+                    followers: followers
+                })
+            })
+            .then(response => {
+                console.log(`[Share] Server response status: ${response.status}`);
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Failed to share post'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message || 'Post shared successfully!');
+                modal.style.display = 'none';
+                console.log('[Share] Post shared successfully.');
+            })
+            .catch(error => {
+                console.error('[Share] Error:', error);
+                alert(error.message || 'An error occurred while sharing the post.');
+            });
+        });
+    });
+
+    // Add this inside your DOMContentLoaded listener
+document.querySelectorAll('.follower-search').forEach(searchBar => {
+    searchBar.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const followersContainer = this.closest('.share-modal-content').querySelector('.followers-container');
+        const followerItems = followersContainer.querySelectorAll('.follower-item');
+
+        followerItems.forEach(item => {
+            const username = item.querySelector('span').textContent.toLowerCase();
+            if (username.includes(query)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
         });
     });
 });

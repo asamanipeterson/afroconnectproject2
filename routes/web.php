@@ -16,14 +16,12 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AdminController;
-
+use App\Http\Controllers\PostShareController;
+use App\Http\Controllers\StreamController;
 
 use App\Events\TestMessageReceived;
 
-// Route::get('/broadcast-test', function () {
-//     broadcast(new TestMessageReceived('Hello from Laravel Reverb!'));
-//     return 'Event has been broadcast!';
-// });
+
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'userHomepage')->name('welcome')->middleware('auth');
@@ -60,6 +58,9 @@ Route::controller(PostController::class)->middleware('auth')->group(function () 
     // MOVE THE SHARE ROUTE ABOVE THE PARAMETERIZED ROUTE
     Route::post('posts/share', 'share')->name('posts.share');
     Route::post('posts/{post}/share', 'shareWithPost')->name('posts.share.withPost');
+
+
+    Route::post('/posts/share', [PostShareController::class, 'share'])->middleware('auth');
 
     // This should come after specific routes
     Route::get('posts/{post}', 'show')->name('posts.show');
@@ -148,4 +149,13 @@ Route::get('/messages/{message}/audio', [MessageController::class, 'getAudio'])
 Route::prefix('admin')->controller(AdminController::class)->middleware('auth')->group(function () {
     Route::post('/promote-user',  'promoteUser')->name('admin.promoteUser');
     Route::post('/demote-user',  'demoteUser')->name('admin.demoteUser');
+});
+
+
+
+Route::controller(StreamController::class)->group(function () {
+    Route::get('/live',  'index')->name('live');
+    Route::get('/live/{stream}',  'show')->name('live.show');
+    Route::post('/live/start',  'start')->name('live.start')->middleware('auth');
+    Route::post('/live/stop/{stream}',  'stop')->name('live.stop')->middleware('auth');
 });

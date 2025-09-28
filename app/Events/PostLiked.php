@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
@@ -15,7 +16,7 @@ class PostLiked implements ShouldBroadcast
     public $likesCount;
     public $user;
 
-    public function __construct($postId, $likesCount, $user)
+    public function __construct(int $postId, int $likesCount, User $user)
     {
         $this->postId = $postId;
         $this->likesCount = $likesCount;
@@ -29,7 +30,7 @@ class PostLiked implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'PostLiked';
+        return 'PostLiked'; // ✅ Keep it WITHOUT the dot
     }
 
     public function broadcastWith(): array
@@ -40,7 +41,7 @@ class PostLiked implements ShouldBroadcast
             'user' => [
                 'id' => $this->user->id,
                 'username' => $this->user->username,
-                'avatar' => $this->user->avatar ?? null
+                'avatar' => $this->user->profile_picture_url // ✅ Fixed: use profile_picture_url instead of avatar
             ],
         ];
     }

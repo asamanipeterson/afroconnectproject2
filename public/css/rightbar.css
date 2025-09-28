@@ -223,3 +223,41 @@ body.dark-mode .event-list::-webkit-scrollbar-thumb,
 body.dark-mode .follow-list::-webkit-scrollbar-thumb {
     background-color: #444;
 }
+
+.follow-btn {
+    margin-left: auto;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #007bff;
+    background-color:#007bff;
+    color: white;
+}
+body.dark-mode .follow-btn {
+    border-color:#66b3ff;
+}
+.follow-btn:hover {
+    background-color:#0056b3;
+    border-color:#0056b3;
+}
+body.dark-mode .follow-btn:hover {
+    background-color:#99ccff;
+    border-color:#99ccff;
+}
+.follow-btn.following {
+    background-color: transparent;
+    color:#0056b3;
+}
+body.dark-mode .follow-btn.following {
+    color: #99ccff;
+}
+.follow-btn.following:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color:#0056b3;
+}
+body.dark-mode .follow-btn.following:hover {
+    background-color: rgba(102, 179, 255, 0.1);
+}
