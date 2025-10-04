@@ -26,4 +26,5 @@
          <link rel="stylesheet" href="{{ asset('css/market.css') }}">
         <link rel="stylesheet" href="{{ asset('css/showItem.css') }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.2.js" defer></script>
 </head>

@@ -158,4 +158,5 @@ Route::controller(StreamController::class)->group(function () {
     Route::get('/live/{stream}',  'show')->name('live.show');
     Route::post('/live/start',  'start')->name('live.start')->middleware('auth');
     Route::post('/live/stop/{stream}',  'stop')->name('live.stop')->middleware('auth');
+    Route::post('/live/{stream}/live-comments',  'storeLiveComment')->name('live-comments.store')->middleware('auth');
 });

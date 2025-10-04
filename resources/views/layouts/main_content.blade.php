@@ -1,7 +1,7 @@
 @include('layouts.head')
 
 <div class="main-content">
-    @if (!Request::is('user/*', 'live', 'marketplace'))
+    @if (!Request::is('user/*', 'live', 'marketplace','live/*'))
         <div class="story-bar">
             @php
                 $userHasStories = isset($stories[auth()->id()]) && $stories[auth()->id()]->isNotEmpty();

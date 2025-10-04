@@ -15,4 +15,9 @@ class Stream extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function liveComments()
+    {
+        return $this->hasMany(LiveComment::class);
+    }
 }

@@ -123,6 +123,12 @@ class User extends Authenticatable
         return $this->hasOne(OneTimePassCode::class);
     }
 
+
+    public function liveComments()
+    {
+        return $this->hasMany(LiveComment::class);
+    }
+
     public function generateOtp()
     {
         // Generate OTP

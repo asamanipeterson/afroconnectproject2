@@ -46,10 +46,15 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+        // 💡 NEW: Capture the 'remember' state and store it in the session
+        $remember = $request->filled('remember');
 
         if ($user && Hash::check($request->password, $user->password)) {
             $user->generateOtp();
-            session(['otp_user_id' => $user->id]);
+            session([
+                'otp_user_id' => $user->id,
+                'remember_login' => $remember // Store the remember me state
+            ]);
             return redirect()->route('otp.verify.page')->with('success', 'A verification code has been sent to your email for security verification.');
         }
 
@@ -58,7 +63,8 @@ class AuthController extends Controller
 
     public function showOtpVerificationPage()
     {
-        if (!session('otp_user_id')) {
+        // Check for both session keys now
+        if (!session('otp_user_id') || !session()->has('remember_login')) {
             return redirect()->route('login')->withErrors(['error' => 'Your session has expired or you need to log in first.']);
         }
         return view('auth.otp-verify');
@@ -71,6 +77,8 @@ class AuthController extends Controller
         ]);
 
         $userId = session('otp_user_id');
+        // 💡 NEW: Retrieve the 'remember' state from the session
+        $remember = session('remember_login', false);
 
         if (!$userId) {
             return redirect()->route('login')->withErrors(['error' => 'Your session has expired. Please log in again.']);
@@ -89,9 +97,13 @@ class AuthController extends Controller
             ->first();
 
         if ($otpRecord) {
-            Auth::login($user);
+            // 💡 NEW: Pass the $remember boolean as the second argument to Auth::login()
+            Auth::login($user, $remember);
+
             DB::table('one_time_pass_codes')->where('id', $otpRecord->id)->delete();
-            $request->session()->forget('otp_user_id');
+
+            // Clean up both session keys
+            $request->session()->forget(['otp_user_id', 'remember_login']);
             $request->session()->regenerate();
 
             if ($user->user_type === 'admin') {
@@ -126,6 +138,7 @@ class AuthController extends Controller
     {
         Auth::logout();
         $request->session()->invalidate();
+        // Since you are using a redirect with a named route, make sure the redirect returns the response.
         return redirect(route('login'))->with('success', 'You have been logged out successfully.');
     }
 

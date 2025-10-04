@@ -397,3 +397,73 @@ body.dark-mode .report-btn:hover{
     position: relative;
     margin-bottom: 15px;
 }
+
+ .profile-tabs {
+        display: flex;
+        justify-content: center;
+        /* border-top: 1px solid #dbdbdb; */
+        margin-top: 25px;
+        margin-bottom: 0; /* Remove bottom margin for clean look */
+        padding: 0;
+        list-style: none;
+    }
+
+    .profile-tabs li {
+        margin: 0 30px; /* Space out the tabs */
+    }
+
+    .profile-tabs button {
+        background: none;
+        border: none;
+        padding: 15px 0;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #8e8e8e;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s, border-bottom 0.2s;
+    }
+     body.dark-mode .profile-tabs button{
+            color: #858383;
+    }
+    .profile-tabs button:hover {
+        color: #575555;
+    }
+     body.dark-mode .profile-tabs button:hover{
+        color:#ffffffc4;
+     }
+    .profile-tabs button.active {
+        color: #262626;
+        border-bottom: 1px solid #262626; /* Active tab indicator */
+    }
+    body.dark-mode .profile-tabs button.active{
+        color: #fff;
+        border-bottom: 1px solid red;
+    }
+    .profile-tabs button i {
+        font-size: 1.2rem;
+    }
+
+    /* Content Area */
+    .tab-content {
+        margin-top: 20px;
+    }
+
+    /* Hide tab contents by default */
+    .tab-pane {
+        display: none;
+    }
+
+    /* Show active tab content */
+    .tab-pane.active {
+        display: block;
+    }
+
+    /* Center text for empty states */
+    .empty-state {
+        text-align: center;
+        padding: 50px 0;
+        color: #8e8e8e;
+    }

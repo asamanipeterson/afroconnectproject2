@@ -1,4 +1,4 @@
-@if (!Request::is('user/*') && !Request::is('marketplace') && !Request::is('marketplace/*') && !Request::is('live'))
+@if (!Request::is('user/*') && !Request::is('marketplace') && !Request::is('marketplace/*') && !Request::is('live')&& !Request::is('live/*'))
 <aside class="rightbar">
     <div class="who-to-follow">
         <h4>Who to Follow</h4>
