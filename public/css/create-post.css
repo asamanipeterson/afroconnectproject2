@@ -1,4 +1,5 @@
 :root {
+
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
     --bg-glass: rgba(255, 255, 255, 0.85);
@@ -30,6 +31,51 @@
     --hover-bg: rgba(31, 31, 31, 0.5);
     --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
     --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+    /* Light Mode Variables */
+    --light-bg: #ffffff;
+    --light-text: #111827;
+    --light-border: #d1d5db;
+    --light-shadow: rgba(0, 0, 0, 0.2);
+    --light-glass: rgba(255, 255, 255, 0.95);
+    --light-hover: rgba(106, 17, 203, 0.08);
+    --light-accent: rgba(106, 17, 203, 0.1);
+    
+    /* Dark Mode Variables */
+    --dark-bg: #000000;
+    --dark-text: #e9ecef;
+    --dark-border: #333333;
+    --dark-shadow: rgba(0, 0, 0, 0.4);
+    --dark-glass: rgba(0, 0, 0, 0.95);
+    --dark-hover: rgba(106, 17, 203, 0.15);
+    --dark-accent: rgba(106, 17, 203, 0.2);
+    
+    /* Current Mode Variables */
+    --form-bg: var(--light-bg);
+    --form-text: var(--light-text);
+    --form-border: var(--light-border);
+    --form-shadow: var(--light-shadow);
+    --form-glass: var(--light-glass);
+    --form-hover: var(--light-hover);
+    --form-accent: var(--light-accent);
+    
+    /* Luxury Design System */
+    --luxury-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    --luxury-glow: rgba(106, 17, 203, 0.4);
+    --luxury-transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --luxury-shadow: 0 20px 40px var(--form-shadow);
+    --luxury-border-radius: 20px;
+}
+
+body.dark-mode {
+    --form-bg: var(--dark-bg);
+    --form-text: var(--dark-text);
+    --form-border: var(--dark-border);
+    --form-shadow: var(--dark-shadow);
+    --form-glass: var(--dark-glass);
+    --form-hover: var(--dark-hover);
+    --form-accent: var(--dark-accent);
+
 }
 
 body {
@@ -37,6 +83,7 @@ body {
     -webkit-font-smoothing: antialiased;
     background: transparent;
 }
+
 
 /* Overlay */
 .overlay {
@@ -52,6 +99,9 @@ body {
 }
 
 /* Container */
+
+/* Container - Luxury Design */
+
 .container {
     position: fixed;
     top: 10%;
@@ -84,17 +134,51 @@ body {
     border-radius: 20px;
     pointer-events: none;
     z-index: -1;
+    background: var(--form-glass);
+    border-radius: var(--luxury-border-radius);
+    box-shadow: var(--luxury-shadow);
+    padding: 2.5rem;
+    z-index: 50;
+    overflow-y: auto;
+    max-height: 80vh;
+    border: 1px solid var(--form-border);
+    backdrop-filter: blur(30px);
+    transition: var(--luxury-transition);
 }
 
-/* Fade-in Animation */
+.container:hover {
+    box-shadow: 0 25px 50px var(--luxury-glow);
+    border-color: rgba(106, 17, 203, 0.4);
+}
+
+/* Overlay - Luxury Design */
+.overlay {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 40;
+    backdrop-filter: blur(10px);
+    transition: var(--luxury-transition);
+
+}
+
+/* Fade-in Animation - Enhanced */
 .fade-in {
     animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: luxuryFadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@keyframes fadeIn {
+@keyframes luxuryFadeIn {
     from {
         opacity: 0;
+
         transform: translateY(-20px) scale(0.95);
+
+        transform: translateY(-30px) scale(0.95);
+
     }
     to {
         opacity: 1;
@@ -102,13 +186,14 @@ body {
     }
 }
 
-/* Tabs */
+/* Tabs - Luxury Design */
 .tab-button {
     position: relative;
     padding: 16px 24px;
+    padding: 1.25rem 2rem;
     border: none;
     background: transparent;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
     cursor: pointer;
@@ -134,10 +219,60 @@ body {
     background: var(--bg-glass-secondary);
     color: var(--accent-solid);
     transform: translateY(-1px);
+    color: var(--form-text);
+    cursor: pointer;
+    transition: var(--luxury-transition);
+    margin-right: 1.5rem;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-/* Close Button */
+.tab-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--luxury-gradient);
+    transition: left 0.4s ease;
+    z-index: -1;
+}
+
+.tab-button.active {
+    color: white;
+    font-weight: 700;
+    transform: translateY(-2px);
+}
+
+.tab-button.active::before {
+    left: 0;
+}
+
+.tab-button.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px var(--luxury-glow);
+}
+
+.tab-button:hover:not(.active) {
+    background: var(--form-hover);
+    color: #6a11cb;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--form-shadow);
+
+}
+
+/* Close Button - Luxury Design */
 #close-create-form {
+
     background: var(--bg-glass-secondary);
     border: 1px solid var(--border-glass);
     width: 44px;
@@ -159,11 +294,36 @@ body {
     color: white;
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    background: var(--form-glass);
+    border: 1px solid var(--form-border);
+    font-size: 1.5rem;
+    color: #EF4444;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--luxury-transition);
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    backdrop-filter: blur(10px);
 }
 
-/* Form Container */
+#close-create-form:hover {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    border-color: transparent;
+}
+
+/* Form Container - Luxury Design */
 .form-container {
     margin-top: 1.5rem;
+    margin-top: 2rem;
     transition: opacity 0.3s ease;
 }
 
@@ -172,29 +332,64 @@ body {
 }
 
 h1 {
+
     font-size: 1.75rem;
     color: var(--text-primary);
     margin-bottom: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.5px;
+    font-size: 2rem;
+    color: var(--form-text);
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-align: center;
+    position: relative;
+
 }
 
-/* Form Inputs */
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--luxury-gradient);
+    border-radius: 2px;
+}
+
+/* Form Inputs - Luxury Design */
 form {
+
     background: var(--bg-glass-secondary);
     backdrop-filter: blur(20px);
     padding: 2rem;
     border-radius: 16px;
     box-shadow: var(--shadow-glass);
     border: 1px solid var(--border-glass);
+    background: var(--form-glass);
+    padding: 2.5rem;
+    border-radius: var(--luxury-border-radius);
+    box-shadow: 0 8px 25px var(--form-shadow);
+    border: 1px solid var(--form-border);
+    backdrop-filter: blur(20px);
+    transition: var(--luxury-transition);
+}
+
+form:hover {
+    box-shadow: 0 12px 35px var(--luxury-glow);
+    border-color: rgba(106, 17, 203, 0.3);
 }
 
 label {
     display: block;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
     color: var(--text-primary);
+    color: var(--form-text);
+    transition: var(--luxury-transition);
 }
 
 textarea,
@@ -212,6 +407,16 @@ select {
     color: var(--text-primary);
     transition: all 0.3s ease;
     box-shadow: var(--shadow-glass);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    border: 1px solid var(--form-border);
+    border-radius: 12px;
+    background: var(--form-glass);
+    color: var(--form-text);
+    transition: var(--luxury-transition);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px var(--form-shadow);
 }
 
 textarea:focus,
@@ -222,9 +427,13 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1), var(--shadow-glass);
     background: var(--bg-glass);
     transform: translateY(-1px);
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2), 0 8px 25px var(--luxury-glow);
+    transform: scale(1.02);
+    background: var(--form-hover);
 }
 
-/* Media Items */
+/* Media Items - Luxury Design */
 .media-item {
     background: var(--bg-glass);
     backdrop-filter: blur(20px);
@@ -259,17 +468,77 @@ select:focus {
     background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    background: var(--form-glass);
+    padding: 1.5rem;
+    border: 1px solid var(--form-border);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    transition: var(--luxury-transition);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Story Textarea Specific */
+.media-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--form-accent), transparent);
+    transition: left 0.6s ease;
+}
+
+.media-item:hover::before {
+    left: 100%;
+}
+
+.media-item:hover {
+    border-color: rgba(106, 17, 203, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px var(--luxury-glow);
+}
+
+.remove-media-item {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--luxury-transition);
+    border: none;
+    margin-top: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.remove-media-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Story Textarea Specific - Luxury Design */
 #story-text-container textarea {
     min-height: 140px;
     resize: vertical;
     font-family: 'Inter', sans-serif;
     line-height: 1.5;
+    min-height: 150px;
+    resize: vertical;
+    background: var(--form-glass);
+    border: 1px solid var(--form-border);
+    transition: var(--luxury-transition);
+
 }
 
-/* Color Picker */
+#story-text-container textarea:focus {
+    background: var(--form-hover);
+    border-color: #6a11cb;
+}
+
+/* Color Picker - Luxury Design */
 input[type="color"] {
     height: 50px;
     width: 70px;
@@ -284,9 +553,22 @@ input[type="color"] {
 input[type="color"]:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 80px;
+    border-radius: 10px;
+    border: 2px solid var(--form-border);
+    cursor: pointer;
+    transition: var(--luxury-transition);
+    box-shadow: 0 4px 15px var(--form-shadow);
+
 }
 
-/* Buttons */
+input[type="color"]:hover {
+    transform: scale(1.1);
+    border-color: rgba(106, 17, 203, 0.5);
+    box-shadow: 0 6px 20px var(--luxury-glow);
+}
+
+/* Buttons - Luxury Design */
 .create-post-btn,
 .add-media-item {
     background: var(--accent-color);
@@ -300,10 +582,40 @@ input[type="color"]:hover {
     font-weight: 600;
     box-shadow: var(--shadow-glass);
     backdrop-filter: blur(10px);
+    background: var(--luxury-gradient);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--luxury-transition);
+    border: none;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.create-post-btn::before,
+.add-media-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.create-post-btn:hover::before,
+.add-media-item:hover::before {
+    left: 100%;
 }
 
 .create-post-btn:hover,
 .add-media-item:hover {
+
     background: var(--gradient-hover);
     transform: translateY(-3px);
     box-shadow: 0 12px 30px rgba(106, 17, 203, 0.4);
@@ -312,6 +624,10 @@ input[type="color"]:hover {
 .create-post-btn:active,
 .add-media-item:active {
     transform: translateY(-1px);
+
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+
 }
 
 button:disabled {
@@ -319,9 +635,10 @@ button:disabled {
     opacity: 0.6;
     transform: none !important;
     box-shadow: var(--shadow-glass) !important;
+    box-shadow: 0 2px 8px var(--form-shadow) !important;
 }
 
-/* Submit Button Container */
+/* Submit Button Container - Luxury Design */
 .form-submit-container {
     display: flex;
     justify-content: center;
@@ -387,9 +704,51 @@ select {
 
 .container::-webkit-scrollbar-thumb:hover {
     background: var(--gradient-hover);
+    margin-top: 2.5rem;
+
 }
 
-/* Responsive Design */
+.form-submit-container .create-post-btn {
+    padding: 1.25rem 3rem;
+    font-size: 1.1rem;
+    min-width: 200px;
+}
+
+/* Luxury Scrollbar for Container */
+.container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+    background: var(--form-bg);
+    border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: var(--luxury-gradient);
+    border-radius: 4px;
+    transition: var(--luxury-transition);
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a0fb8 0%, #1a65e0 100%);
+}
+
+/* Luxury Focus States */
+*:focus {
+    outline: 2px solid #6a11cb;
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Luxury Selection */
+::selection {
+    background: rgba(106, 17, 203, 0.3);
+    color: var(--form-text);
+}
+
+/* Responsive Design - Enhanced with Luxury Touch */
+
 /* Mobile */
 @media (max-width: 768px) {
     .container {
@@ -406,11 +765,14 @@ select {
         text-align: center;
         margin-bottom: 0.75rem;
         padding: 14px 20px;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
     }
 
     .form-submit-container {
         flex-direction: column;
         gap: 12px;
+        gap: 1rem;
     }
 
     .media-item {
@@ -423,6 +785,16 @@ select {
 
     h1 {
         font-size: 1.5rem;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #close-create-form {
+        top: 1rem;
+        right: 1rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1.25rem;
     }
 }
 
@@ -436,10 +808,25 @@ select {
     .tab-button {
         font-size: 1rem;
         padding: 16px 22px;
+        border-radius: 18px;
+    }
+
+    .tab-button {
+        font-size: 1.05rem;
+        padding: 1.125rem 1.75rem;
+        margin-right: 1.25rem;
     }
 
     .form-submit-container {
         justify-content: flex-start;
+    }
+
+    form {
+        padding: 2rem;
+    }
+
+    h1 {
+        font-size: 1.875rem;
     }
 }
 
@@ -454,16 +841,38 @@ select {
     .tab-button {
         font-size: 1.1rem;
         padding: 18px 26px;
+
+        padding: 3rem 4rem;
+        border-radius: var(--luxury-border-radius);
+    }
+
+    .tab-button {
+        font-size: 1.15rem;
+        padding: 1.5rem 2.5rem;
+        margin-right: 2rem;
+
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 2.25rem;
+        margin-bottom: 2.5rem;
+    }
+
+    form {
+        padding: 3rem;
+    }
+
+    .form-submit-container .create-post-btn {
+        padding: 1.5rem 4rem;
+        font-size: 1.2rem;
+        min-width: 250px;
     }
 
     form {
         padding: 2.5rem;
     }
 }
+
 
 /* Additional Luxury Touches */
 .tab-container {
@@ -539,4 +948,92 @@ select {
         opacity: 1;
         transform: translateY(0);
     }
+}
+/* Additional Luxury Enhancements */
+
+/* Loading Animation for Buttons */
+.create-post-btn.loading,
+.add-media-item.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.create-post-btn.loading::after,
+.add-media-item.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: loadingShimmer 1.5s infinite;
+}
+
+@keyframes loadingShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Luxury Hover Effects for Form Elements */
+.form-group {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.form-group::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--luxury-gradient);
+    transition: width 0.3s ease;
+}
+
+.form-group:focus-within::after {
+    width: 100%;
+}
+
+/* Luxury File Upload Area */
+input[type="file"] {
+    position: relative;
+    cursor: pointer;
+    transition: var(--luxury-transition);
+}
+
+input[type="file"]::before {
+    content: '📁 Choose File';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: var(--luxury-gradient);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: var(--luxury-transition);
+}
+
+input[type="file"]:hover::before {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--luxury-glow);
+}
+
+/* Luxury Select Dropdown */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%236a11cb' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5rem;
+    padding-right: 3rem;
+}
+
+/* Luxury Textarea Resize Handle */
+textarea::-webkit-resizer {
+    background: var(--luxury-gradient);
+    border-radius: 4px;
+
 }
