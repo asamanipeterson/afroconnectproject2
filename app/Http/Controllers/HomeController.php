@@ -11,6 +11,8 @@ use App\Models\Like;
 use App\Models\Comment;
 use App\Models\PostReport;
 use App\Models\Report;
+// Add this if you have a Share model, otherwise we'll set it to 0
+// use App\Models\Share;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -90,9 +92,21 @@ class HomeController extends Controller
         $totalPosts = Post::count();
         $likesCount = Like::count();
         $commentsCount = Comment::count();
+        
+        // FIX: Add sharesCount - choose one option below:
+        
+        // Option 1: If you have a Share model
+        // $sharesCount = Share::count();
+        
+        // Option 2: If you don't have shares feature, set to 0
+        $sharesCount = 0;
+        
+        // Option 3: If posts have a share_count column
+        // $sharesCount = Post::sum('share_count');
+        
         $reportsCount = Report::count();
         $postsreport = PostReport::count();
-        $totalReports = $reportsCount + $postsreport; // This is the fix
+        $totalReports = $reportsCount + $postsreport;
 
         $users = User::withCount(['followers', 'reports'])->where('id', '!=', Auth::id())->get();
 
@@ -103,9 +117,10 @@ class HomeController extends Controller
             'usersPerDay'    => $usersPerDay,
             'likesCount'     => $likesCount,
             'commentsCount'  => $commentsCount,
+            'sharesCount'    => $sharesCount, // ADD THIS LINE - This was missing!
             'reportsCount'   => $reportsCount,
             'postsreport'    => $postsreport,
-            'totalReports'   => $totalReports, // Pass the new variable
+            'totalReports'   => $totalReports,
             'users'          => $users,
             'reportsChartData' => $reportsChartData,
         ]);

@@ -16,16 +16,24 @@
     @auth
     <div class="profile-section">
         <div class="icon-section">
-            <div class="top-icons">
-                <a href="{{ route('notifications.index') }}" class="notification-icon">
-                    <i class="bi bi-bell"></i>
-                    {{-- THIS IS THE LINE THAT WAS CAUSING THE ERROR --}}
-                    @if(auth()->user()->unreadNotifications->count())
-                        <span class="notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
-                    @endif
-                </a>
-                <a href="#"><i class="bi bi-bookmark"></i></a>
-            </div>
+          <div class="top-icons">
+    <!-- Notifications -->
+    <a href="{{ route('notifications.index') }}" class="notification-icon">
+        <i class="bi bi-bell"></i>
+        @if(auth()->user()->unreadNotifications->count())
+            <span class="notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
+        @endif
+    </a>
+
+    <!-- Bookmarks / Saved Posts -->
+    <a href="{{ route('bookmarks.index') }}" class="bookmark-icon">
+        <i class="bi bi-bookmark"></i>
+        @if(auth()->user()->bookmarkedPosts()->count())
+            <span class="bookmark-badge">{{ auth()->user()->bookmarkedPosts()->count() }}</span>
+        @endif
+    </a>
+</div>
+
         </div>
         <a href="#" class="profile-link" id="toggleDropdown">
             @if(auth()->user()->profile_picture)

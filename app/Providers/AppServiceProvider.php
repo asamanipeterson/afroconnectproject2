@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Conversation;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,5 +32,7 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('latestConversation', $latestConversation);
             }
         });
+
+          Schema::defaultStringLength(191);
     }
 }

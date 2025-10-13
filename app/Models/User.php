@@ -10,10 +10,12 @@ use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use App\Models\OneTimePassCode;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'username',
@@ -148,4 +150,27 @@ class User extends Authenticatable
 
         return $otpCode; // optional, in case you want to log/debug
     }
+
+    
+   // Many-to-Many relationship between User and Post through 'bookmarks' pivot table
+
+
+// Check if user has bookmarked a specific post
+public function hasBookmarked(Post $post)
+{
+    return $this->bookmarkedPosts()->where('post_id', $post->id)->exists();
+}
+
+// Posts the user has bookmarked
+public function bookmarkedPosts()
+{
+    return $this->belongsToMany(Post::class, 'bookmarks', 'user_id', 'post_id')->withTimestamps();
+}
+
+// Posts the user is tagged in
+public function taggedPosts()
+{
+    return $this->belongsToMany(Post::class, 'post_user_tags', 'user_id', 'post_id')->withTimestamps();
+}
+
 }

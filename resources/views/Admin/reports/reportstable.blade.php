@@ -90,40 +90,45 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @forelse ($postReports as $report)
-                                            <tr>
-                                                <td>{{ Str::limit($report->post->caption, 30, '...') }}</td>
-                                                <td>
-                                                    <a href="{{ route('admin.users.show', $report->post->user) }}" class="re">
-                                                        {{ $report->post->user->username }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ $report->reporter->username }}</td>
-                                                <td>{{ $report->reason ?? 'No reason provided' }}</td>
-                                                <td class="details-column" title="{{ $report->details ?? '' }}">
-                                                    {{ $report->details ?? 'No details provided' }}
-                                                </td>
-                                                <td>
-                                                    <span class="badge {{ $report->status === 'pending' ? 'bg-warning' : 'bg-success' }}">
-                                                        {{ ucfirst($report->status) }}
-                                                    </span>
-                                                </td>
-                                                <td>{{ $report->created_at->format('Y-m-d H:i:s') }}</td>
-                                                <td>
-                                                    @if ($report->status === 'pending')
-                                                        <form action="{{ route('reports.resolve.post', $report) }}" method="POST" style="display: inline;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-sm btn-success">Resolve</button>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr><td colspan="8">No post reports found.</td></tr>
-                                        @endforelse
-                                    </tbody>
+                                   <tbody>
+    @forelse ($postReports as $report)
+        <tr>
+            <td>{{ Str::limit($report->post?->caption ?? 'Post deleted', 30, '...') }}</td>
+            <td>
+                @if ($report->post && $report->post->user)
+                    <a href="{{ route('admin.users.show', $report->post->user) }}" class="re">
+                        {{ $report->post->user->username }}
+                    </a>
+                @else
+                    Post/user deleted
+                @endif
+            </td>
+            <td>{{ $report->reporter->username ?? 'Unknown' }}</td>
+            <td>{{ $report->reason ?? 'No reason provided' }}</td>
+            <td class="details-column" title="{{ $report->details ?? '' }}">
+                {{ $report->details ?? 'No details provided' }}
+            </td>
+            <td>
+                <span class="badge {{ $report->status === 'pending' ? 'bg-warning' : 'bg-success' }}">
+                    {{ ucfirst($report->status) }}
+                </span>
+            </td>
+            <td>{{ $report->created_at->format('Y-m-d H:i:s') }}</td>
+            <td>
+                @if ($report->status === 'pending')
+                    <form action="{{ route('reports.resolve.post', $report) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-sm btn-success">Resolve</button>
+                    </form>
+                @endif
+            </td>
+        </tr>
+    @empty
+        <tr><td colspan="8">No post reports found.</td></tr>
+    @endforelse
+</tbody>
+
                                 </table>
                             </div>
                         </div>

@@ -89,15 +89,22 @@ class PostController extends Controller
         return redirect()->route('welcome')->with('success', 'Post created successfully!');
     }
 
-    public function show($id)
-    {
-        $post = Post::with(['user', 'likes', 'comments.replies.user'])->findOrFail($id);
-        $media = Post::where('post_group_id', $post->post_group_id)
-            ->with('media')
-            ->orderBy('created_at', 'desc')
-            ->get();
-        return view('posts.show', compact('post', 'media'));
-    }
+   public function show($id)
+{
+    $post = Post::with([
+        'user:id,name,profile_photo_path', // Load only basic user info
+        'likes',
+        'comments.replies.user:id,name,profile_photo_path'
+    ])->findOrFail($id);
+
+    $media = Post::where('post_group_id', $post->post_group_id)
+        ->with('media')
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return view('posts.show', compact('post', 'media'));
+}
+
 
     public function report(Post $post)
     {
@@ -176,5 +183,35 @@ class PostController extends Controller
         }
 
         return response()->json(['message' => 'Post shared successfully']);
+    }
+
+     // Add bookmark
+    public function bookmark(Post $post)
+    {
+        $user = Auth::user();
+
+        if (!$user->hasBookmarked($post)) {
+            $user->bookmarkedPosts()->attach($post->id);
+        }
+
+        return response()->json(['message' => 'Post bookmarked successfully!']);
+    }
+
+    // Remove bookmark
+    public function unbookmark(Post $post)
+    {
+        $user = Auth::user();
+        $user->bookmarkedPosts()->detach($post->id);
+
+        return response()->json(['message' => 'Bookmark removed successfully!']);
+    }
+
+    // Check if current user has bookmarked a post
+    public function isBookmarked(Post $post)
+    {
+        $user = Auth::user();
+        $bookmarked = $user ? $user->hasBookmarked($post) : false;
+
+        return response()->json(['bookmarked' => $bookmarked]);
     }
 }

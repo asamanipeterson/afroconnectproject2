@@ -233,12 +233,57 @@
             --}}
             <div class="posts-grid">
                 @if(isset($savedPosts) && $savedPosts->count() > 0)
-                    {{-- Loop through $savedPosts here, using the same structure as the posts-grid above --}}
+@foreach($savedPosts as $post)
+    @php
+        $firstMedia = $post->media->first();
+        $isVideo = $firstMedia && $firstMedia->file_type === 'video';
+        $likesCount = $post->likes->count();
+        $commentsCount = $post->comments->count();
+    @endphp
+    <div class="post-item" data-post-id="{{ $post->id }}">
+        <a href="{{ route('posts.show', $post->id) }}">
+            @if($firstMedia)
+                @if($firstMedia->file_type === 'image')
+                    <img src="{{ asset('storage/' . $firstMedia->file_path) }}" alt="Post">
+                @elseif($firstMedia->file_type === 'video')
+                    <video muted loop>
+                        <source src="{{ asset('storage/' . $firstMedia->file_path) }}">
+                    </video>
+                @elseif($firstMedia->file_type === 'text')
+                    <div class="text-post">
+                        <p>{{ $firstMedia->text_content }}</p>
+                    </div>
+                @endif
+            @endif
+
+            @if($isVideo)
+                <div class="reels-icon">...</div>
+            @endif
+            @if($post->media->count() > 1)
+                <div class="stack-icon">...</div>
+            @endif
+
+            <div class="hover-overlay">
+                <div class="post-stats-overlay">
+                    <span class="stat-item"><i class="bi bi-heart-fill"></i>{{ $likesCount }}</span>
+                    <span class="stat-item"><i class="fa-regular fa-comment"></i>{{ $commentsCount }}</span>
+                </div>
+            </div>
+        </a>
+
+        {{-- Optional: Unbookmark button --}}
+        <form action="{{ route('posts.bookmark', $post->id) }}" method="POST" class="unbookmark-form">
+    @csrf
+    <button type="submit" class="unbookmark-btn">Unsave</button>
+</form>
+
+    </div>
+@endforeach
                     {{-- For demonstration, I'll just put an empty state: --}}
-                    <div class="empty-state">
+                    {{--  <div class="empty-state">
                         <i class="bi bi-bookmark-fill" style="font-size: 3rem;"></i>
                         <p>No posts saved yet.</p>
-                    </div>
+                    </div>  --}}
                 @else
                     <div class="empty-state">
                         <i class="bi bi-bookmark-fill" style="font-size: 3rem;"></i>

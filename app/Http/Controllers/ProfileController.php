@@ -11,30 +11,47 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProfileController extends Controller
 {
-
     use AuthorizesRequests;
+
+    /**
+     * Display a user's profile with POSTS, SAVED, TAGGED tabs
+     */
     public function index(User $user)
     {
-        // Group user's posts by post_group_id (like Instagram albums)
-        $groupedPosts = Post::with('media')
-            ->where('user_id', $user->id)
+        $is_own_profile = auth()->id() === $user->id;
+
+        // POSTS tab - grouped by post_group_id
+        $groupedPosts = $user->posts()
+            ->with(['media', 'likes', 'comments'])
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('post_group_id');
 
+        // SAVED tab (only for own profile)
+        $savedPosts = $is_own_profile
+            ? $user->bookmarkedPosts()->with(['media', 'likes', 'comments'])->latest()->get()
+            : collect();
+
+        // TAGGED tab
+        $taggedPosts = $user->taggedPosts()->with(['media', 'likes', 'comments'])->latest()->get();
+
+        // Counts
         $postsCount = $groupedPosts->count();
         $followersCount = $user->followers()->count();
         $followingCount = $user->following()->count();
 
-        // Check if viewer is authenticated and already follows the user
+        // Follow status
         $isFollowing = false;
-        if (Auth::check() && Auth::id() !== $user->id) {
+        if (Auth::check() && !$is_own_profile) {
             $isFollowing = Auth::user()->following()->where('followed_id', $user->id)->exists();
         }
 
         return view('profile.index', compact(
             'user',
             'groupedPosts',
+            'savedPosts',
+            'taggedPosts',
+            'is_own_profile',
             'postsCount',
             'followersCount',
             'followingCount',
@@ -42,13 +59,16 @@ class ProfileController extends Controller
         ));
     }
 
+    /**
+     * Update profile details (profile picture, cover picture, bio, website)
+     */
     public function update(Request $request, User $user)
     {
-        $this->authorize('update', $user); // Optional: Add policy to restrict edit to owner
+        $this->authorize('update', $user);
 
         $request->validate([
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg',
-            'cover_picture' => 'nullable|image|mimes:jpeg,png,jpg',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'cover_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'bio' => 'nullable|string|max:255',
             'website' => 'nullable|url',
         ]);
@@ -67,24 +87,20 @@ class ProfileController extends Controller
         $user->website = $request->input('website');
         $user->save();
 
-        return redirect()->back()->with('success', 'Profile updated.');
+        return redirect()->back()->with('success', 'Profile updated successfully.');
     }
 
-    // public function follow(User $user)
-    // {
-    //     if (Auth::check() && Auth::id() !== $user->id) {
-    //         Auth::user()->following()->syncWithoutDetaching([$user->id]);
-    //         return back()->with('success', 'Followed user.');
-    //     }
-    //     return back()->with('error', 'Cannot follow user.');
-    // }
+    /**
+     * Show bookmarked posts (only for own profile)
+     */
+    public function bookmarks(User $user)
+    {
+        if (Auth::id() !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
 
-    // public function unfollow(User $user)
-    // {
-    //     if (Auth::check() && Auth::id() !== $user->id) {
-    //         Auth::user()->following()->detach($user->id);
-    //         return back()->with('success', 'Unfollowed user.');
-    //     }
-    //     return back()->with('error', 'Cannot unfollow user.');
-    // }
+        $bookmarkedPosts = $user->bookmarkedPosts()->with('user', 'media')->latest()->get();
+
+        return view('profile.bookmarks', compact('user', 'bookmarkedPosts'));
+    }
 }

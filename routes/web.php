@@ -16,11 +16,10 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\PostShareController;
 use App\Http\Controllers\StreamController;
-
 use App\Events\TestMessageReceived;
-
 
 
 Route::controller(HomeController::class)->group(function () {
@@ -64,8 +63,8 @@ Route::controller(PostController::class)->middleware('auth')->group(function () 
 
     // This should come after specific routes
     Route::get('posts/{post}', 'show')->name('posts.show');
+    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
-    Route::delete('delete-post/{id}', 'destroy')->name('delete-post');
     Route::post('report-post/{id}', 'report')->name('report-post');
     Route::post('mark-as-not-interested/{id}', 'markAsNotInterested')->name('mark-as-not-interested');
 });
@@ -74,9 +73,22 @@ Route::controller(LikeController::class)->group(function () {
     Route::post('/posts/{post}/like', 'toggleLike')->name('post.like');
 })->middleware('auth');
 
-Route::post('/posts/{post}/bookmark', function ($post) {
-    return redirect()->back();
-})->name('post.bookmark');
+// Route::post('/posts/{post}/bookmark', function ($post) {
+//     return redirect()->back();
+// })->name('post.bookmark');
+
+// Route::middleware('auth')->group(function () {
+//     Route::post('/posts/{post}/bookmark', [BookmarkController::class, 'store'])->name('posts.bookmark');
+//     Route::delete('/posts/{post}/unbookmark', [BookmarkController::class, 'destroy'])->name('posts.unbookmark');
+//     Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+// });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+    Route::post('/posts/{post}/bookmark', [BookmarkController::class, 'toggle'])->name('posts.bookmark');
+});
+
+
 
 Route::get('/user/{user}', [ProfileController::class, 'index'])->middleware('auth')->name('user.profile');
 

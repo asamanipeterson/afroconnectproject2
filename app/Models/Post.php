@@ -50,4 +50,24 @@ class Post extends Model
     {
         return $this->hasMany(PostReport::class);
     }
+// Posts bookmarked by many users
+public function bookmarkedBy()
+{
+    return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
+}
+
+// Check if a post is bookmarked by a specific user
+public function isBookmarkedBy(User $user = null)
+{
+    if (!$user) return false;
+
+    return $this->bookmarkedBy()->where('user_id', $user->id)->exists();
+}
+
+// Get number of users who bookmarked this post
+public function bookmarksCount()
+{
+    return $this->bookmarkedBy()->count();
+}
+
 }
