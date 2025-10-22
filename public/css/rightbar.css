@@ -18,7 +18,8 @@ body {
     position: sticky;
     top: 0;
     right: 0;
-    height: 100vh;
+    height:auto;
+    z-index:000;
 }
 
 /*----------------------------------------------------------
@@ -28,10 +29,10 @@ body {
 .messages,
 .events,
 .who-to-follow {
-    background: white;
-    padding: .5rem;
+    /* background: white; */
+    /* padding: .5rem; */
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
     margin-bottom: 1rem;
 }
 
@@ -150,12 +151,12 @@ body {
 }
 
 
-body.dark-mode .messages,
+/* body.dark-mode .messages,
 body.dark-mode .events,
 body.dark-mode .who-to-follow {
     background: #000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
+} */
 
 body.dark-mode .messages h4,
 body.dark-mode .events h4,

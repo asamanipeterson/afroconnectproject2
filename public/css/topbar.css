@@ -285,10 +285,10 @@ body.dark-mode .username {
     background: white;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    z-index: 1000;
+    z-index:999999999999;
     min-width: 220px;
     width: 220px;
-    padding: 1rem 0;
+    padding:.7rem 0;
     border: 1px solid #f0f0f0;
 }
 body.dark-mode .dropdown-menu {

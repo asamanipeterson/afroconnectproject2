@@ -1,278 +1,132 @@
-:root {
-    /* Light Mode Variables */
-    --light-bg: #fafafd;
-    --light-text: #1c1e21;
-    --light-card-bg: #ffffff;
-    --light-border: #e9e9e9;
-    --light-shadow: rgba(0, 0, 0, 0.1);
-    --light-glass: rgba(255, 255, 255, 0.95);
-    --light-hover: rgba(106, 17, 203, 0.08);
-    --light-accent: rgba(106, 17, 203, 0.1);
-    
-    /* Dark Mode Variables */
-    --dark-bg: #000000;
-    --dark-text: #ffffff;
-    --dark-card-bg: #0a0a0a;
-    --dark-border: #333333;
-    --dark-shadow: rgba(0, 0, 0, 0.4);
-    --dark-glass: rgba(0, 0, 0, 0.95);
-    --dark-hover: rgba(106, 17, 203, 0.15);
-    --dark-accent: rgba(106, 17, 203, 0.2);
-    
-    /* Current Mode Variables */
-    --market-bg: var(--light-bg);
-    --market-text: var(--light-text);
-    --market-card-bg: var(--light-card-bg);
-    --market-border: var(--light-border);
-    --market-shadow: var(--light-shadow);
-    --market-glass: var(--light-glass);
-    --market-hover: var(--light-hover);
-    --market-accent: var(--light-accent);
-    
-    /* Luxury Design System */
-    --luxury-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    --luxury-glow: rgba(106, 17, 203, 0.4);
-    --luxury-transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --luxury-shadow: 0 20px 40px var(--market-shadow);
-    --luxury-border-radius: 20px;
-}
-
-body.dark-mode {
-    --market-bg: var(--dark-bg);
-    --market-text: var(--dark-text);
-    --market-card-bg: var(--dark-card-bg);
-    --market-border: var(--dark-border);
-    --market-shadow: var(--dark-shadow);
-    --market-glass: var(--dark-glass);
-    --market-hover: var(--dark-hover);
-    --market-accent: var(--dark-accent);
-}
-
-/* Cards Container - Luxury Design */
 .cards-container {
-    padding: 2.5rem;
-    background-color: var(--market-bg);
-    position: relative;
-    min-height: 100vh;
+    padding: 24px;
+    background-color: #fafafd00; /* Light gray background to separate the section */
 }
-
-.cards-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(106, 17, 203, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(37, 117, 252, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
+body.dark-mode .cards-container {
+    background-color: #000; /* Dark mode background */
 }
-
-/* Section Title - Luxury Design */
+/* Section title, matching the "Today's picks" style */
 .section-title {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: var(--market-text);
-    margin-bottom: 2rem;
-    position: relative;
-    display: inline-block;
-    padding-bottom: 0.5rem;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1c1e21;
+    margin-bottom: 16px;
 }
-
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: var(--luxury-gradient);
-    border-radius: 2px;
+body.dark-mode .section-title {
+    color: #fff; /* White text in dark mode */
 }
-
-/* Grid Container - Luxury Design */
+/* Grid layout for the cards */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    position: relative;
-    z-index: 1;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
 }
 
-/* Card Item Link - Luxury Design */
+/* Link element wrapping the card, to make the whole card clickable */
 .card-item-link {
-    text-decoration: none;
+    text-decoration: none; /* Remove underline from links */
     color: inherit;
     cursor: pointer;
-    transition: var(--luxury-transition);
-    border-radius: var(--luxury-border-radius);
 }
 
-.card-item-link:hover {
-    transform: translateY(-8px);
-}
-
-/* Card Item - Luxury Design */
+/* Styling for each individual card */
 .card-item {
-    background: var(--market-card-bg);
-    border-radius: var(--luxury-border-radius);
-    box-shadow: var(--luxury-shadow);
-    overflow: hidden;
-    transition: var(--luxury-transition);
-    border: 1px solid var(--market-border);
-    backdrop-filter: blur(20px);
-    position: relative;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensures rounded corners on the image */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
-
-.card-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, var(--market-accent), transparent);
-    transition: left 0.6s ease;
-    z-index: 1;
+body.dark-mode .card-item {
+    background-color: #000; /* Dark mode background for cards */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Slightly darker shadow in dark mode */
 }
-
-.card-item:hover::before {
-    left: 100%;
-}
-
+/* Hover effect for the cards */
 .card-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px var(--luxury-glow);
-    border-color: rgba(106, 17, 203, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Card Image - Luxury Design */
+/* Styling for the product image */
 .card-image {
     width: 100%;
-    height: 250px;
-    object-fit: cover;
-    transition: var(--luxury-transition);
-    position: relative;
-    z-index: 2;
+    height: 200px; /* Fixed height for consistent card size */
+    object-fit: cover; /* Ensures images fill the space without distortion */
 }
 
-.card-item:hover .card-image {
-    transform: scale(1.05);
-}
-
-/* Placeholder Image - Luxury Design */
+/* Placeholder for items with no images */
 .placeholder-image {
     width: 100%;
-    height: 250px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--luxury-gradient);
-    color: white;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: var(--luxury-transition);
-    position: relative;
-    z-index: 2;
+    background-color: #e9e9e9;
+    color: #666;
+    font-weight: 500;
 }
-
-.card-item:hover .placeholder-image {
-    background: linear-gradient(135deg, #5a0fb8 0%, #1a65e0 100%);
+body.dark-mode .placeholder-image {
+    background-color: #a9a6a6a4; /* Dark mode background for placeholder */
+    color: #bbb; /* Lighter text color in dark mode */
 }
-
-/* Card Details - Luxury Design */
+/* Container for text details below the image */
 .card-details {
-    padding: 1.5rem;
-    position: relative;
-    z-index: 2;
-    background: var(--market-glass);
+    padding: 12px;
 }
 
-/* Card Price - Luxury Design */
-.card-price {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--market-text);
-    margin: 0 0 0.75rem 0;
-    background: var(--luxury-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
-    padding: 0.25rem 0;
+/* Styling for the price */
+.card-price{
+    font-size: 16px;
+    font-weight: bold;
+    color: #1c1e21;
+    margin: 0 0 4px 0;
 }
-
-/* Card Title - Luxury Design */
+body.dark-mode .card-price {
+    color: #fff; /* White text in dark mode */
+}
+/* Styling for the product title */
 .card-title {
-    font-size: 1.1rem;
-    color: var(--market-text);
+    font-size: 14px;
+    color: #4b4f56;
     margin: 0;
-    line-height: 1.4;
-    font-weight: 600;
+    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    transition: var(--luxury-transition);
+    white-space: nowrap; /* Prevent title from wrapping */
 }
-
-.card-item:hover .card-title {
-    color: #6a11cb;
+body.dark-mode .card-title {
+    color: #d1d1d6; /* Lighter text color in dark mode */
 }
-
-/* Card Location - Luxury Design */
+/* Styling for the location text */
 .card-location {
-    font-size: 0.95rem;
-    color: var(--market-text);
-    opacity: 0.7;
+    font-size: 12px;
+    color: #606770;
     margin: 0;
-    margin-top: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: var(--luxury-transition);
+    margin-top: 4px;
 }
-
-.card-location::before {
-    content: '📍';
-    font-size: 0.8rem;
+body.dark-mode .card-location {
+    color: #a1a1a6; /* Lighter text color in dark mode */
 }
-
-.card-item:hover .card-location {
-    opacity: 1;
-    color: #6a11cb;
-}
-
-/* Content Wrapper - Luxury Design */
+/* The CSS you provided for the navigation bar and general layout starts here */
 .content-wrapper {
     flex: 1;
     width: 100%;
-    background: var(--market-bg);
 }
 
-/* Navbar - Luxury Design */
 .navbar {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--market-glass);
-    padding: 1.5rem;
+    background: #e1e0e000;
+    padding: 1rem;
     width: 100%;
     position: sticky;
     z-index: 1000;
     top: 0;
-    border-bottom: 1px solid var(--market-border);
-    backdrop-filter: blur(30px);
-    box-shadow: 0 8px 32px var(--market-shadow);
-    transition: var(--luxury-transition);
 }
-
-.navbar:hover {
-    box-shadow: 0 12px 40px var(--luxury-glow);
-    border-bottom-color: rgba(106, 17, 203, 0.3);
+body.dark-mode .navbar {
+    background: #000;
 }
-
 .containers {
     display: flex;
     flex-direction: column;
@@ -283,118 +137,79 @@ body.dark-mode {
     margin: 0 auto;
 }
 
-/* Navbar Brand - Luxury Design */
 .navbar-brand h3 {
-    color: var(--market-text);
+    color: #2c3e50;
     font-weight: 700;
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
-    background: var(--luxury-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    transition: var(--luxury-transition);
-    position: relative;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
 }
 
-.navbar-brand h3::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--luxury-gradient);
-    border-radius: 12px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+body.dark-mode .navbar-brand h3 {
+    color: #fff;
 }
 
-.navbar-brand:hover h3::before {
-    opacity: 0.1;
-}
-
-.navbar-brand:hover h3 {
-    transform: scale(1.05) translateY(-2px);
-    text-shadow: 0 5px 15px var(--luxury-glow);
-}
-
-/* Search Bar - Luxury Design */
 .search-bar {
     width: 100%;
-    max-width: 600px;
-    margin: 1.5rem 0;
-    position: relative;
+    max-width: 500px;
+    margin: 1rem 0;
 }
 
 .search-bar input {
-    border-radius: 50px;
-    padding: 1.25rem 1.5rem 1.25rem 3rem;
-    border: 1px solid var(--market-border);
-    background: var(--market-glass);
+    border-radius: 25px;
+    padding: 0.9rem 1rem;
+    border: 1px solid #000;
+    background: transparent;
     font-size: 1rem;
     font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
-    transition: var(--luxury-transition);
+    transition: all 0.3s ease;
     width: 100%;
     box-sizing: border-box;
-    color: var(--market-text);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px var(--market-shadow);
 }
 
 .search-bar input:focus {
-    border-color: #6a11cb;
-    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2), 0 8px 25px var(--luxury-glow);
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
     outline: none;
-    transform: scale(1.02);
 }
 
 .search-bar input::placeholder {
-    color: var(--market-text);
-    opacity: 0.6;
+    color: #7f8c8d;
 }
 
-.search-bar::before {
-    content: '🔍';
-    position: absolute;
-    left: 1.25rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.1rem;
-    color: #6a11cb;
-    z-index: 2;
+body.dark-mode .search-bar input {
+    border-color: #55555551;
+    color: #ecf0f1;
 }
 
-/* Icons Container - Luxury Design */
-.icons-container {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+body.dark-mode .search-bar input::placeholder {
+    color: #bdc3c7;
 }
 
 .inbox-icon i {
-    color: var(--market-text);
-    transition: var(--luxury-transition);
-    font-size: 1.8rem;
-    padding: 0.75rem;
-    border-radius: 50%;
-    background: var(--market-glass);
-    border: 1px solid var(--market-border);
-    backdrop-filter: blur(10px);
+    color: #2c3e50;
+    transition: color 0.3s ease;
+    font-size: 1.6rem;
+}
+
+body.dark-mode .inbox-icon i {
+    color: #fff;
+}
+
+body.dark-mode .inbox-icon:hover i {
+    color: #3498db;
 }
 
 .inbox-icon:hover i {
-    color: white;
-    background: var(--luxury-gradient);
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px var(--luxury-glow);
+    color: #3498db;
 }
 
-/* Create Listing - Luxury Design */
+.icons-container {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
 .create-listing-container {
     width: 100%;
     display: flex;
@@ -402,90 +217,30 @@ body.dark-mode {
 }
 
 .create-listing {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--luxury-gradient);
+    display: inline-block;
+    background-color: #e74c3c;
     color: white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
+    padding: 0.75rem .5rem;
+    border-radius: 25px;
     text-decoration: none;
-    font-weight: 700;
-    transition: var(--luxury-transition);
+    font-weight: 600;
+    transition: background-color 0.3s ease;
     text-align: center;
     width: 100%;
-    max-width: 300px;
-    margin-right: 2rem;
-    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.create-listing::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s ease;
-}
-
-.create-listing:hover::before {
-    left: 100%;
+    max-width:300px;
+    margin-right:2rem;
 }
 
 .create-listing:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
-    background: linear-gradient(135deg, #5a0fb8 0%, #1a65e0 100%);
+    background-color: #c0392b;
 }
 
-/* Luxury Scrollbar */
-.cards-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.cards-container::-webkit-scrollbar-track {
-    background: var(--market-bg);
-    border-radius: 4px;
-}
-
-.cards-container::-webkit-scrollbar-thumb {
-    background: var(--luxury-gradient);
-    border-radius: 4px;
-    transition: var(--luxury-transition);
-}
-
-.cards-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a0fb8 0%, #1a65e0 100%);
-}
-
-/* Luxury Focus States */
-*:focus {
-    outline: 2px solid #6a11cb;
-    outline-offset: 3px;
-    border-radius: 4px;
-}
-
-/* Luxury Selection */
-::selection {
-    background: rgba(106, 17, 203, 0.3);
-    color: var(--market-text);
-}
-
-/* Media Queries for Responsiveness - Enhanced with Luxury Touch */
-
-/* Tablet and Desktop */
+/* Media Queries for Responsiveness */
 @media (min-width: 768px) {
     .navbar {
         flex-direction: row;
         justify-content: space-between;
-        padding: 2rem 1.5rem;
+        padding: 2rem 1rem;
     }
 
     .containers {
@@ -494,13 +249,11 @@ body.dark-mode {
     }
 
     .search-bar {
-        margin: 0 2rem;
-        max-width: 500px;
+        margin: 0 1rem;
     }
 
     .icons-container {
         margin-bottom: 0;
-        gap: 1.5rem;
     }
 
     .create-listing-container {
@@ -508,22 +261,17 @@ body.dark-mode {
     }
 
     .create-listing {
-        width: 220px;
-        margin-right: 0;
-    }
-
-    .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2.5rem;
+        width: 200px;
     }
 }
 
-/* Large Desktop Screens */
 @media (min-width: 1587px) {
+
     .navbar {
-        padding: 2.5rem 2rem;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 2rem 1rem;
     }
-    
     .containers {
         max-width: 1400px;
     }
@@ -533,245 +281,82 @@ body.dark-mode {
     }
 
     .navbar-brand h3 {
-        font-size: 2.25rem;
-    }
-
-    .inbox-icon i {
         font-size: 2rem;
-        padding: 1rem;
     }
 
-    .create-listing {
-        max-width: 280px;
-        padding: 1.25rem 2.5rem;
-        font-size: 1.2rem;
+    .inbox-icon i {
+        font-size: 1.8rem;
     }
 
-    .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 3rem;
-    }
-
-    .card-image, .placeholder-image {
-        height: 280px;
-    }
-
-    .section-title {
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
+    .notification-bell {
+        width: 24px;
+        height: 20px;
     }
 }
 
-/* Mobile Devices */
-@media (max-width: 767px) {
-    .cards-container {
-        padding: 1.5rem;
-    }
-
-    .section-title {
-        font-size: 1.75rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
+@media (max-width: 576px) {
 
     .navbar {
-        padding: 1.25rem 1rem;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 2rem 1rem;
     }
-
     .navbar-brand h3 {
         font-size: 1.5rem;
     }
 
     .search-bar input {
-        padding: 1rem 1.25rem 1rem 2.75rem;
-        font-size: 0.95rem;
-    }
-
-    .search-bar::before {
-        left: 1rem;
-    }
-
-    .inbox-icon i {
-        font-size: 1.5rem;
-        padding: 0.6rem;
-    }
-
-    .create-listing {
-        padding: 0.9rem 1.5rem;
-        font-size: 1rem;
-        max-width: 250px;
-        margin-right: 1rem;
-    }
-
-    .card-image, .placeholder-image {
-        height: 220px;
-    }
-
-    .card-details {
-        padding: 1.25rem;
-    }
-
-    .card-price {
-        font-size: 1.3rem;
-    }
-
-    .card-title {
-        font-size: 1rem;
-    }
-}
-
-/* Small Mobile Devices */
-@media (max-width: 480px) {
-    .cards-container {
-        padding: 1rem;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .grid-container {
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-    }
-
-    .navbar {
-        padding: 1rem 0.75rem;
-    }
-
-    .navbar-brand h3 {
-        font-size: 1.3rem;
-    }
-
-    .search-bar input {
-        padding: 0.9rem 1rem 0.9rem 2.5rem;
+        padding: 0.7rem 1rem;
         font-size: 0.9rem;
     }
 
-    .search-bar::before {
-        left: 0.9rem;
-        font-size: 1rem;
-    }
-
     .inbox-icon i {
-        font-size: 1.3rem;
-        padding: 0.5rem;
+        font-size: 1.4rem;
     }
 
-    .icons-container {
-        gap: 0.75rem;
+    .notification-bell {
+        width: 18px;
+        height: 1px;
     }
 
     .create-listing {
-        padding: 0.8rem 1.25rem;
-        font-size: 0.95rem;
-        max-width: 200px;
-        margin-right: 0.75rem;
-    }
-
-    .card-image, .placeholder-image {
-        height: 200px;
-    }
-
-    .card-details {
-        padding: 1rem;
-    }
-
-    .card-price {
-        font-size: 1.2rem;
-    }
-
-    .card-title {
-        font-size: 0.95rem;
-    }
-
-    .card-location {
+        padding: 0.6rem 1.2rem;
         font-size: 0.9rem;
+        max-width: 180px;
     }
 }
 
-/* Extra Small Devices */
 @media (max-width: 360px) {
-    .cards-container {
-        padding: 0.75rem;
+    .navbar {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 2rem 1rem;
     }
-
-    .section-title {
+    .navbar-brand h3 {
         font-size: 1.3rem;
     }
 
-    .navbar {
-        padding: 0.75rem 0.5rem;
-    }
-
-    .navbar-brand h3 {
-        font-size: 1.1rem;
-    }
-
     .search-bar input {
-        padding: 0.8rem 0.9rem 0.8rem 2.25rem;
+        padding: 0.6rem 0.8rem;
         font-size: 0.85rem;
     }
 
-    .search-bar::before {
-        left: 0.8rem;
-        font-size: 0.9rem;
+    .inbox-icon i {
+        font-size: 1.2rem;
     }
 
-    .inbox-icon i {
-        font-size: 1.1rem;
-        padding: 0.4rem;
+    .notification-bell {
+        width: 16px;
+        height: 16px;
     }
 
     .create-listing {
-        padding: 0.7rem 1rem;
-        font-size: 0.9rem;
-        max-width: 180px;
-        margin-right: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        max-width: 160px;
     }
 
-    .card-image, .placeholder-image {
-        height: 180px;
+    .navbar {
+        padding: 0.8rem;
     }
-}
-
-/* Luxury Loading Animation for Cards */
-.card-item.loading {
-    position: relative;
-    overflow: hidden;
-}
-
-.card-item.loading::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, var(--market-accent), transparent);
-    animation: loadingShimmer 1.5s infinite;
-}
-
-@keyframes loadingShimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-/* Luxury Hover Effects Enhancement */
-.card-item-link {
-    perspective: 1000px;
-}
-
-.card-item {
-    transform-style: preserve-3d;
-    transition: transform 0.6s ease, box-shadow 0.6s ease;
-}
-
-.card-item:hover {
-    transform: translateY(-8px) rotateX(5deg);
 }

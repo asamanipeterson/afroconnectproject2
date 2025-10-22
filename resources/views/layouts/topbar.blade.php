@@ -26,12 +26,12 @@
     </a>
 
     <!-- Bookmarks / Saved Posts -->
-    <a href="{{ route('bookmarks.index') }}" class="bookmark-icon">
+    {{-- <a href="{{ route('bookmarks.index') }}" class="bookmark-icon">
         <i class="bi bi-bookmark"></i>
         @if(auth()->user()->bookmarkedPosts()->count())
             <span class="bookmark-badge">{{ auth()->user()->bookmarkedPosts()->count() }}</span>
         @endif
-    </a>
+    </a> --}}
 </div>
 
         </div>

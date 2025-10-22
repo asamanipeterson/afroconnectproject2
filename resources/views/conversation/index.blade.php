@@ -37,11 +37,11 @@
         <a href="{{ route('conversations.index') }}" class="nav-item {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'active' : '' }}">
             <div class="icon-wrapper" style="position: relative;">
                 <i class="bi {{ request()->routeIs(['conversations.index', 'conversations.show']) ? 'bi-chat-fill' : 'bi-chat' }}"></i>
-                @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
+                {{-- @if(isset($unreadMessageCount) && $unreadMessageCount > 0)
                     <span class="notifications-badge">
                         {{ $unreadMessageCount }}
                     </span>
-                @endif
+                @endif --}}
             </div>
         </a>
         <a href="" class="nav-item {{ request()->routeIs('stories.create') ? 'active' : '' }}" id="openStoryModalSidebarNav">

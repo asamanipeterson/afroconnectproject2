@@ -375,7 +375,8 @@
 
         .add-item-btn {
             width: 100%;
-            background-color: #0a84ff;
+            /* background-color: #0a84ff; */
+            background: linear-gradient(to right, #6a11cb, #2575fc);
             color: #fff;
             border: none;
             border-radius: 8px;

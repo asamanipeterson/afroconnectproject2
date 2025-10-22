@@ -17,12 +17,12 @@
                 <div class="d-flex mx-auto search-bar">
                     <input class="form-control" type="search" placeholder="Search by category" aria-label="Search">
                 </div>
-                <div class="d-flex align-items-center">
+                {{-- <div class="d-flex align-items-center">
                     <a href="{{ url('/inbox') }}" class="me-4 inbox-icon">
                         <i class="bi bi-inbox-fill"></i>
                     </a>
 
-                </div>
+                </div> --}}
             </div>
             <div class="create-listing-container">
                 <a href="{{ route('marketplace.newlisting') }}" class="create-listing">+ Create new listing</a>

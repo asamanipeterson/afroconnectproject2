@@ -549,14 +549,30 @@ body.dark-mode .shares-count {
 body.dark-mode .post-actions {
     border-top-color: var(--dark-border);
 }
-.post-actions .icons,
-.icon-share-bookmark {
+.post-actions .icons{
     display: flex;
     align-items: center;
     gap: 8px;
 }
+.icon-share-bookmark{
+    border:none;
+    background: none;
+    cursor: pointer;
+}
+.icon-share-bookmark i{
+    font-size: 24px;
+    color: var(--light-placeholder);
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.bookmark-button i {
+    color: #ffc107;
+}
+
+body.dark-mode .bookmark-button:hover i {
+    color: #ffc107;
+}
 .post-actions a,
-.icon-share-bookmark a {
+.icon-share-bookmark i{
     color: var(--light-placeholder);
     text-decoration: none;
     transition: color 0.2s ease, transform 0.2s ease;
@@ -637,7 +653,32 @@ body.dark-mode .share-button:hover i {
 body.dark-mode .bookmark-button:hover i {
     color: #ffc107;
 }
-
+.bookmark-btn{
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    /* color: #ff4444 !important; */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0;
+}
+.bookmark-btn i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    /* color: #ff4444; */
+    /* width: 20px; */
+    text-align: center;
+    transition: all 0.3s ease;
+}
 /* View Comments Link Styling */
 .views-comment{
     text-decoration: none;
@@ -813,7 +854,7 @@ body.dark-mode .comment-input-wrapper {
     font-size: 0.95rem;
     color: var(--light-text);
     background: transparent;
-    border-radius: 25px;
+    /* border-radius: 25px; */
     margin-top: 15px;
     padding-bottom: 10px;
     padding-left:10px;
@@ -1393,7 +1434,6 @@ body.dark-mode .share-modal-actions .cancel-share-btn:hover {
 .delete-post-btn:hover {
     background: rgba(255, 68, 68, 0.15) !important;
     border-left-color: #ff4444 !important;
-    padding-left: 25px;
     color: #ff4444 !important;
     transform: none;
 }

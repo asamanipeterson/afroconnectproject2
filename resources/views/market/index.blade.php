@@ -108,12 +108,12 @@
                     </div>
 
                     <!-- Right Side Icons -->
-                    <div class="d-flex align-items-center">
-                        <!-- Inbox Icon -->
+                    {{-- <div class="d-flex align-items-center">
+
                         <a href="{{ url('/inbox') }}" class="me-4 inbox-icon">
                             <i class="bi bi-inbox-fill"></i>
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="create-listing-container">

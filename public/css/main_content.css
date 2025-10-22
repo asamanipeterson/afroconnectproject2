@@ -1,25 +1,15 @@
 /* Main Content Layout - Luxury Design */
-.main-content {
+/* .main-content {
     flex-grow: 1;
     padding: 2rem;
     width: 100%;
     box-sizing: border-box;
     background: var(--main-bg);
     position: relative;
-}
 
-.main-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 4rem);
-    max-width: 800px;
-    height: 1px;
-    background: var(--luxury-gradient);
-    opacity: 0.2;
-}
+} */
+
+
 
 /* Story Section - Luxury Design */
 .story-section {
@@ -33,6 +23,7 @@
     transition: var(--luxury-transition);
     position: relative;
     overflow: hidden;
+    width: 100%;
 }
 
 .story-section::before {
@@ -140,7 +131,7 @@
 
 /* Post Creation Section - Luxury Design */
 .post-creation-section {
-    background: var(--card-bg);
+    /* background: var(--card-bg); */
     padding: 2rem;
     border-radius: var(--luxury-border-radius);
     box-shadow: var(--luxury-shadow);
@@ -170,8 +161,8 @@
 }
 
 .post-creation-section:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 50px var(--luxury-glow);
+    /* transform: translateY(-5px); */
+    /* box-shadow: 0 25px 50px var(--luxury-glow); */
     border-color: rgba(106, 17, 203, 0.4);
 }
 
@@ -188,19 +179,19 @@
 
 .post-creation-section:hover .avatar {
     border-color: rgba(106, 17, 203, 0.5);
-    transform: scale(1.05);
+    /* transform: scale(1.05); */
 }
 
 .post-creation-section i.avatar {
     font-size: 60px;
     color: var(--main-text);
-    opacity: 0.7;
+    /* opacity: 0.7; */
     transition: var(--luxury-transition);
 }
 
 .post-creation-section:hover i.avatar {
     color: #6a11cb;
-    opacity: 1;
+    /* opacity: 1; */
 }
 
 .post-input {
@@ -276,7 +267,7 @@
     padding: 1.5rem;
     overflow-x: auto;
     scrollbar-width: none;
-    background: var(--card-bg);
+    /* background: var(--card-bg); */
     border-radius: var(--luxury-border-radius);
     margin-bottom: 2rem;
     border: 1px solid var(--main-border);
@@ -814,16 +805,16 @@
 .story-viewer-content {
     position: relative;
     border-radius: var(--luxury-border-radius);
-    width: 90%;
+    width:100%;
     height: 90%;
-    max-width: 500px;
+    max-width:700px;
     max-height: 800px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: var(--card-bg);
-    border: 1px solid var(--main-border);
-    box-shadow: 0 25px 50px var(--luxury-glow);
+    /* background: var(--card-bg); */
+    /* border: 1px solid var(--main-border); */
+    /* box-shadow: 0 25px 50px var(--luxury-glow); */
 }
 
 .story-slider {
@@ -841,7 +832,7 @@
     flex-shrink: 0;
     width: 400px;
     height: 700px;
-    background: var(--card-bg);
+    /* background: var(--card-bg); */
     border-radius: var(--luxury-border-radius);
     overflow: hidden;
     opacity: 0.6;
@@ -854,12 +845,12 @@
     align-items: center;
     position: relative;
     margin: 0 1rem;
-    border: 1px solid var(--main-border);
+    /* border: 1px solid var(--main-border); */
 }
 
 .story-user-card.active {
-    width: 30%;
-    height: 70%;
+    width:100%;
+    height: 100%;
     opacity: 1;
     filter: none;
     transform: scale(1);
@@ -1119,7 +1110,7 @@
     position: relative;
 }
 
-.profile-link::after {
+/* .profile-link::after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -1128,7 +1119,7 @@
     height: 2px;
     background: var(--luxury-gradient);
     transition: width 0.3s ease;
-}
+} */
 
 .profile-link:hover::after {
     width: 100%;
@@ -1149,7 +1140,7 @@
     .post-creation-section {
         margin: 0 0 0 2rem;
     }
-    
+
     .main-content {
         margin-left: 80px;
         padding: 1.5rem;
@@ -1160,12 +1151,12 @@
     .creation-button {
         display: none;
     }
-    
+
     .main-content {
         margin: 0;
         padding: 1rem;
     }
-    
+
     .story-viewer-content {
         width: 100%;
         height: 100%;
@@ -1173,21 +1164,21 @@
         max-width: none;
         max-height: none;
     }
-    
+
     .story-user-card.inactive {
         display: none;
     }
-    
+
     .story-user-card.active {
         width: 100%;
         height: 100%;
         margin: 0;
     }
-    
+
     .story-slider {
         justify-content: flex-start;
     }
-    
+
     .close-story-viewer-btn {
         font-size: 1.5rem;
         top: 1rem;
@@ -1195,43 +1186,43 @@
         width: 40px;
         height: 40px;
     }
-    
+
     .story-header {
         padding: 1rem 1.5rem;
     }
-    
+
     .story-header .story-viewer-avatar {
         width: 40px;
         height: 40px;
     }
-    
+
     .story-header .story-viewer-username {
         font-size: 1rem;
     }
-    
+
     .story-caption {
         font-size: 1.125rem;
         padding: 1.5rem;
     }
-    
+
     .story-text-content {
         font-size: 1.25rem;
         padding: 1.5rem;
     }
-    
+
     .story-media-area .nav-btn {
         font-size: 0.875rem;
         width: 35px;
         height: 35px;
         padding: 0.5rem;
     }
-    
+
     .play-pause-btn, .mute-unmute-btn {
         width: 40px;
         height: 40px;
         font-size: 1rem;
     }
-    
+
     .play-pause-btn {
         right: 60px;
     }
@@ -1243,7 +1234,7 @@
         width: 70px;
         height: 70px;
     }
-    
+
     .plus-badge {
         width: 24px;
         height: 24px;
@@ -1256,7 +1247,7 @@
         width: 65px;
         height: 65px;
     }
-    
+
     .plus-badge {
         width: 22px;
         height: 22px;
@@ -1269,18 +1260,18 @@
         gap: 1rem;
         padding: 1rem;
     }
-    
+
     .story-avatar-wrapper {
         width: 60px;
         height: 60px;
     }
-    
+
     .plus-badge {
         width: 20px;
         height: 20px;
         font-size: 12px;
     }
-    
+
     .story-username {
         font-size: 0.8rem;
     }
@@ -1291,25 +1282,25 @@
         width: 55px;
         height: 55px;
     }
-    
+
     .story-username {
         font-size: 0.75rem;
     }
-    
+
     .plus-badge {
         width: 18px;
         height: 18px;
         font-size: 10px;
     }
-    
+
     .post-creation-section {
         padding: 1.5rem;
     }
-    
+
     .post-input input {
         padding: 0.75rem 1rem;
     }
-    
+
     .share-post-btn {
         padding: 0.75rem 1rem;
         font-size: 0.875rem;

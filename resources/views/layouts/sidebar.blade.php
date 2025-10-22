@@ -26,7 +26,9 @@
         @endif
 
         {{-- Username and Link --}}
-        <a href="{{ route('user.profile', auth()->user()) }}"><p>@ {{ auth()->user()->username }}</p></a>
+        <a href="{{ route('user.profile', auth()->user()) }}">
+            <p>@ {{ auth()->user()->username }}</p>
+        </a>
 
         @php
             $followersCount = auth()->user()->followers()->count();
@@ -49,7 +51,7 @@
 
 
     <div class="navigation">
-    <a href="{{ route('welcome') }}" class="logo"><img src="{{ asset('2projlogo.png') }}" alt=""></a>
+    {{-- <a href="{{ route('welcome') }}" class="logo"><img src="{{ asset('2projlogo.png') }}" alt=""></a> --}}
     <a href="{{ route('welcome') }}" class="nav-item {{ request()->routeIs('welcome') ? 'active' : '' }}">
         <i class="bi {{ request()->routeIs('welcome') ? 'bi-house-door-fill' : 'bi-house-door' }}"></i><span>Home</span>
     </a>

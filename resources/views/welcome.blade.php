@@ -54,34 +54,29 @@
                         <div class="dropdown-content">
                             <a href="#" class="dropdown-item report-post" data-post-id="{{ $firstPost->id }}"><i class="bi bi-flag"></i>Report</a>
                             <a href="#" class="dropdown-item share-post" data-post-id="{{ $firstPost->id }}"><i class="bi bi-share"></i> Share</a>
-       <form action="{{ route('posts.bookmark', $firstPost->id) }}" method="POST" class="bookmark-toggle-form d-inline">
-    @csrf
-    <button type="submit" class="btn btn-link p-0">
-        <i class="bi bi-bookmark{{ auth()->user()->bookmarkedPosts->contains($firstPost->id) ? '-fill text-primary' : '' }}"></i>
-    </button>
-</form>
+                            <form action="{{ route('posts.bookmark', $firstPost->id) }}" method="POST" class="bookmark-toggle-form d-inline">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item bookmark-btn">
+                                        <i class="bi bi-bookmark{{ auth()->user()->bookmarkedPosts->contains($firstPost->id) ? '-fill text-primary' : '' }}"></i>
+                                        Save
+                                    </button>
+                            </form>
+                                    @if(Auth::check() && Auth::id() === $user->id)
+                                        <form action="{{ route('posts.destroy', $firstPost->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dropdown-item delete-post-btn">
+                                                <i class="bi bi-trash"></i> Delete Post
+                                            </button>
+                                        </form>
 
+                                    @endif
 
-
-
-
-                            @if(Auth::check() && Auth::id() === $user->id)
-@if(Auth::check() && Auth::id() === $user->id)
- <form action="{{ route('posts.destroy', $firstPost->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?');">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="dropdown-item delete-post-btn">
-        <i class="bi bi-trash"></i> Delete Post
-    </button>
-</form>
-
-@endif
-                            @endif
                         </div>
                     </div>
                 </div>
 
-                
+
                 <p class="post-caption">{{ $firstPost->caption }}</p>
                 @if($firstPost->media->isNotEmpty())
                     <div class="post-media-carousel">
@@ -146,13 +141,13 @@
                                 <svg width="24" height="24" fill="green" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21.0808 4.08454c.0817-.26553.0099-.55446-.1865-.7509-.1964-.19644-.4854-.2682-.7509-.1865L1.75863 8.80399c-.2994.09213-.51001.36063-.52817.67336-.01816.31273.15995.60385.44668.72995l8.57186 3.7716 3.7716 8.5719c.1262.2867.4173.4648.73.4467.3127-.0182.5812-.2288.6734-.5282l5.6568-18.38476ZM10.6505 12.5168 4.12458 9.64541 19.2305 4.99743l-4.648 15.10597-2.8714-6.526 3.3496-3.3495L14 9.16725l-3.3495 3.34955Z"></path></svg>
                             </a>
                         </div>
-       <form action="{{ route('posts.bookmark', $firstPost->id) }}" method="POST" class="bookmark-toggle-form d-inline">
-    @csrf
-    <button type="submit" class="btn btn-link p-0">
-        <i class="bi bi-bookmark{{ auth()->user()->bookmarkedPosts->contains($firstPost->id) ? '-fill text-primary' : '' }}"></i>
-    </button>
-</form>
 
+                            <form action="{{ route('posts.bookmark', $firstPost->id) }}" method="POST" class="bookmark">
+                                    @csrf
+                                    <button type="submit" class="icon-share-bookmark bookmark-button">
+                                        <i class="bi bi-bookmark{{ auth()->user()->bookmarkedPosts->contains($firstPost->id) ? '-fill text-primary' : '' }}"></i>
+                                    </button>
+                            </form>
                     </div>
                 </div>
                 <div class="recent-comments-section px-3 py-2">
@@ -178,7 +173,7 @@
                     </div>
                     <div class="comment-input-wrapper">
                         <form class="comment-form" data-post-id="{{ $firstPost->id }}">
-                            <input type="text" class="comment-input" placeholder="Add a comment..." name="content" required>
+                            <input type="text"class="comment-input" placeholder="Add a comment..."name="content"required style="outline: none; box-shadow: none;">
                         </form>
                         <button type="button" class="submit-comment-button" data-post-id="{{ $firstPost->id }}">
                             <svg width="30" height="30" fill="currentColor" viewBox="0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21.0808 4.08454c.0817-.26553.0099-.55446-.1865-.7509-.1964-.19644-.4854-.2682-.7509-.1865L1.75863 8.80399c-.2994.09213-.51001.36063-.52817.67336-.01816.31273.15995.60385.44668.72995l8.57186 3.7716 3.7716 8.5719c.1262.2867.4173.4648.73.4467.3127-.0182.5812-.2288.6734-.5282l5.6568-18.38476ZM10.6505 12.5168 4.12458 9.64541 19.2305 4.99743l-4.648 15.10597-2.8714-6.526 3.3496-3.3495L14 9.16725l-3.3495 3.34955Z"></path></svg>

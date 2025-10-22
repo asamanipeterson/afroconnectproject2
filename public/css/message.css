@@ -66,7 +66,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         radial-gradient(circle at 20% 80%, rgba(106, 17, 203, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(37, 117, 252, 0.08) 0%, transparent 50%);
     z-index: -1;
@@ -300,7 +300,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         radial-gradient(circle at 10% 20%, rgba(106, 17, 203, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 90% 80%, rgba(37, 117, 252, 0.03) 0%, transparent 50%);
     pointer-events: none;
@@ -464,7 +464,7 @@ body::before {
     background: var(--message-sent);
     color: white;
     border-radius: 20px 20px 6px 20px;
-    box-shadow: 0 8px 25px rgba(106, 17, 203, 0.3);
+    /* box-shadow: 0 8px 25px rgba(106, 17, 203, 0.3); */
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -830,16 +830,16 @@ body::before {
     .navigation-sidebar {
         width: 72px;
     }
-    
+
     .messages-container {
         margin-left: 72px;
         width: calc(100% - 72px);
     }
-    
+
     .conversations-sidebar {
         width: 100%;
     }
-    
+
     .message-bubble {
         max-width: 80%;
     }
@@ -889,7 +889,7 @@ body::before {
 }
 
 /* Theme toggle button */
-.theme-toggle {
+/* .theme-toggle {
     background: var(--bg-glass-secondary);
     border: 1px solid var(--border-glass);
     color: var(--text-primary);
@@ -910,4 +910,247 @@ body::before {
     background: var(--gradient-primary);
     color: white;
     transform: translateY(-2px) scale(1.05);
+} */
+
+
+.recording-status {
+            text-align: center;
+            padding: 5px;
+            color: var(--accent-color);
+            display: none;
+        }
+
+        .audio-controls {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 20px;
+            margin-top: 8px;
+            gap: 8px;
+        }
+
+        .audio-preview {
+            flex: 1;
+            height: 36px;
+            border-radius: 18px;
+        }
+
+        .audio-controls-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .send-audio-btn {
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .send-audio-btn:hover {
+            background-color: #0077cc;
+        }
+
+        .cancel-audio-btn {
+            background-color: #efefef;
+            border: none;
+            border-radius: 16px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .cancel-audio-btn:hover {
+            background-color: #e4e4e4;
+        }
+
+        .audio-message {
+            background: transparent;
+            padding: 0;
+        }
+
+        .audio-message audio {
+            max-width: 250px;
+            height: 40px;
+        }
+
+        .custom-audio-player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            color: white;
+            width: 200px;
+        }
+
+        .message-sent .custom-audio-player {
+            background-color: var(--message-sent);
+        }
+
+        .message-received .custom-audio-player {
+            background-color: var(--message-received);
+            color: var(--text-primary);
+        }
+
+        .custom-audio-player .play-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .message-sent .play-btn {
+            /* background-color: white; */
+            color: var(--message-sent);
+        }
+
+        .message-received .play-btn {
+            background-color: var(--text-primary);
+            color: var(--message-received);
+        }
+
+        .waveform {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            /* height:50px; */
+        }
+
+        .waveform span {
+            display: block;
+            width: 3px;
+            border-radius: 2px;
+            transition: height .3s ease-in-out, background-color .2s;
+        }
+
+        .message-sent .waveform span {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .message-received .waveform span {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .waveform span.active {
+            background-color: white;
+        }
+
+        .message-received .waveform span.active {
+            background-color: var(--text-primary);
+        }
+
+        .audio-duration {
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-left: 5px;
+        }
+
+        .audio-message.message-sent::after,
+        .audio-message.message-received::after {
+            display: none;
+        }
+        .message-time-divider {
+            text-align: center;
+            margin: 20px 0;
+            user-select: none;
+            display: block;
+            position: relative;
+        }
+
+        .message-time-divider::before {
+            left: 0;
+        }
+
+        .message-time-divider::after {
+            right: 0;
+        }
+         .navigation-sidebar .profile-nav-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 0;
+            object-fit: cover;
+        }
+
+        .navigation-sidebar .dropdown-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 8px;
+    width: 220px;
+    z-index: 1000;
+    bottom: 60px;
+    left: 12px;
 }
+
+
+.shared-post-message {
+            background-color: transparent !important;
+            background: none !important;
+            border: none;
+            padding: 0;
+            border-radius: 0;
+            width: fit-content;
+            cursor: pointer;
+        }
+
+        .message-wrapper .message-bubble {
+            /* background-color: transparent; */
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .shared-post-message::after {
+            display: none;
+        }
+
+        .shared-post-content {
+            background-color: transparent;
+            border-radius: 0;
+            overflow: hidden;
+            margin: 0;
+            border: none;
+        }
+
+        .shared-post-image,
+        .shared-post-video {
+            width: 330px;
+            height:600px;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .shared-post-caption {
+            padding: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .shared-by-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 8px 0 4px;
+            text-align: center;
+        }
