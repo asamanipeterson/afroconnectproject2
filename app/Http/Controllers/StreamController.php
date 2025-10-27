@@ -17,13 +17,6 @@ class StreamController extends Controller
     {
         $this->agoraService = new AgoraService();
     }
-
-    // public function index()
-    // {
-    //     $streams = Stream::where('status', 'live')->with('user')->get();
-    //     return view('live.index', compact('streams'));
-    // }
-
     public function index()
     {
         $streams = Stream::where('status', 'live')->get();
@@ -57,14 +50,6 @@ class StreamController extends Controller
 
         return redirect()->route('live.show', $stream)->with('token', $token);
     }
-
-    // public function stop(Stream $stream)
-    // {
-    //     $this->authorize('update', $stream);
-    //     $stream->update(['status' => 'offline']);
-    //     return redirect()->route('live');
-    // }
-
     public function stop(Stream $stream)
     {
         \Log::debug('Stopping stream ID: ' . $stream->id . ', User ID: ' . auth()->id() . ', Current Status: ' . $stream->status);

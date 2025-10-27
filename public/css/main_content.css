@@ -78,9 +78,9 @@
 }
 
 .story-add:hover {
-    background: var(--main-hover);
+    /* background: var(--main-hover); */
     transform: translateX(8px);
-    border-color: rgba(106, 17, 203, 0.3);
+    /* border-color: rgba(106, 17, 203, 0.3); */
 }
 
 .story-add .avatar {
@@ -89,13 +89,13 @@
     border-radius: 50%;
     object-fit: cover;
     margin-right: 1rem;
-    border: 3px solid var(--main-border);
+    /* border: 3px solid var(--main-border); */
     transition: var(--luxury-transition);
     box-shadow: 0 4px 15px var(--main-shadow);
 }
 
 .story-add:hover .avatar {
-    border-color: rgba(106, 17, 203, 0.5);
+    /* border-color: rgba(106, 17, 203, 0.5); */
     transform: scale(1.05);
 }
 
@@ -297,13 +297,9 @@
 }
 
 .story-item.has-stories .story-avatar {
-    border: 3px solid;
     border-image: var(--luxury-gradient) 1;
 }
 
-.story-item:not(.has-stories) .story-avatar {
-    border: 3px solid var(--main-border);
-}
 
 .story-avatar-wrapper {
     position: relative;

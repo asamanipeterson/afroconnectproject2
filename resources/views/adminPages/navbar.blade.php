@@ -126,7 +126,6 @@
                             </div>
                         </div>
                         <div class="preview-item-content">
-                            <p class="preview-subject mb-1">User Report: {{ $report->reported_user->username }}</p>
                             <p class="text-muted ellipsis mb-0">Reason: {{ $report->reason }} - {{ $report->created_at->diffForHumans() }}</p>
                         </div>
                     </a>
