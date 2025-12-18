@@ -215,11 +215,6 @@ class AuthController extends Controller
     {
         return view('profile.index', compact(
             'user',
-            // 'groupedPosts',
-            // 'postsCount',
-            // 'followersCount',
-            // 'followingCount',
-            // 'isFollowing'
         ));
     }
 }
