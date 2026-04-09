@@ -326,8 +326,6 @@
 <script src="{{ asset('js/welcome.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // ... (Existing Edit Profile and Report User modal toggle code) ...
-
         // Edit Profile modal toggle
         const openEditBtn = document.getElementById('openEditForm');
         const editModal = document.getElementById('editProfileModal');
