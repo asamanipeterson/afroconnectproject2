@@ -1,24 +1,40 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
-WORKDIR /var/www/html
-
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libzip-dev
 
-# Install Composer
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy project
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy project files
 COPY . .
 
-# Install dependencies
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Permissions
-RUN chmod -R 775 storage bootstrap/cache
+# Set permissions for Laravel
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Render uses the $PORT environment variable
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Start Laravel
+CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
