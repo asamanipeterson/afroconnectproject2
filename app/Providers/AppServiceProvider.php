@@ -6,21 +6,15 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\Conversation;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\URL; // ✅ ADD THIS
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot()
     {
         View::composer('layouts.sidebar', function ($view) {
@@ -33,11 +27,10 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
+        Schema::defaultStringLength(191); // keep only one
 
-          Schema::defaultStringLength(191);
-
-            Schema::defaultStringLength(191);
-
-
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https'); // now works
+        }
     }
 }
