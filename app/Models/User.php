@@ -146,7 +146,7 @@ class User extends Authenticatable
         ]);
 
         // Send OTP mail
-        Mail::to($this->email)->send(new OtpMai($otpCode));
+        Mail::to($this->email)->send(new OtpMail($otpCode));
 
         return $otpCode; // optional, in case you want to log/debug
     }
