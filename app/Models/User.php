@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -136,6 +137,8 @@ class User extends Authenticatable
         // Generate OTP
         $otpCode = rand(100000, 999999);
 
+        Log::info('Generating OTP for user', ['user_id' => $this->id, 'email' => $this->email]);
+
         // Delete old OTP if exists
         $this->oneTimePassword()->delete();
 
@@ -145,8 +148,21 @@ class User extends Authenticatable
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
+        Log::info('OTP saved to database', ['user_id' => $this->id, 'otp_code' => $otpCode]);
+
         // Send OTP mail
-        Mail::to($this->email)->queue(new OtpMail($otpCode));
+        try {
+            Mail::to($this->email)->send(new OtpMail($otpCode));
+            Log::info('OTP email sent successfully', ['user_id' => $this->id, 'email' => $this->email]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send OTP email', [
+                'user_id' => $this->id,
+                'email' => $this->email,
+                'error' => $e->getMessage(),
+                'exception' => $e
+            ]);
+            throw $e;
+        }
 
         return $otpCode;
     }
